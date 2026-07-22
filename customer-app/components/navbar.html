@@ -1,0 +1,127 @@
+<nav class="bg-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="flex items-center justify-between h-20">
+
+            <!-- Logo -->
+            <div class="flex items-center">
+                <a href="../pages/home.html"
+                    class="flex items-center gap-3 mr-8 flex-shrink-0">
+                    <span class="text-4xl">🌸</span>
+                    <span class="text-3xl font-bold text-pink-600">Maquillage</span>
+                </a>
+            </div>
+
+            <!-- Desktop Menu -->
+            <div class="hidden lg:flex items-center gap-8">
+                <a href="../pages/home.html"
+                    class="font-medium hover:text-pink-600 transition">
+                    Home
+                </a>
+
+                <a href="../pages/shop.html"
+                    class="font-medium hover:text-pink-600 transition">
+                    Shop
+                </a>
+
+                <a href="#"
+                    class="font-medium hover:text-pink-600 transition">
+                    Brands
+                </a>
+
+                <a href="#"
+                    class="font-medium hover:text-pink-600 transition">
+                    Offers
+                </a>
+            </div>
+
+            <!-- Search -->
+            <div class="hidden md:flex flex-1 max-w-xl mx-8">
+                <input
+                    type="text"
+                    placeholder="Search products, brands..."
+                    class="w-full px-4 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-pink-500">
+                <button
+                    class="bg-pink-600 text-white px-5 rounded-r-lg hover:bg-pink-700">
+                    <i data-lucide="search"></i>
+                </button>
+            </div>
+
+            <!-- Icons -->
+            <div class="flex items-center gap-5">
+                <button>
+                    <i data-lucide="heart"></i>
+                </button>
+
+                <button>
+                    <i data-lucide="bell"></i>
+                </button>
+
+                <button class="relative">
+                    <i data-lucide="shopping-cart"></i>
+                    <span
+                        class="absolute -top-2 -right-2 bg-pink-600 text-white rounded-full text-xs px-1">
+                        0
+                    </span>
+                </button>
+
+                <button>
+                    <i data-lucide="user"></i>
+                </button>
+
+                <button
+                    id="mobileMenuBtn"
+                    class="lg:hidden">
+                    <i data-lucide="menu"></i>
+                </button>
+
+
+                <a href="../pages/wishlist.html"
+                    title="Wishlist"
+                    class="text-2xl hover:text-pink-600">
+            
+                </a>
+                <a href="../pages/cart.html"
+                    title="Cart"
+                    class="relative text-2xl hover:text-pink-600">
+                    <span
+                        class="absolute -top-2 -right-2 bg-pink-600 text-white text-xs rounded-full px-1">
+                        0
+                    </span>
+                </a>
+
+                <a href="../pages/profile.html"
+                    title="Profile"
+                    class="text-2xl hover:text-pink-600">
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div
+        id="mobileMenu"
+        class="hidden lg:hidden bg-white border-t">
+
+        <a href="../pages/home.html"
+            class="block px-6 py-3 hover:bg-pink-50">
+            Home
+        </a>
+
+        <a href="../pages/shop.html"
+            class="block px-6 py-3 hover:bg-pink-50">
+            Shop
+        </a>
+
+        <a href="#"
+            class="block px-6 py-3 hover:bg-pink-50">
+            Brands
+        </a>
+
+        <a href="#"
+            class="block px-6 py-3 hover:bg-pink-50">
+            Offers
+        </a>
+    </div>
+
+</nav>

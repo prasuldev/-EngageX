@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+
+    <!-- AI CSS -->
+    <link rel="stylesheet" href="../css/ai.css">
+
+</head>
+
+<script src="../js/navbar.js"></script>
+
+<body class="bg-gray-100">
+
+    <div id="navbar"></div>
+    <main class="p-8">
+        
+    </main>
+
+    <div class="p-10">
+
+        <h1 class="text-4xl font-bold">
+
+           
+
+        </h1>
+
+        <p class="mt-5">
+
+            
+        </p>
+
+    </div>
+
+    <!-- AI Widget -->
+    <div id="ai-container"></div>
+
+    <script>
+
+        fetch("../components/ai-chat.html")
+            .then(response => response.text())
+            .then(html => {
+
+                document.getElementById("ai-container").innerHTML = html;
+
+                const script = document.createElement("script");
+
+                script.src = "../js/ai.js";
+                script.onload=()=>{
+                    initializeAI();
+                };
+
+                document.body.appendChild(script);
+
+            });
+
+    </script>
+
+</body>
+
+</html>
