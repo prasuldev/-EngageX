@@ -12,3 +12,9 @@ function logout() {
     localStorage.removeItem(SESSION_KEY);
     window.location.href = "login.html";
 }
+
+function logoutUser() {
+
+    localStorage.removeItem("loggedInUser");
+
+}

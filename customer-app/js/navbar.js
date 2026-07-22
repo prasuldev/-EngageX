@@ -9,5 +9,27 @@ function initializeNavbar() {
         });
     }
 
-    lucide.createIcons();
+    lucide.createIcons();const profileBtn = document.getElementById("profileBtn");
+
+if (profileBtn) {
+
+    profileBtn.addEventListener("click", () => {
+
+        const user =
+            JSON.parse(localStorage.getItem("loggedInUser"));
+
+        if (user) {
+
+            window.location.href = "../pages/profile.html";
+
+        } else {
+
+            window.location.href = "../pages/login.html";
+
+        }
+
+    });
+
+}
+
 }
