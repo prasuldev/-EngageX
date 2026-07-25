@@ -4,24 +4,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!form) return;
 
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
 
         e.preventDefault();
 
         const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value;
 
-        const result = loginUser(email, password);
+        try {
+            const res = await fetch(`${API_BASE}/auth/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password })
+            });
 
-        if (!result.success) {
-            alert(result.message);
-            return;
+            if (!res.ok) {
+                const err = await res.json();
+                alert(err.detail || "Login failed. Check your email and password.");
+                return;
+            }
+
+            const data = await res.json();
+
+            // Store JWT + user info via session.js
+            saveSession(data.access_token, data.user);
+
+            alert("Login Successful!");
+            window.location.href = "home.html";
+
+        } catch (err) {
+            console.error("Login error:", err);
+            alert("Could not connect to server. Please try again.");
         }
-
-        alert("Login Successful!");
-
-        window.location.href = "home.html";
-
     });
 
 });

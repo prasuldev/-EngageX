@@ -118,21 +118,35 @@ function hideTyping() {
     }
 }
 
-    /* ===========================================
-       Dummy AI Response
-    =========================================== */
-
-function botReply(userMessage) {
+async function botReply(userMessage) {
     showTyping();
-    setTimeout(() => {
+
+    try {
+        const user = getLoggedInUser();
+
+        const response = await fetch(`${API_BASE}/chat`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                message: userMessage,
+                user_id: user ? user.id : null
+            })
+        });
+
+        const data = await response.json();
         hideTyping();
-        addMessage(
-            "Thanks for your question! This is a demo response. Later, Gemini/OpenAI will answer: \"" +
-            userMessage +
-            "\"",
-            "bot"
-        );
-    }, 1500);
+
+        if (data.reply) {
+            addMessage(data.reply, "bot");
+        } else {
+            addMessage("Sorry, I couldn't process that. Please try again.", "bot");
+        }
+
+    } catch (error) {
+        console.error("AI chat error:", error);
+        hideTyping();
+        addMessage("Sorry, I'm having trouble connecting right now.", "bot");
+    }
 }
 
     /* ===========================================

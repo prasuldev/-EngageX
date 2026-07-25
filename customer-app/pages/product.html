@@ -17,6 +17,8 @@
     <link rel="stylesheet" href="../css/navbar.css">
     <link rel="stylesheet" href="../css/product.css">
     <link rel="stylesheet" href="../css/ai.css">
+    <link rel="stylesheet" href="../css/campaigns/campaign-shell.css">
+    <link rel="stylesheet" href="../css/campaigns/beauty-match.css">
 
 </head>
 
@@ -32,6 +34,8 @@
 
     </main>
 
+    <section id="campaign-container"></section>
+
     <!-- Footer -->
     <div id="footer"></div>
 
@@ -45,6 +49,26 @@
 
     <!-- Common Components -->
     <script src="../js/loadComponents.js"></script>
+
+    <script>
+        fetch("../components/campaigns/campaign-shell.html")
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById("campaign-container").innerHTML = html;
+
+                const coreScript = document.createElement("script");
+                coreScript.src = "../js/campaigns/campaign-core.js";
+                coreScript.onload = () => {
+                    const matchScript = document.createElement("script");
+                    matchScript.src = "../js/campaigns/renderers/beauty-match-renderer.js";
+                    matchScript.onload = () => {
+                        initializeCampaign("product");
+                    };
+                    document.body.appendChild(matchScript);
+                };
+                document.body.appendChild(coreScript);
+            });
+        </script>
 
 </body>
 

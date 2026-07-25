@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Campaign</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body style="padding: 40px;">
+
+    <h1>Campaign Widget Test</h1>
+
+    <div id="campaign-container"></div>
+
+    <script src="../js/session.js"></script>
+    <script>
+        fetch("../components/campaign-widget.html")
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById("campaign-container").innerHTML = html;
+
+                const script = document.createElement("script");
+                script.src = "../js/campaign.js";
+                script.onload = () => {
+                    initializeCampaign("home");
+                };
+                document.body.appendChild(script);
+            });
+    </script>
+
+</body>
+</html>

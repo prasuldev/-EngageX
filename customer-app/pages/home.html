@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="../css/navbar.css">
     <link rel="stylesheet" href="../css/home.css">
     <link rel="stylesheet" href="../css/ai.css">
+    <link rel="stylesheet" href="../css/campaigns/campaign-shell.css">
+    <link rel="stylesheet" href="../css/campaigns/beauty-match.css">
 
 </head>
 
@@ -23,7 +25,7 @@
     <main>
 
         <section id="hero"></section>
-
+        <section id="campaign-container"></section>
         <section id="categories"></section>
 
         <section id="featured-products">
@@ -35,7 +37,7 @@
         </section>
 
         <section id="ai-section"></section>
-
+        
     </main>
 
     <div id="footer"></div>
@@ -57,14 +59,52 @@
     </script>
 
     <script src="../js/navbar.js"></script>
-    <script src="../js/ai.js"></script>
     <script src="../js/app.js"></script>
     <script src="../js/loadComponents.js"></script>
 
+    <!-- AI Widget -->
+    <script>
+        fetch("../components/ai-chat.html")
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById("ai-section").innerHTML = html;
+
+                const script = document.createElement("script");
+                script.src = "../js/ai.js";
+                script.onload = () => {
+                    initializeAI();
+                };
+                document.body.appendChild(script);
+            });
+    </script>
 
     <script>
         lucide.createIcons();
     </script>
 
+    <script>
+        fetch("../components/campaigns/campaign-shell.html")
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById("campaign-container").innerHTML = html;
+
+                const coreScript = document.createElement("script");
+                coreScript.src = "../js/campaigns/campaign-core.js";
+                coreScript.onload = () => {
+                    const pollScript = document.createElement("script");
+                    pollScript.src = "../js/campaigns/renderers/poll-renderer.js";
+                    pollScript.onload = () => {
+                        const matchScript = document.createElement("script");
+                        matchScript.src = "../js/campaigns/renderers/beauty-match-renderer.js";
+                        matchScript.onload = () => {
+                            initializeCampaign("home");
+                        };
+                        document.body.appendChild(matchScript);
+                    };
+                    document.body.appendChild(pollScript);
+                };
+                document.body.appendChild(coreScript);
+            });
+        </script>
 </body>
 </html>

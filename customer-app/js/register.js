@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!form) return;
 
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
 
         e.preventDefault();
 
@@ -21,22 +21,33 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("confirmPassword").value;
 
         if (password !== confirmPassword) {
-
             alert("Passwords do not match.");
-
             return;
         }
 
-        const result = registerUser(
-            fullname,
-            email,
-            password
-        );
+        try {
+            const res = await fetch(`${API_BASE}/auth/register`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    full_name: fullname,
+                    email: email,
+                    password: password
+                })
+            });
 
-        alert(result.message);
+            if (!res.ok) {
+                const err = await res.json();
+                alert(err.detail || "Registration failed.");
+                return;
+            }
 
-        if (result.success) {
+            alert("Registration Successful! Please log in.");
             window.location.href = "login.html";
+
+        } catch (err) {
+            console.error("Register error:", err);
+            alert("Could not connect to server. Please try again.");
         }
     });
 });

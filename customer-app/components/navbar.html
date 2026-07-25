@@ -35,7 +35,7 @@
             </div>
 
             <!-- Search -->
-            <div class="hidden md:flex flex-1 max-w-xl mx-8">
+            <div class="hidden lg:flex w-full max-w-lg mx-8">
                 <input
                     type="text"
                     placeholder="Search products, brands..."
@@ -47,57 +47,19 @@
             </div>
 
             <!-- Icons -->
-            <div class="flex items-center gap-5">
-                <button>
-                    <i data-lucide="heart"></i>
-                </button>
-
-                <button>
-                    <i data-lucide="bell"></i>
-                </button>
-
-                <button class="relative">
-                    <i data-lucide="shopping-cart"></i>
-                    <span
-                        class="absolute -top-2 -right-2 bg-pink-600 text-white rounded-full text-xs px-1">
-                        0
-                    </span>
-                </button>
-
-                <button id="profileBtn">
-                    <i data-lucide="user"></i>
-                </button>
-
-                <button
-                    id="mobileMenuBtn"
-                    class="lg:hidden">
-                    <i data-lucide="menu"></i>
-                </button>
-
-
-                <a href="../pages/wishlist.html"
-                    title="Wishlist"
-                    class="text-2xl hover:text-pink-600">
-            
-                </a>
-                <a href="../pages/cart.html"
-                    title="Cart"
-                    class="relative text-2xl hover:text-pink-600">
-                    <span
-                        class="absolute -top-2 -right-2 bg-pink-600 text-white text-xs rounded-full px-1">
-                        0
-                    </span>
-                </a>
-
-                <a href="../pages/profile.html"
-                    title="Profile"
-                    class="text-2xl hover:text-pink-600">
-                </a>
-
-            </div>
-        </div>
-    </div>
-
+            <a href="../pages/wishlist.html" title="Wishlist">
+                <i data-lucide="heart"></i>
+            </a>
+            <a href="../pages/cart.html" class="relative" title="Cart">
+                <i data-lucide="shopping-cart"></i>
+                <span class="absolute -top-2 -right-2 bg-pink-600 text-white rounded-full text-xs px-1">
+                    0
+                </span>
+            </a>
+            <a href="../pages/profile.html" title="Profile">
+                <i data-lucide="user"></i>
+            </a>
+       
     <!-- Mobile Navigation -->
     <div
         id="mobileMenu"
