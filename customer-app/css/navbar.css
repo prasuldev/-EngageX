@@ -1,0 +1,15 @@
+nav a{
+    transition:.3s;
+}
+
+nav a:hover{
+    color:#db2777;
+}
+
+nav button{
+    transition:.3s;
+}
+
+nav button:hover{
+    color:#db2777;
+}

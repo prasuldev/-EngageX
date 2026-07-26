@@ -1,0 +1,84 @@
+.match-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    width: 100%;
+    perspective: 1000px;
+}
+
+.match-card {
+    aspect-ratio: 1 / 1;
+    cursor: pointer;
+}
+
+.match-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.4s;
+    transform-style: preserve-3d;
+}
+
+.match-card.flipped .match-card-inner,
+.match-card.matched .match-card-inner {
+    transform: rotateY(180deg);
+}
+
+.match-card-front,
+.match-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6px;
+    box-sizing: border-box;
+}
+
+.match-card-front {
+    background: linear-gradient(135deg, #EC4899, #DB2777);
+    color: white;
+    font-size: 22px;
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(0,0,0,.12);
+}
+
+.match-card-back {
+    background: #FFF5F8;
+    border: 1px solid #EC4899;
+    color: #DB2777;
+    font-size: 12px;
+    font-weight: 600;
+    transform: rotateY(180deg);
+    overflow: hidden;
+}
+
+.match-card-back img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.match-card.matched .match-card-back {
+    background: #FCE7F1;
+    border-color: #DB2777;
+    opacity: 0.9;
+}
+
+.match-card:not(.flipped):not(.matched) .match-card-inner:hover {
+    transform: scale(1.03);
+    transition: transform 0.15s;
+}
+
+/* Mobile: shrink to 4 cols but smaller gap, or drop to 3 cols under 380px */
+@media (max-width: 380px) {
+    .match-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+    }
+}

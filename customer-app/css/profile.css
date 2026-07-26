@@ -1,0 +1,128 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:#f8f4ef;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
+
+.profile-container{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.profile-card{
+    width:430px;
+    background:#fff;
+    border-radius:20px;
+    padding:40px 35px;
+    text-align:center;
+    box-shadow:0 12px 35px rgba(0,0,0,.12);
+}
+
+.profile-avatar{
+    width:110px;
+    height:110px;
+    background:#d63384;
+    border-radius:50%;
+    margin:0 auto 25px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:#fff;
+    font-size:45px;
+}
+
+/* Brand */
+.brand{
+    font-size:48px;
+    color:#d63384;
+    font-weight:700;
+    margin-bottom:5px;
+}
+
+.subtitle{
+    color:#666;
+    font-size:18px;
+    margin-bottom:30px;
+}
+
+/* User Info */
+
+.info{
+    text-align:left;
+    margin-bottom:25px;
+}
+
+.info label{
+    display:block;
+    font-size:14px;
+    font-weight:600;
+    color:#555;
+    margin-bottom:6px;
+}
+
+.info p{
+    background:#f8f4ef;
+    padding:14px;
+    border-radius:10px;
+    margin-bottom:18px;
+    color:#333;
+    font-size:16px;
+}
+
+/* Buttons */
+
+.profile-buttons{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.profile-buttons button{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:10px;
+    color:#fff;
+    font-size:17px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.profile-buttons i{
+    margin-right:8px;
+}
+
+.edit-btn{
+    background:#d63384;
+}
+
+.edit-btn:hover{
+    background:#b52b6d;
+}
+
+.password-btn{
+    background:#444;
+}
+
+.password-btn:hover{
+    background:#222;
+}
+
+.logout-btn{
+    background:#ff4d6d;
+}
+
+.logout-btn:hover{
+    background:#e63956;
+}

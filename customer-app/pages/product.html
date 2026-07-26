@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Product Details</title>
+
+    <!-- Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/product.css">
+    <link rel="stylesheet" href="../css/ai.css">
+    <link rel="stylesheet" href="../css/campaigns/campaign-shell.css">
+    <link rel="stylesheet" href="../css/campaigns/beauty-match.css">
+
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <div id="navbar"></div>
+
+    <!-- Main Content -->
+    <main>
+
+        <div id="product-details"></div>
+
+    </main>
+
+    <section id="campaign-container"></section>
+
+    <!-- Footer -->
+    <div id="footer"></div>
+
+    <!-- AI Assistant -->
+    <section id="ai-section"></section>
+    <!-- JS -->
+    <script src="../js/session.js"></script>
+
+    <!-- Product Page -->
+    <script src="../js/product.js"></script>
+
+    <!-- Common Components -->
+    <script src="../js/loadComponents.js"></script>
+
+    <script>
+        fetch("../components/campaigns/campaign-shell.html")
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById("campaign-container").innerHTML = html;
+
+                const coreScript = document.createElement("script");
+                coreScript.src = "../js/campaigns/campaign-core.js";
+                coreScript.onload = () => {
+                    const matchScript = document.createElement("script");
+                    matchScript.src = "../js/campaigns/renderers/beauty-match-renderer.js";
+                    matchScript.onload = () => {
+                        initializeCampaign("product");
+                    };
+                    document.body.appendChild(matchScript);
+                };
+                document.body.appendChild(coreScript);
+            });
+        </script>
+
+</body>
+
+</html>
