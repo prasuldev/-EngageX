@@ -1,3 +1,7 @@
+from app.models.survey import Survey
+from app.routers.survey import router as survey_router
+from app.models.quiz import Quiz
+from app.routers.quiz import router as quiz_router
 from fastapi import FastAPI
 from app.models.poll import Poll
 from app.routers.poll import router as poll_router
@@ -15,6 +19,12 @@ app.include_router(campaign_router)
 
 # Register Poll Router
 app.include_router(poll_router)
+
+# Register Quiz Router
+app.include_router(quiz_router)
+
+# Register Survey Router
+app.include_router(survey_router)
 
 @app.get("/")
 def home():
