@@ -1,9 +1,6 @@
 from fastapi import APIRouter, Depends, Query, HTTPException
-from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from app.database import get_db
-from app.models.campaign import Campaign
-from app.schemas.campaign import CampaignCreate
 
 router = APIRouter(
     prefix="/campaigns",
@@ -11,30 +8,7 @@ router = APIRouter(
 )
 
 
-@router.post("/")
-def create_campaign(campaign: CampaignCreate, db: Session = Depends(get_db)):
-    new_campaign = Campaign(
-        title=campaign.title,
-        description=campaign.description,
-        campaign_type=campaign.campaign_type,
-        status=campaign.status
-    )
-
-    db.add(new_campaign)
-    db.commit()
-    db.refresh(new_campaign)
-
-    return {
-        "message": "Campaign created successfully",
-        "id": new_campaign.id
-    }
-@router.get("/")
-def get_all_campaigns(db: Session = Depends(get_db)):
-    campaigns = db.query(Campaign).all()
-
-    return campaigns
-
-@router.get("/campaigns/active")
+@router.get("/active")
 async def get_active_campaigns(
     context: str = Query("global"),
     db=Depends(get_db)
@@ -54,9 +28,7 @@ async def get_active_campaigns(
     return [dict(r) for r in rows]
 
 
-# --- GET /campaigns/{slug} — add game data when applicable ---
-
-@router.get("/campaigns/{slug}")
+@router.get("/{slug}")
 async def get_campaign_detail(slug: str, db=Depends(get_db)):
     campaign = await db.fetchrow(
         "SELECT * FROM campaigns WHERE slug = $1 AND is_active = true",
@@ -94,8 +66,6 @@ async def get_campaign_detail(slug: str, db=Depends(get_db)):
     return result
 
 
-# --- Updated submission model — supports both quiz-style and game-style payloads ---
-
 class ResponseSubmission(BaseModel):
     user_id: int | None = None
     answers: list[dict] | None = None
@@ -103,7 +73,7 @@ class ResponseSubmission(BaseModel):
     time_taken_seconds: int | None = None
 
 
-@router.post("/campaigns/{slug}/respond")
+@router.post("/{slug}/respond")
 async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get_db)):
     campaign = await db.fetchrow("SELECT * FROM campaigns WHERE slug = $1", slug)
     if not campaign:
@@ -111,7 +81,6 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
 
     campaign_id = campaign["id"]
 
-    # --- Branch: memory_match game ---
     if campaign["campaign_type"] == "memory_match":
         if payload.moves_taken is None or payload.time_taken_seconds is None:
             raise HTTPException(status_code=400, detail="moves_taken and time_taken_seconds required")
@@ -122,7 +91,6 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
         if not card_set:
             raise HTTPException(status_code=404, detail="Game config not found for this campaign")
 
-        # Find best matching reward rule (highest priority rule whose threshold is met)
         rules = await db.fetch(
             "SELECT * FROM game_reward_rules WHERE card_set_id = $1 ORDER BY priority DESC",
             card_set["id"]
@@ -163,7 +131,6 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
                 campaign_id, payload.user_id
             )
 
-            # Update streak
             today = await db.fetchval("SELECT CURRENT_DATE")
             streak = await db.fetchrow(
                 "SELECT * FROM user_game_streaks WHERE user_id = $1", payload.user_id
@@ -191,7 +158,6 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
 
         return {"success": True, "reward_type": reward_type, "reward_value": reward_value}
 
-    # --- Existing quiz/poll branch (unchanged) ---
     for ans in payload.answers or []:
         await db.execute(
             "INSERT INTO campaign_responses (campaign_id, user_id, question_id, answer) VALUES ($1, $2, $3, $4)",

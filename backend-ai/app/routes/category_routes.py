@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from database import get_db
+from app.database import get_db
 
 router = APIRouter(tags=["categories"])
 

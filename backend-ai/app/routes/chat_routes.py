@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-from database import get_db
+from app.database import get_db
 import os
 import google.generativeai as genai
 

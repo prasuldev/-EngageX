@@ -5,7 +5,7 @@ Run after schema.sql and campaign_schema.sql have been applied.
 
 import asyncio
 import asyncpg
-from config import DATABASE_URL
+from app.config import DATABASE_URL
 
 # Concern/benefit tags mapped by category name — adjust to match your actual categories
 CATEGORY_CONCERN_MAP = {

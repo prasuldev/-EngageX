@@ -1,23 +1,16 @@
 from dotenv import load_dotenv
-load_dotenv()
+import os
+load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from database import connect_db, disconnect_db
-from auth.auth_routes import router as auth_router
-from routes.product_routes import router as product_router
-from routes.category_routes import router as category_router
-from routes.chat_routes import router as chat_router
-from routes.campaign_routes import router as campaign_router
-
-
-from app.database import Base, engine
-from app.models.campaign import Campaign
-from app.routes.campaign import router as campaign_router
-
-# Create database tables
-Base.metadata.create_all(bind=engine)
+from app.database import connect_db, disconnect_db
+from app.auth.auth_routes import router as auth_router
+from app.routes.product_routes import router as product_router
+from app.routes.category_routes import router as category_router
+from app.routes.chat_routes import router as chat_router
+from app.routes.campaign_routes import router as campaign_router
 
 app = FastAPI(title="EngageX API")
 
@@ -41,10 +34,7 @@ app.include_router(auth_router)
 app.include_router(product_router)
 app.include_router(category_router)
 app.include_router(chat_router)
-
-# Register Campaign Router
 app.include_router(campaign_router)
-
 
 @app.get("/")
 def home():
