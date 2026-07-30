@@ -1,0 +1,40 @@
+const API_BASE = "http://localhost:8000";
+
+export async function getActiveCampaigns(context = "global") {
+    const response = await fetch(
+        `${API_BASE}/campaigns/active?context=${context}`
+    );
+
+    if (!response.ok) {
+        throw new Error("Failed to load campaigns");
+    }
+
+    return await response.json();
+}
+
+export async function getCampaign(slug) {
+    const response = await fetch(
+        `${API_BASE}/campaigns/${slug}`
+    );
+
+    if (!response.ok) {
+        throw new Error("Campaign not found");
+    }
+
+    return await response.json();
+}
+
+export async function submitGame(slug, data) {
+    const response = await fetch(
+        `${API_BASE}/campaigns/${slug}/respond`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        }
+    );
+
+    return await response.json();
+}

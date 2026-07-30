@@ -22,19 +22,56 @@
 
 </head>
 
-<body>
+<body class="bg-gray-50">
 
     <!-- Navbar -->
     <div id="navbar"></div>
 
     <!-- Main Content -->
-    <main>
+    <main class="min-h-screen pb-16">
+        <!-- Breadcrumb -->
+        <section class="max-w-7xl mx-auto px-6 pt-6">
+            <nav class="text-sm text-gray-500">
+                <a href="home.html" class="hover:text-pink-600">
+                    Home
+                </a>
+                <span class="mx-2">/</span>
 
-        <div id="product-details"></div>
+                <a href="products.html" class="hover:text-pink-600">
+                    Products
+                </a>
+
+                <span class="mx-2">/</span>
+
+                <span class="text-gray-700">
+                    Product Details
+                </span>
+             </nav>
+
+        </section>
+
+        <!-- Product Container -->
+        <section
+            id="product-details"
+            class="max-w-7xl mx-auto px-6 py-10">  
+            <div class="text-center py-20">
+
+                <p class="text-gray-500 animate-pulse">
+
+                    Loading Product...
+
+                </p>
+
+            </div>
+
+        </section>  
 
     </main>
 
-    <section id="campaign-container"></section>
+    <section 
+        id="campaign-container"
+        class="fixed inset-0 pointer-events-none z-50">
+    </section>
 
     <!-- Footer -->
     <div id="footer"></div>
@@ -44,31 +81,56 @@
     <!-- JS -->
     <script src="../js/session.js"></script>
 
-    <!-- Product Page -->
-    <script src="../js/product.js"></script>
-
     <!-- Common Components -->
     <script src="../js/loadComponents.js"></script>
 
-    <script>
-        fetch("../components/campaigns/campaign-shell.html")
-            .then(res => res.text())
-            .then(html => {
-                document.getElementById("campaign-container").innerHTML = html;
+    <!-- Product Page -->
+    <script type="module" src="../js/product.js"></script>
+    
+        <script>
+        async function loadCampaign() {
 
-                const coreScript = document.createElement("script");
-                coreScript.src = "../js/campaigns/campaign-core.js";
-                coreScript.onload = () => {
-                    const matchScript = document.createElement("script");
-                    matchScript.src = "../js/campaigns/renderers/beauty-match-renderer.js";
-                    matchScript.onload = () => {
+            const response = await fetch(
+                "../components/campaigns/campaign-shell.html"
+            );
+
+            document.getElementById("campaign-container").innerHTML =
+                await response.text();
+
+            const coreScript = document.createElement("script");
+            coreScript.src = "../js/campaigns/campaign-core.js";
+
+            coreScript.onload = () => {
+
+                const rendererScript = document.createElement("script");
+
+                rendererScript.src =
+                    "../js/campaigns/renderers/beauty-match-renderer.js";
+
+                rendererScript.onload = () => {
+
+                    if (typeof initializeCampaign === "function") {
+
                         initializeCampaign("product");
-                    };
-                    document.body.appendChild(matchScript);
+
+                    }
+
                 };
-                document.body.appendChild(coreScript);
-            });
-        </script>
+
+                document.body.appendChild(rendererScript);
+
+            };
+
+            document.body.appendChild(coreScript);
+
+        }
+
+        loadCampaign();
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+
+    </script>
 
 </body>
 

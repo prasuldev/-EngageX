@@ -1,8 +1,0 @@
-passlib[bcrypt]
-python-jose[cryptography]
-email-validator
-fastapi
-uvicorn
-asyncpg
-pydantic
-google-generativeai

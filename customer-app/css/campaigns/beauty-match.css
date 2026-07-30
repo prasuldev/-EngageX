@@ -1,21 +1,110 @@
+/* ===========================
+   MEMORY MATCH - CONTAINER
+=========================== */
+
+.match-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #FDF2F8, #FCE7F3);
+    border: 1px solid #F9A8D4;
+    border-radius: 14px;
+    font-weight: 600;
+    color: #BE185D;
+    box-shadow: 0 4px 12px rgba(236, 72, 153, 0.12);
+}
+
+.match-header div {
+    flex: 1;
+    text-align: center;
+}
+
+/* ===========================
+   START SCREEN
+=========================== */
+
+.match-start {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 25px;
+}
+
+.match-start-card {
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    background: white;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 12px 30px rgba(0,0,0,.12);
+}
+
+.match-start-card h2 {
+    color: #DB2777;
+    margin-bottom: 10px;
+}
+
+.match-start-card p {
+    color: #666;
+    margin-bottom: 18px;
+}
+
+.match-info {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 22px;
+    font-size: 15px;
+}
+
+#start-match-btn {
+    width: 100%;
+    border: none;
+    border-radius: 12px;
+    padding: 14px;
+    background: linear-gradient(135deg,#EC4899,#DB2777);
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: .25s;
+}
+
+#start-match-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(219,39,119,.3);
+}
+
+/* ===========================
+   GRID
+=========================== */
+
 .match-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    gap: 12px;
     width: 100%;
     perspective: 1000px;
 }
 
+/* ===========================
+   CARD
+=========================== */
+
 .match-card {
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 1;
     cursor: pointer;
+    perspective: 1000px;
 }
 
 .match-card-inner {
-    position: relative;
     width: 100%;
     height: 100%;
-    transition: transform 0.4s;
+    position: relative;
+    transition: transform .55s ease;
     transform-style: preserve-3d;
 }
 
@@ -26,59 +115,215 @@
 
 .match-card-front,
 .match-card-back {
+
     position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    border-radius: 12px;
+
+    inset: 0;
+
+    border-radius: 16px;
+
     display: flex;
-    align-items: center;
+
     justify-content: center;
-    text-align: center;
-    padding: 6px;
-    box-sizing: border-box;
+
+    align-items: center;
+
+    backface-visibility: hidden;
+
+    overflow: hidden;
+
 }
+
+/* Front */
 
 .match-card-front {
-    background: linear-gradient(135deg, #EC4899, #DB2777);
+
+    background: linear-gradient(
+        135deg,
+        #EC4899,
+        #DB2777
+    );
+
     color: white;
-    font-size: 22px;
-    font-weight: 700;
-    box-shadow: 0 4px 10px rgba(0,0,0,.12);
+
+    font-size: 32px;
+
+    font-weight: bold;
+
+    box-shadow: 0 8px 20px rgba(0,0,0,.15);
+
 }
 
+/* Back */
+
 .match-card-back {
-    background: #FFF5F8;
-    border: 1px solid #EC4899;
-    color: #DB2777;
-    font-size: 12px;
-    font-weight: 600;
+
     transform: rotateY(180deg);
-    overflow: hidden;
+
+    background: white;
+
+    border: 2px solid #F9A8D4;
+
+    color: #BE185D;
+
+    font-weight: 600;
+
+    padding: 10px;
+
+    text-align: center;
+
 }
 
 .match-card-back img {
+
     width: 100%;
+
     height: 100%;
+
     object-fit: cover;
-    border-radius: 10px;
+
+}
+
+/* Hover */
+
+.match-card:hover:not(.flipped):not(.matched) {
+
+    transform: translateY(-4px);
+
+    transition: .2s;
+
+}
+
+/* Matched */
+
+.match-card.matched {
+
+    animation: matchedPop .4s ease;
+
 }
 
 .match-card.matched .match-card-back {
-    background: #FCE7F1;
-    border-color: #DB2777;
-    opacity: 0.9;
+
+    border-color: #22C55E;
+
+    box-shadow: 0 0 18px rgba(34,197,94,.35);
+
 }
 
-.match-card:not(.flipped):not(.matched) .match-card-inner:hover {
-    transform: scale(1.03);
-    transition: transform 0.15s;
+/* ===========================
+   FINISH SCREEN
+=========================== */
+
+.match-finish {
+
+    text-align: center;
+
+    padding: 30px;
+
 }
 
-/* Mobile: shrink to 4 cols but smaller gap, or drop to 3 cols under 380px */
-@media (max-width: 380px) {
-    .match-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 6px;
+.match-finish h2 {
+
+    color: #DB2777;
+
+    margin-bottom: 20px;
+
+}
+
+.match-finish p {
+
+    margin: 8px 0;
+
+    font-size: 17px;
+
+}
+
+.match-finish button {
+
+    margin-top: 20px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    padding: 12px 20px;
+
+    background: linear-gradient(
+        135deg,
+        #EC4899,
+        #DB2777
+    );
+
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+}
+
+/* ===========================
+   ANIMATIONS
+=========================== */
+
+@keyframes matchedPop {
+
+    0% {
+
+        transform: scale(.85);
+
     }
+
+    60% {
+
+        transform: scale(1.08);
+
+    }
+
+    100% {
+
+        transform: scale(1);
+
+    }
+
+}
+
+/* ===========================
+   MOBILE
+=========================== */
+
+@media (max-width:768px){
+
+.match-grid{
+
+grid-template-columns:repeat(4,1fr);
+
+gap:8px;
+
+}
+
+.match-card-front{
+
+font-size:24px;
+
+}
+
+.match-header{
+
+font-size:13px;
+
+padding:10px;
+
+}
+
+}
+
+@media (max-width:420px){
+
+.match-grid{
+
+grid-template-columns:repeat(3,1fr);
+
+}
+
 }

@@ -54,6 +54,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         initializeAI();
     }
 
-    lucide.createIcons();
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+    
 
 });

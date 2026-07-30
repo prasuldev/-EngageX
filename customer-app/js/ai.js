@@ -1,3 +1,7 @@
+import { sendMessage } from "../services/aiservice.js";
+import { renderAIResponse } from "../components/messagerenderer.js";
+import { getChatHistory, saveMessage } from "../services/chathistoryservice.js";
+import { clearChatHistory } from "../services/chathistoryservice.js";
 function initializeAI() {
 
     console.log("AI JS Started");
@@ -122,30 +126,29 @@ async function botReply(userMessage) {
     showTyping();
 
     try {
-        const user = getLoggedInUser();
 
-        const response = await fetch(`${API_BASE}/chat`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                message: userMessage,
-                user_id: user ? user.id : null
-            })
-        });
-
-        const data = await response.json();
+        const history = getChatHistory();
+        const data = await sendMessage(userMessage, history);
         hideTyping();
-
         if (data.reply) {
-            addMessage(data.reply, "bot");
+            renderAIResponse(data);
+            saveMessage("assistant", data.reply);
+
         } else {
-            addMessage("Sorry, I couldn't process that. Please try again.", "bot");
+            addMessage(
+                "Sorry, I couldn't process that.",
+                "bot"
+            );
         }
 
     } catch (error) {
-        console.error("AI chat error:", error);
+        console.error(error);
         hideTyping();
-        addMessage("Sorry, I'm having trouble connecting right now.", "bot");
+        addMessage(
+            "Sorry, I'm having trouble connecting.",
+            "bot"
+        );
+
     }
 }
 
@@ -153,16 +156,17 @@ async function botReply(userMessage) {
        Send Message
     =========================================== */
 
-function sendMessage() {
+function handlesendMessage() {
     const message = input.value.trim();
     if (message === "") return;
     addMessage(message, "user");
+    saveMessage("user", message);
     input.value = "";
     botReply(message);
 }
 
 if (sendBtn) {
-    sendBtn.addEventListener("click", sendMessage);
+    sendBtn.addEventListener("click", handlesendMessage);
 }
 
     /* ===========================================
@@ -177,7 +181,7 @@ if (input) {
 
             event.preventDefault();
 
-            sendMessage();
+            handlesendMessage();
 
         }
 
@@ -192,7 +196,27 @@ if (input) {
 quickActions.forEach(button => {
     button.addEventListener("click", () => {
         input.value = button.textContent.trim();
-        sendMessage();
+        handlesendMessage();
     });
 });
+
+function loadPreviousMessages() {
+
+    const history = getChatHistory();
+
+    history.forEach(msg => {
+
+        addMessage(
+            msg.content,
+            msg.role === "assistant"
+                ? "bot"
+                : "user"
+        );
+
+    });
 }
+loadPreviousMessages();
+
+}
+
+document.addEventListener("DOMContentLoaded", initializeAI);

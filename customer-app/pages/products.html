@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Products | Maquillage</title>
+
+    <!-- Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/ai.css">
+    <link rel="stylesheet" href="../css/products.css">
+
+</head>
+
+<body class="bg-gray-50">
+
+    <!-- Navbar -->
+    <div id="navbar"></div>
+
+    <main class="max-w-7xl mx-auto px-6 py-10">
+
+        <div class="flex justify-between items-center mb-8">
+
+            <div>
+
+                <h1 class="text-4xl font-bold">
+                    Our Products
+                </h1>
+
+                <p class="text-gray-500 mt-2">
+                    Discover premium beauty products.
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- Search & Filters (Next Step) -->
+        <div class="mb-8">
+
+            <input
+                id="searchInput"
+                type="text"
+                placeholder="Search products..."
+                class="w-full border rounded-lg px-4 py-3">
+
+        </div>
+
+        <!-- Loading -->
+        <div
+            id="loading"
+            class="text-center py-10">
+
+            Loading Products...
+
+        </div>
+
+        <!-- Products Grid -->
+        <div
+            id="productsGrid"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <div id="footer"></div>
+
+    <!-- AI -->
+    <section id="ai-section"></section>
+
+    <script src="../js/session.js"></script>
+    <script src="../js/loadComponents.js"></script>
+
+    <script type="module" src="../js/products.js"></script>
+
+</body>
+
+</html>
