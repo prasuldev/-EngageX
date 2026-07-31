@@ -20,7 +20,7 @@ CATEGORY_CONCERN_MAP = {
 }
 
 # Priority order for reward tiers — best reward checked first at claim time
-REWARD_TIER_PRIORITY = {"under_par_moves": 3, "under_time": 2, "completion": 1}
+REWARD_TIER_PRIORITY = {"under_time": 2, "completion": 1}
 
 REQUIRED_PAIRS = 8
 
@@ -105,7 +105,6 @@ async def seed_beauty_match():
 
             # 5. Insert tiered reward rules for this card set
             reward_tiers = [
-                ("under_par_moves", 12, "coupon", "15% off"),
                 ("under_time", 60, "free_sample", "Free sample with next order"),
                 ("completion", None, "points", "50 loyalty points"),
             ]

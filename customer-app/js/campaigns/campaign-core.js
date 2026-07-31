@@ -1,129 +1,137 @@
-let activeCampaign = null;
 const renderers = {};
 
 function registerRenderer(type, rendererFn) {
     renderers[type] = rendererFn;
 }
 
-function getCampaignStorageKey(slug) {
-    return `campaign_status_${slug}`;
+let shellTemplatePromise = null;
+
+function getShellTemplate() {
+    if (!shellTemplatePromise) {
+        shellTemplatePromise = fetch("../components/campaigns/campaign-shell.html")
+            .then(res => res.text());
+    }
+    return shellTemplatePromise;
 }
 
-function getCampaignStatus(slug) {
-    return localStorage.getItem(getCampaignStorageKey(slug));
-}
-
-function setCampaignStatus(slug, status) {
-    localStorage.setItem(getCampaignStorageKey(slug), status);
-}
-
-async function loadCampaign(context = "home") {
+/**
+ * Fetches every currently-active campaign for a given context.
+ */
+async function loadActiveCampaigns(context = "home") {
     try {
         const res = await fetch(`${API_BASE}/campaigns/active?context=${encodeURIComponent(context)}`);
-        const campaigns = await res.json();
+        return await res.json();
+    } catch (error) {
+        console.error("Error loading campaigns:", error);
+        return [];
+    }
+}
 
-        if (!campaigns || campaigns.length === 0) {
-            document.getElementById("campaign-widget").style.display = "none";
-            return;
+/**
+ * Mounts a single campaign widget (collapsed pill -> expanded panel)
+ * into containerEl. Each call creates a fully independent instance,
+ * so many can exist on the same page at once.
+ *
+ * Campaigns are always replayable on refresh -- there's no local lock.
+ * Whether a reward is granted again is decided server-side.
+ */
+async function mountCampaignWidget(campaign, containerEl) {
+    const template = await getShellTemplate();
+    containerEl.innerHTML = template;
+
+    const el = {
+        root: containerEl.querySelector(".campaign-strip"),
+        collapsed: containerEl.querySelector(".campaign-collapsed"),
+        expanded: containerEl.querySelector(".campaign-expanded"),
+        titleText: containerEl.querySelector(".campaign-title-text"),
+        subtitleText: containerEl.querySelector(".campaign-subtitle-text"),
+        openBtn: containerEl.querySelector(".campaign-open-btn"),
+        dismissBtn: containerEl.querySelector(".campaign-close-collapsed"),
+        closeBtn: containerEl.querySelector(".campaign-close-btn"),
+        questionText: containerEl.querySelector(".campaign-question-text"),
+        content: containerEl.querySelector(".campaign-content"),
+        reward: containerEl.querySelector(".campaign-reward"),
+    };
+
+    el.titleText.textContent = campaign.title;
+    el.subtitleText.textContent = campaign.description || "Play now and win rewards";
+
+    async function openCampaign() {
+        el.collapsed.style.display = "none";
+        el.expanded.style.display = "block";
+        el.reward.style.display = "none";
+        el.content.style.display = "flex";
+
+        try {
+            const res = await fetch(`${API_BASE}/campaigns/${campaign.slug}`);
+            const detail = await res.json();
+
+            const renderer = renderers[detail.campaign_type];
+
+            if (!renderer) {
+                console.error("No renderer registered for type:", detail.campaign_type);
+                el.questionText.textContent = "This campaign type isn't supported yet.";
+                return;
+            }
+
+            renderer.render(detail, {
+                questionEl: el.questionText,
+                contentEl: el.content,
+                onComplete: submitCampaignResult
+            });
+
+        } catch (error) {
+            console.error("Error opening campaign:", error);
         }
-
-        // Always show the first active campaign, regardless of past status
-        activeCampaign = campaigns[0];
-        document.getElementById("campaign-title-text").textContent = activeCampaign.title;
-        document.getElementById("campaign-widget").style.display = "block";
-
-    } catch (error) {
-        console.error("Error loading campaign:", error);
-    }
-}
-
-async function openCampaign() {
-    if (!activeCampaign) return;
-
-    document.getElementById("campaign-collapsed").style.display = "none";
-    document.getElementById("campaign-expanded").style.display = "block";
-    document.getElementById("campaign-reward").style.display = "none";
-
-    const status = getCampaignStatus(activeCampaign.slug);
-
-    if (status === "answered") {
-        document.getElementById("campaign-content").style.display = "none";
-        document.getElementById("campaign-question-text").textContent =
-            "You've already completed this! Check back soon for a new one.";
-        return;
     }
 
-    // reset content display in case it was hidden by a previous "already answered" view
-    document.getElementById("campaign-content").style.display = "flex";
+    async function submitCampaignResult(payload) {
+        try {
+            const user = getLoggedInUser();
 
-    try {
-        const res = await fetch(`${API_BASE}/campaigns/${activeCampaign.slug}`);
-        const detail = await res.json();
+            const res = await fetch(`${API_BASE}/campaigns/${campaign.slug}/respond`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    user_id: user ? user.id : null,
+                    ...payload
+                })
+            });
 
-        const renderer = renderers[detail.campaign_type];
+            const data = await res.json();
 
-        if (!renderer) {
-            console.error("No renderer registered for type:", detail.campaign_type);
-            document.getElementById("campaign-question-text").textContent = "This campaign type isn't supported yet.";
-            return;
+            el.content.style.display = "none";
+            el.reward.style.display = "block";
+
+            if (data.requires_login) {
+                el.questionText.textContent = "Thanks for playing!";
+                el.reward.textContent = "Log in to earn rewards from campaigns.";
+            } else if (data.already_rewarded) {
+                el.questionText.textContent = "Thanks for playing again!";
+                el.reward.textContent = "You've already claimed your reward for this campaign.";
+            } else {
+                el.questionText.textContent = "Thanks!";
+                el.reward.textContent = `🎉 You unlocked: ${data.reward_value}`;
+            }
+
+            setTimeout(() => {
+                el.expanded.style.display = "none";
+                el.collapsed.style.display = "flex";
+            }, 5000);
+
+        } catch (error) {
+            console.error("Error submitting campaign result:", error);
         }
-
-        renderer.render(detail, {
-            questionEl: document.getElementById("campaign-question-text"),
-            contentEl: document.getElementById("campaign-content"),
-            onComplete: submitCampaignResult
-        });
-
-    } catch (error) {
-        console.error("Error opening campaign:", error);
     }
-}
 
-async function submitCampaignResult(payload) {
-    try {
-        const user = getLoggedInUser();
-
-        const res = await fetch(`${API_BASE}/campaigns/${activeCampaign.slug}/respond`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                user_id: user ? user.id : null,
-                ...payload
-            })
-        });
-
-        const data = await res.json();
-
-        document.getElementById("campaign-content").style.display = "none";
-        document.getElementById("campaign-question-text").textContent = "Thanks!";
-
-        const rewardBox = document.getElementById("campaign-reward");
-        rewardBox.style.display = "block";
-        rewardBox.textContent = `🎉 You unlocked: ${data.reward_value}`;
-
-        setCampaignStatus(activeCampaign.slug, "answered");
-
-        // No more auto-hiding the whole widget — just re-collapse it
-        setTimeout(() => {
-            document.getElementById("campaign-expanded").style.display = "none";
-            document.getElementById("campaign-collapsed").style.display = "flex";
-        }, 5000);
-
-    } catch (error) {
-        console.error("Error submitting campaign result:", error);
+    function closeCampaign() {
+        el.expanded.style.display = "none";
+        el.collapsed.style.display = "flex";
     }
-}
 
-function closeCampaign() {
-    // Dismiss just collapses the panel back down — doesn't hide the widget entirely anymore
-    document.getElementById("campaign-expanded").style.display = "none";
-    document.getElementById("campaign-collapsed").style.display = "flex";
-}
+    el.openBtn.addEventListener("click", openCampaign);
+    el.closeBtn.addEventListener("click", closeCampaign);
+    el.dismissBtn.addEventListener("click", closeCampaign);
 
-function initializeCampaign(context = "home") {
-    loadCampaign(context);
-
-    document.getElementById("campaign-open-btn")?.addEventListener("click", openCampaign);
-    document.getElementById("campaign-close-btn")?.addEventListener("click", closeCampaign);
-    document.getElementById("campaign-dismiss-collapsed-btn")?.addEventListener("click", closeCampaign);
+    return el.root;
 }

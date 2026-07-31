@@ -1,3 +1,20 @@
+// How long the player has to finish the board, in seconds.
+const MATCH_TIME_LIMIT_SECONDS = 120;
+
+// Each pair gets one color AND one icon (two independent signals, since
+// color alone isn't reliable for colorblind users or for players who don't
+// already know which product matches which benefit).
+const MATCH_PAIR_STYLES = [
+    { color: "#EC4899", icon: "★" },
+    { color: "#8B5CF6", icon: "●" },
+    { color: "#3B82F6", icon: "▲" },
+    { color: "#10B981", icon: "♦" },
+    { color: "#F59E0B", icon: "■" },
+    { color: "#EF4444", icon: "✦" },
+    { color: "#06B6D4", icon: "⬟" },
+    { color: "#84CC16", icon: "⬢" }
+];
+
 const beautyMatchRenderer = {
     render(detail, { questionEl, contentEl, onComplete }) {
         questionEl.textContent = detail.title || "Match each product to its benefit!";
@@ -8,7 +25,15 @@ const beautyMatchRenderer = {
             return;
         }
 
-        // Build 16 cards from 8 pairs: one card per side, tagged with pair_id
+        // Assign each pair a color + icon up front (by its position in the
+        // pairs list), but this is only ever applied to a card once it's
+        // flipped/matched -- it's not shown as a pre-game hint.
+        const pairStyles = {};
+        pairs.forEach((pair, i) => {
+            pairStyles[pair.id] = MATCH_PAIR_STYLES[i % MATCH_PAIR_STYLES.length];
+        });
+
+        // Build cards from pairs: one card per side, tagged with pair_id
         let cards = [];
         pairs.forEach(pair => {
             cards.push({ pairId: pair.id, side: "a", label: pair.card_a_label, type: pair.card_a_type });
@@ -25,6 +50,8 @@ const beautyMatchRenderer = {
                     <span>🧴 ${pairs.length} Products</span>
                     <span>🏆 Win Rewards</span>
                 </div>
+                <p class="match-time-note">⏱ You'll have ${Math.floor(MATCH_TIME_LIMIT_SECONDS / 60)} minutes to finish</p>
+                <p class="match-hint-note">💡 Flipped pairs share the same color & symbol</p>
                 <button id="start-match-btn">Start Game</button>
             </div>
         </div>
@@ -35,7 +62,7 @@ const beautyMatchRenderer = {
         function startGame() {
             contentEl.innerHTML = `
             <div class="match-header">
-                <div id="match-timer">⏱ 00:00</div>
+                <div id="match-timer">⏱ ${formatTime(MATCH_TIME_LIMIT_SECONDS)}</div>
                 <div id="match-moves">🎯 0 Moves</div>
                 <div id="match-score">✅ 0/${pairs.length}</div>
             </div>
@@ -43,20 +70,38 @@ const beautyMatchRenderer = {
             `;
 
             const grid = document.getElementById("match-grid");
+            const timerEl = document.getElementById("match-timer");
 
             let flipped = [];
             let matchedPairIds = new Set();
             let moves = 0;
             let locked = false;
+            let gameOver = false;
             const startTime = Date.now();
 
             const timer = setInterval(() => {
-                const seconds = Math.floor((Date.now() - startTime) / 1000);
-                const mins = Math.floor(seconds / 60);
-                const secs = seconds % 60;
-                document.getElementById("match-timer").textContent =
-                    `⏱ ${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const remaining = MATCH_TIME_LIMIT_SECONDS - elapsed;
+
+                if (remaining <= 0) {
+                    timerEl.textContent = `⏱ ${formatTime(0)}`;
+                    handleTimeUp();
+                    return;
+                }
+
+                timerEl.textContent = `⏱ ${formatTime(remaining)}`;
+                timerEl.classList.toggle("match-timer-warning", remaining <= 10);
             }, 1000);
+
+            function handleTimeUp() {
+                if (gameOver) return;
+                gameOver = true;
+                locked = true;
+                clearInterval(timer);
+                showTimeUpScreen(matchedPairIds.size, pairs.length, contentEl, () =>
+                    beautyMatchRenderer.render(detail, { questionEl, contentEl, onComplete })
+                );
+            }
 
             cards.forEach((card, idx) => {
                 const cardEl = document.createElement("div");
@@ -67,15 +112,22 @@ const beautyMatchRenderer = {
                     <div class="match-card-inner">
                         <div class="match-card-front">✨</div>
                         <div class="match-card-back">
+                            <span class="match-pair-icon"></span>
                             ${card.type === "image"
                                 ? `<img src="${card.label}" alt="" />`
-                                : `<span>${card.label}</span>`}
+                                : `<span class="match-card-label">${card.label}</span>`}
                         </div>
                     </div>
                 `;
 
                 cardEl.addEventListener("click", () => {
-                    if (locked || cardEl.classList.contains("flipped") || cardEl.classList.contains("matched")) return;
+                    if (gameOver || locked || cardEl.classList.contains("flipped") || cardEl.classList.contains("matched")) return;
+
+                    // Reveal this pair's color + icon only now, on flip.
+                    const style = pairStyles[card.pairId];
+                    const backEl = cardEl.querySelector(".match-card-back");
+                    backEl.style.setProperty("--pair-color", style.color);
+                    backEl.querySelector(".match-pair-icon").textContent = style.icon;
 
                     cardEl.classList.add("flipped");
                     flipped.push({ idx, card, el: cardEl });
@@ -96,6 +148,7 @@ const beautyMatchRenderer = {
                             locked = false;
 
                             if (matchedPairIds.size === pairs.length) {
+                                gameOver = true;
                                 clearInterval(timer);
                                 locked = true;
 
@@ -130,6 +183,12 @@ function shuffle(arr) {
     return a;
 }
 
+function formatTime(totalSeconds) {
+    const mins = Math.floor(totalSeconds / 60);
+    const secs = totalSeconds % 60;
+    return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+}
+
 registerRenderer("memory_match", beautyMatchRenderer);
 
 async function showFinishScreen(moves, timeTaken, contentEl, onComplete, onPlayAgain) {
@@ -149,4 +208,19 @@ async function showFinishScreen(moves, timeTaken, contentEl, onComplete, onPlayA
         moves_taken: moves,
         time_taken_seconds: timeTaken
     });
+}
+
+function showTimeUpScreen(matchedCount, totalPairs, contentEl, onPlayAgain) {
+    // Time ran out before the board was finished -- no submission is made,
+    // so no reward is requested for an incomplete game.
+    contentEl.innerHTML = `
+        <div class="match-finish match-timeout">
+            <h2>⏱ Time's Up!</h2>
+            <p>You matched ${matchedCount} of ${totalPairs} pairs.</p>
+            <p>Give it another shot!</p>
+            <button id="play-again-btn">Try Again</button>
+        </div>
+    `;
+
+    document.getElementById("play-again-btn").addEventListener("click", onPlayAgain);
 }

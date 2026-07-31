@@ -81,6 +81,19 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
 
     campaign_id = campaign["id"]
 
+    # Guests are never eligible for a reward -- only logged-in users are.
+    is_guest = payload.user_id is None
+
+    already_participated = False
+    if not is_guest:
+        existing = await db.fetchrow(
+            "SELECT 1 FROM campaign_participation WHERE campaign_id = $1 AND user_id = $2",
+            campaign_id, payload.user_id
+        )
+        already_participated = existing is not None
+
+    grants_reward = (not is_guest) and (not already_participated)
+
     if campaign["campaign_type"] == "memory_match":
         if payload.moves_taken is None or payload.time_taken_seconds is None:
             raise HTTPException(status_code=400, detail="moves_taken and time_taken_seconds required")
@@ -111,6 +124,8 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
         reward_type = matched_rule["reward_type"] if matched_rule else campaign["reward_type"]
         reward_value = matched_rule["reward_value"] if matched_rule else campaign["reward_value"]
 
+        # Always log the play itself, win/lose, for analytics -- but only
+        # record a reward_issued_value when a reward is actually granted.
         await db.execute(
             """
             INSERT INTO game_sessions
@@ -118,10 +133,11 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
             VALUES ($1, $2, $3, $4, true, $5, $6)
             """,
             campaign_id, payload.user_id, payload.moves_taken, payload.time_taken_seconds,
-            matched_rule["id"] if matched_rule else None, reward_value
+            matched_rule["id"] if matched_rule else None,
+            reward_value if grants_reward else None
         )
 
-        if payload.user_id:
+        if grants_reward:
             await db.execute(
                 """
                 INSERT INTO campaign_participation (campaign_id, user_id)
@@ -156,7 +172,13 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
                     new_streak, longest, today, payload.user_id
                 )
 
-        return {"success": True, "reward_type": reward_type, "reward_value": reward_value}
+        return {
+            "success": True,
+            "reward_type": reward_type if grants_reward else None,
+            "reward_value": reward_value if grants_reward else None,
+            "already_rewarded": already_participated,
+            "requires_login": is_guest
+        }
 
     for ans in payload.answers or []:
         await db.execute(
@@ -164,7 +186,7 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
             campaign_id, payload.user_id, ans["question_id"], ans["answer"]
         )
 
-    if payload.user_id:
+    if grants_reward:
         await db.execute(
             """
             INSERT INTO campaign_participation (campaign_id, user_id)
@@ -176,6 +198,8 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
 
     return {
         "success": True,
-        "reward_type": campaign["reward_type"],
-        "reward_value": campaign["reward_value"]
+        "reward_type": campaign["reward_type"] if grants_reward else None,
+        "reward_value": campaign["reward_value"] if grants_reward else None,
+        "already_rewarded": already_participated,
+        "requires_login": is_guest
     }

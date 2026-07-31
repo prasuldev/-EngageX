@@ -1,32 +1,35 @@
-<div id="campaign-widget" class="campaign-strip">
+<div class="campaign-strip">
 
-    <div id="campaign-collapsed" class="campaign-collapsed">
-        <span id="campaign-title-text"></span>
-        <div style="display:flex; align-items:center; gap:10px;">
-            <button id="campaign-open-btn" type="button">Start</button>
-            <button id="campaign-dismiss-collapsed-btn" type="button" class="campaign-close-collapsed">×</button>
+    <div class="campaign-collapsed">
+        <div class="campaign-shine"></div>
+
+        <div class="campaign-icon">✨</div>
+
+        <div class="campaign-text">
+            <span class="campaign-title-text"></span>
+            <span class="campaign-subtitle-text"></span>
+        </div>
+
+        <div class="campaign-actions">
+            <button type="button" class="campaign-open-btn">
+                Play Now <span class="campaign-btn-arrow">→</span>
+            </button>
+            <button type="button" class="campaign-close-collapsed">×</button>
         </div>
     </div>
 
-    <div id="campaign-expanded" class="campaign-expanded" style="display:none;">
+    <div class="campaign-expanded" style="display:none;">
 
-    <button
-        id="campaign-close-btn"
-        type="button"
-        class="campaign-close">
-        ×
-    </button>
+        <button type="button" class="campaign-close-btn campaign-close">×</button>
 
-    <h4 id="campaign-question-text"></h4>
+        <h4 class="campaign-question-text"></h4>
 
-    <!-- Universal campaign content -->
-    <div id="campaign-content"></div>
+        <!-- Universal campaign content -->
+        <div class="campaign-content"></div>
 
-    <!-- Reward -->
-    <div
-        id="campaign-reward"
-        class="campaign-reward"
-        style="display:none;">
+        <!-- Reward -->
+        <div class="campaign-reward" style="display:none;"></div>
+
     </div>
 
 </div>
