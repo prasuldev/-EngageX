@@ -1,6 +1,6 @@
 async function loadProducts() {
     try {
-        const response = await fetch(`${API_BASE}/products?limit=12`);
+        const response = await fetch(`${API_BASE}/products?limit=48`);
         const products = await response.json();
         console.log("Products Loaded:", products);
         return products;
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     container.innerHTML = "";
-    products.slice(0, 12).forEach(product => {
+    products.forEach(product => {
         container.innerHTML += createProductCard(product);
     });
 });

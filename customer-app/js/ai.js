@@ -100,9 +100,10 @@ function addMessage(message, sender) {
     /* ===========================================
        Scroll Bottom
     =========================================== */
+const chatBody = document.querySelector(".chat-body");
 
 function scrollBottom() {
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    chatBody.scrollTop = chatBody.scrollHeight;
 }
 
     /* ===========================================
@@ -195,7 +196,8 @@ if (input) {
 
 quickActions.forEach(button => {
     button.addEventListener("click", () => {
-        input.value = button.textContent.trim();
+        const query = button.dataset.query || button.textContent.trim();
+        input.value = query;
         handlesendMessage();
     });
 });
@@ -219,4 +221,4 @@ loadPreviousMessages();
 
 }
 
-document.addEventListener("DOMContentLoaded", initializeAI);
+initializeAI();
