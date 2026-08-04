@@ -35,6 +35,105 @@ async function loadActiveCampaigns(context = "home") {
  * Campaigns are always replayable on refresh -- there's no local lock.
  * Whether a reward is granted again is decided server-side.
  */
+function renderRecommendationCard(product, data) {
+    const reasonLine = data.recommendation_reason
+        ? `<div class="campaign-rec-reason">${data.ai_generated ? "✨ " : ""}${data.recommendation_reason}</div>`
+        : "";
+
+    return `
+        <div class="campaign-recommendation">
+            ${product.image_url ? `<img src="${product.image_url}" alt="${product.name}" class="campaign-recommendation-img" />` : ""}
+            <div class="campaign-recommendation-info">
+                <div class="campaign-recommendation-brand">${product.brand_name || ""}</div>
+                <div class="campaign-recommendation-name">${product.name}</div>
+                <div class="campaign-recommendation-category">${product.category_name || ""}</div>
+                <div class="campaign-recommendation-price">₹ ${product.price}</div>
+                <div class="campaign-recommendation-actions">
+                    <a href="product.html?id=${product.id}" class="campaign-recommendation-link">Buy Now →</a>
+                    <button type="button" class="campaign-recommendation-later">Maybe later</button>
+                </div>
+            </div>
+        </div>
+        ${reasonLine}
+    `;
+}
+
+function renderSkinTwinResult(data) {
+    const productsHtml = (data.products || []).map(p => `
+        <div class="campaign-recommendation">
+            ${p.image_url ? `<img src="${p.image_url}" alt="${p.name}" class="campaign-recommendation-img" />` : ""}
+            <div class="campaign-recommendation-info">
+                <div class="campaign-recommendation-brand">${p.brand_name || ""}</div>
+                <div class="campaign-recommendation-name">${p.name}</div>
+                <div class="campaign-recommendation-category">${p.category_name || ""}</div>
+                <div class="campaign-recommendation-price">₹ ${p.price}</div>
+                <a href="product.html?id=${p.id}" class="campaign-recommendation-link">Buy Now →</a>
+            </div>
+        </div>
+    `).join("");
+
+    const lowMatchNote = data.low_match
+        ? `<div class="campaign-low-match-note">We found your best match below — we're adding more products for this concern soon.</div>`
+        : "";
+
+    return `
+        <div class="campaign-skin-twin-blurb">${data.blurb || ""}</div>
+        ${renderSkinTwinRoutine(data.routine)}
+        ${lowMatchNote}
+        <div class="campaign-skin-twin-products">${productsHtml}</div>
+    `;
+}
+
+
+function renderMoodRitualResult(data) {
+    const stepsHtml = (data.routine || []).map((step, i) => `
+        <div class="campaign-mood-step" style="animation-delay: ${i * 0.15}s">
+            <div class="campaign-mood-step-number">${i + 1}</div>
+            <div class="campaign-mood-step-content">
+                <div class="campaign-mood-step-category">${step.category}</div>
+                <div class="campaign-mood-step-name">${step.product.name}</div>
+                <div class="campaign-mood-step-caption">${step.caption}</div>
+            </div>
+        </div>
+    `).join("");
+
+    const streakHtml = data.streak
+        ? `<div class="campaign-mood-streak">🔥 ${data.streak} day streak</div>`
+        : "";
+
+    return `
+        <div class="campaign-mood-result">
+            <div class="campaign-mood-result-title">${data.mood.label} — your ritual</div>
+            <div class="campaign-mood-result-subtitle">Follow in order for best results</div>
+            <div class="campaign-mood-steps">${stepsHtml}</div>
+            ${streakHtml}
+        </div>
+    `;
+}
+
+function renderSkinTwinRoutine(routine) {
+    if (!routine || !routine.steps || routine.steps.length === 0) return "";
+
+    const stepsHtml = routine.steps.map(step => `
+        <div class="campaign-routine-step">
+            <div class="campaign-routine-step-header">
+                <span class="campaign-routine-step-product">${step.product_name}</span>
+                <span class="campaign-routine-step-when">${step.when}</span>
+            </div>
+            <div class="campaign-routine-step-freq">${step.frequency}</div>
+            <div class="campaign-routine-step-instructions">${step.instructions || ""}</div>
+        </div>
+    `).join("");
+
+    return `
+        <div class="campaign-skin-twin-routine">
+            <div class="campaign-routine-title">Your Daily Routine</div>
+            ${stepsHtml}
+            ${routine.note ? `<div class="campaign-routine-note">${routine.note}</div>` : ""}
+        </div>
+    `;
+}
+
 async function mountCampaignWidget(campaign, containerEl) {
     const template = await getShellTemplate();
     containerEl.innerHTML = template;
@@ -57,9 +156,25 @@ async function mountCampaignWidget(campaign, containerEl) {
     el.subtitleText.textContent = campaign.description || "Play now and win rewards";
 
     async function openCampaign() {
+        const user = getLoggedInUser();
+
         el.collapsed.style.display = "none";
         el.expanded.style.display = "block";
         el.reward.style.display = "none";
+
+        if (!user) {
+            el.content.style.display = "none";
+            el.questionText.textContent = "Log in to participate";
+            el.reward.style.display = "block";
+            el.reward.innerHTML = `
+                <div class="campaign-login-prompt">
+                    <p>You need to be logged in to play campaigns and unlock recommendations.</p>
+                    <a href="login.html" class="campaign-login-btn">Log In</a>
+                </div>
+            `;
+            return;
+        }
+
         el.content.style.display = "flex";
 
         try {
@@ -98,14 +213,33 @@ async function mountCampaignWidget(campaign, containerEl) {
                 })
             });
 
+            if (!res.ok) {
+                el.questionText.textContent = "Something went wrong";
+                el.reward.textContent = "Please log in and try again.";
+                setTimeout(() => {
+                    el.expanded.style.display = "none";
+                    el.collapsed.style.display = "flex";
+                }, 3000);
+                return;
+            }
+
             const data = await res.json();
+            console.log("Campaign response:", data); // temporary -- confirms what the backend actually sent
 
             el.content.style.display = "none";
             el.reward.style.display = "block";
 
-            if (data.requires_login) {
-                el.questionText.textContent = "Thanks for playing!";
-                el.reward.textContent = "Log in to earn rewards from campaigns.";
+            if (data.products) {
+                el.questionText.textContent = "Here's your skin twin match!";
+                el.reward.innerHTML = renderSkinTwinResult(data);
+            } else if (data.routine && data.mood) {
+                el.questionText.textContent = "Your ritual is ready ✨";
+                el.reward.innerHTML = renderMoodRitualResult(data);
+            } else if (data.recommended_product) {
+                el.questionText.textContent = "Here's your match!";
+                el.reward.innerHTML = renderRecommendationCard(data.recommended_product, data);
+                el.reward.querySelector(".campaign-recommendation-later")
+                    ?.addEventListener("click", closeCampaign);
             } else if (data.already_rewarded) {
                 el.questionText.textContent = "Thanks for playing again!";
                 el.reward.textContent = "You've already claimed your reward for this campaign.";
@@ -114,10 +248,9 @@ async function mountCampaignWidget(campaign, containerEl) {
                 el.reward.textContent = `🎉 You unlocked: ${data.reward_value}`;
             }
 
-            setTimeout(() => {
-                el.expanded.style.display = "none";
-                el.collapsed.style.display = "flex";
-            }, 5000);
+            // No auto-close here -- the user reviews the result (and can
+            // click "Buy Now" for a recommendation) and closes manually
+            // via the × button whenever they're ready.
 
         } catch (error) {
             console.error("Error submitting campaign result:", error);

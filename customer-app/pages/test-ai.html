@@ -55,11 +55,8 @@
                 document.getElementById("ai-container").innerHTML = html;
 
                 const script = document.createElement("script");
-
+                script.type = "module";
                 script.src = "../js/ai.js";
-                script.onload=()=>{
-                    initializeAI();
-                };
 
                 document.body.appendChild(script);
 

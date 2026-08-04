@@ -6,6 +6,22 @@ const grid = document.getElementById("productsGrid");
 
 let products = [];
 
+function shuffleArray(array) {
+
+    const shuffled = [...array];
+
+    for (let i = shuffled.length - 1; i > 0; i--) {
+
+        const j = Math.floor(Math.random() * (i + 1));
+
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+
+    }
+
+    return shuffled;
+
+}
+
 async function loadProducts() {
 
     try {
@@ -13,6 +29,9 @@ async function loadProducts() {
         loading.classList.remove("hidden");
 
         products = await getProducts();
+
+        // Mix the products
+        products = shuffleArray(products);
 
         renderProducts(products);
 

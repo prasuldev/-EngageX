@@ -4,6 +4,10 @@
 
         <div class="flex items-center justify-between h-20">
 
+            <button id="mobile-menu-btn" class="lg:hidden">
+                <i data-lucide="menu"></i>
+            </button>
+
             <!-- Logo -->
             <a href="../pages/home.html"
                 class="flex items-center gap-3 flex-shrink-0">
@@ -90,9 +94,11 @@
 
                 </a>
 
-                <a href="../pages/profile.html"
+                <a 
+                    id="profileBtn"    
+                    href="../pages/profile.html"
                     title="Profile">
-
+                    
                     <i data-lucide="user"></i>
 
                 </a>
@@ -105,38 +111,40 @@
 
     <!-- Mobile Menu -->
 
-    <div
-        id="mobileMenu"
-        class="hidden lg:hidden bg-white border-t">
+    <div id="mobileMenu" class="hidden bg-white border-t">
 
-        <a href="../pages/home.html"
-            class="block px-6 py-3 hover:bg-pink-50">
+    <a href="../pages/home.html" class="block px-6 py-4 hover:bg-pink-50">
+        Home
+    </a>
 
-            Home
+    <a href="../pages/products.html" class="block px-6 py-4 hover:bg-pink-50">
+        Products
+    </a>
 
-        </a>
+    <a href="../pages/categories.html" class="block px-6 py-4 hover:bg-pink-50">
+        Categories
+    </a>
 
-        <a href="../pages/products.html"
-            class="block px-6 py-3 hover:bg-pink-50">
+    <a href="../pages/offers.html" class="block px-6 py-4 hover:bg-pink-50">
+        Offers
+    </a>
 
-            Products
+    <a href="../pages/campaigns.html" class="block px-6 py-4 hover:bg-pink-50">
+        Campaigns
+    </a>
 
-        </a>
+    <a href="../pages/wishlist.html" class="block px-6 py-4 hover:bg-pink-50">
+        Wishlist
+    </a>
 
-        <a href="#"
-            class="block px-6 py-3 hover:bg-pink-50">
+    <a href="../pages/cart.html" class="block px-6 py-4 hover:bg-pink-50">
+        Cart
+    </a>
 
-            Brands
+    <a href="../pages/profile.html" class="block px-6 py-4 hover:bg-pink-50">
+        Profile
+    </a>
 
-        </a>
-
-        <a href="#"
-            class="block px-6 py-3 hover:bg-pink-50">
-
-            Offers
-
-        </a>
-
-    </div>
+</div>
 
 </nav>

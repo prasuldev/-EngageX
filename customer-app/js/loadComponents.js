@@ -13,16 +13,14 @@ async function loadComponent(id, file) {
     }
 }
 
-function loadScript(src) {
-
+function loadScript(src, isModule = false) {
     return new Promise((resolve, reject) => {
-
         const script = document.createElement("script");
-
+        if (isModule) {
+            script.type = "module";
+        }
         script.src = src;
-
         script.onload = resolve;
-
         script.onerror = reject;
 
         document.body.appendChild(script);
@@ -36,14 +34,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Load HTML Components
     await loadComponent("navbar", "../components/navbar.html");
 
-    await loadComponent("footer", "../components/footer.html");
-
     await loadComponent("ai-container", "../components/ai-chat.html");
+
+    const currentPage = window.location.pathname.split("/").pop();
+    if (currentPage === "home.html") {
+        await loadComponent("footer", "../components/footer.html");
+    }
 
     // Load JS Files
     await loadScript("../js/navbar.js");
-
-    await loadScript("../js/ai.js");
+    await loadScript("../js/ai.js", true);
 
     // Initialize Components
     if (typeof initializeNavbar === "function") {

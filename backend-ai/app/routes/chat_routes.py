@@ -1,46 +1,149 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+
 from app.database import get_db
-import os
-import google.generativeai as genai
+from app.services.intent_service import IntentService
+from app.services.product_service import ProductService
+from app.ai.prompt_builder import PromptBuilder
+from app.ai.llm_service import LLMService
 
 router = APIRouter(tags=["chat"])
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel("gemini-2.5-flash")
+llm = LLMService()
+
 
 class ChatRequest(BaseModel):
     message: str
+    history: list = []
     user_id: int | None = None
 
-SYSTEM_PROMPT = """You are the AI Beauty Assistant for Maquillage, a cosmetics and skincare store.
-You help customers with:
-- Product recommendations based on skin type/concerns
-- Explaining ingredients in skincare products
-- Comparing products
-- Basic skincare advice
-- Order tracking questions (redirect to their Orders page)
-
-Keep responses concise, friendly, and focused on skincare/cosmetics. If asked about something
-unrelated to beauty/skincare, politely redirect the conversation back to how you can help with
-their skincare needs."""
 
 @router.post("/chat")
 async def chat(payload: ChatRequest, db=Depends(get_db)):
+
     try:
-        prompt = f"{SYSTEM_PROMPT}\n\nUser: {payload.message}"
 
-        response = model.generate_content(prompt)
-        reply = response.text
+        # -----------------------------------------
+        # Detect Intent
+        # -----------------------------------------
 
-        if payload.user_id:
-            await db.execute(
-                "INSERT INTO chat_history (user_id, message, response) VALUES ($1, $2, $3)",
-                payload.user_id, payload.message, reply
+        intent_data = IntentService.detect_intent(
+            payload.message
+        )
+
+        intent = intent_data["intent"]
+        category = intent_data["category"]
+        ingredient = intent_data["ingredient"]
+
+        # -----------------------------------------
+        # Greeting (No DB, No Gemini)
+        # -----------------------------------------
+
+        if intent == "greeting":
+
+            return {
+
+                "reply": (
+                    "Hi! 👋 I'm Aura. I can help you choose cleansers, moisturizers, eye creams, face masks, and sun protection products."
+                ),
+
+                "products": [],
+
+                "follow_up": [
+                    "Recommend a cleanser",
+                    "Suggest a moisturizer",
+                    "Recommend sunscreen"
+                ]
+            }
+
+        # -----------------------------------------
+        # Search Products
+        # -----------------------------------------
+
+        if intent in ["product_details", "comparison"]:
+
+            products = await ProductService.find_products_by_name(
+                db,
+                payload.message
             )
 
-        return {"reply": reply}
+        else:
+
+            products = await ProductService.search_products(
+                db=db,
+                message=payload.message,
+                category=category,
+                ingredient=ingredient,
+                intent=intent
+            )
+
+        # -----------------------------------------
+        # Build Prompt
+        # -----------------------------------------
+
+        prompt = PromptBuilder.build_prompt(
+            user_message=payload.message,
+            history=payload.history,
+            products=products,
+            intent=intent
+        )
+
+        # -----------------------------------------
+        # Gemini Response
+        # -----------------------------------------
+
+        reply = await llm.generate_reply(prompt)
+
+        # -----------------------------------------
+        # Save Chat
+        # -----------------------------------------
+
+        if payload.user_id:
+
+            await db.execute(
+                """
+                INSERT INTO chat_history
+                (user_id, message, response)
+                VALUES ($1,$2,$3)
+                """,
+                payload.user_id,
+                payload.message,
+                reply
+            )
+
+        # -----------------------------------------
+        # Return Response
+        # -----------------------------------------
+
+        return {
+
+            "reply": reply,
+
+            "products": [
+
+                {
+                    "id": p["id"],
+                    "name": p["name"],
+                    "brand": p["brand"],
+                    "category": p["category"],
+                    "price": float(p["price"]),
+                    "rating": float(p["rating"]),
+                    "image_url": p["image_url"]
+                }
+
+                for p in products
+
+            ],
+
+            "follow_up": []
+
+        }
 
     except Exception as e:
-        print("Chat error:", e)
-        raise HTTPException(status_code=500, detail="AI Assistant is temporarily unavailable")
+
+        print("Chat Error:", e)
+
+        raise HTTPException(
+            status_code=500,
+            detail="AI Assistant unavailable"
+        )

@@ -68,11 +68,6 @@
 
     </main>
 
-    <section 
-        id="campaign-container"
-        class="fixed inset-0 pointer-events-none z-50">
-    </section>
-
     <!-- Footer -->
     <div id="footer"></div>
 
@@ -87,51 +82,6 @@
     <!-- Product Page -->
     <script type="module" src="../js/product.js"></script>
     
-        <script>
-        async function loadCampaign() {
-
-            const response = await fetch(
-                "../components/campaigns/campaign-shell.html"
-            );
-
-            document.getElementById("campaign-container").innerHTML =
-                await response.text();
-
-            const coreScript = document.createElement("script");
-            coreScript.src = "../js/campaigns/campaign-core.js";
-
-            coreScript.onload = () => {
-
-                const rendererScript = document.createElement("script");
-
-                rendererScript.src =
-                    "../js/campaigns/renderers/beauty-match-renderer.js";
-
-                rendererScript.onload = () => {
-
-                    if (typeof initializeCampaign === "function") {
-
-                        initializeCampaign("product");
-
-                    }
-
-                };
-
-                document.body.appendChild(rendererScript);
-
-            };
-
-            document.body.appendChild(coreScript);
-
-        }
-
-        loadCampaign();
-        if (window.lucide) {
-            lucide.createIcons();
-        }
-
-    </script>
-
 </body>
 
 </html>

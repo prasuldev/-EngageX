@@ -1,6 +1,17 @@
+function shuffleArray(array) {
+    const shuffled = [...array];
+
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    return shuffled;
+}
+
 async function loadProducts() {
     try {
-        const response = await fetch(`${API_BASE}/products?limit=48`);
+        const response = await fetch(`${API_BASE}/products?limit=50`);
         const products = await response.json();
         console.log("Products Loaded:", products);
         return products;
@@ -79,7 +90,12 @@ async function renderProductsWithCampaigns(container, products) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const products = await loadProducts();
+
+    let products = await loadProducts();
+
+    // Mix the products
+    products = shuffleArray(products);
+
     const container = document.getElementById("products-container");
 
     if (!container) {

@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="../css/navbar.css">
     <link rel="stylesheet" href="../css/home.css">
     <link rel="stylesheet" href="../css/ai.css">
+    <link rel="stylesheet" href="../css/footer.css">
     <link rel="stylesheet" href="../css/campaigns/campaign-shell.css">
     <link rel="stylesheet" href="../css/campaigns/beauty-match.css">
 
@@ -53,7 +54,7 @@
         console.log(user);
 
         if (user) {
-            document.title = `Welcome ${user.fullname}`;
+            document.title = `Welcome ${user.full_name}`;
         }
     </script>
 
@@ -64,6 +65,8 @@
     <script src="../js/campaigns/campaign-core.js"></script>
     <script src="../js/campaigns/renderers/poll-renderer.js"></script>
     <script src="../js/campaigns/renderers/beauty-match-renderer.js"></script>
+    <script src="../js/campaigns/renderers/skin-twin-renderer.js"></script>
+    <script src="../js/campaigns/renderers/mood-ritual-renderer.js"></script>
 
     <script src="../js/app.js"></script>
     <script src="../js/loadComponents.js"></script>

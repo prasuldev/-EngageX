@@ -15,6 +15,77 @@
 
 <body>
 
+    <!-- Change Password Modal -->
+    <div id="passwordModal" class="modal hidden">
+
+        <div class="modal-content">
+
+            <span id="closeModal" class="close">&times;</span>
+
+            <h2>Change Password</h2>
+
+            <form id="changePasswordForm">
+
+                <label>Current Password</label>
+                <input
+                    type="password"
+                    id="currentPassword"
+                    required
+                >
+
+                <label>New Password</label>
+                <input
+                   type="password"
+                   id="newPassword"
+                   required
+                >
+
+                <label>Confirm Password</label>
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    required
+                >
+
+                <button type="submit">
+                    Update Password
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div id="editProfileModal" class="modal hidden">
+        <div class="modal-content">
+            <span id="closeEditModal" class="close">&times;</span>
+            <h2>Edit Profile</h2>
+            <form id="editProfileForm">
+                <label>Full Name</label>
+                <input
+                    type="text"
+                    id="editName"
+                    required
+                >
+
+                <label>Email</label>
+                <input
+                    type="email"
+                    id="editEmail"
+                    required
+                >
+
+                <button type="submit">
+                    Save Changes
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
     <div class="profile-container">
 
         <div class="profile-card">
@@ -27,34 +98,44 @@
 
             <p class="subtitle">My Profile</p>
 
-            <div class="info">
-
+            <div class="info-item">
                 <label>Full Name</label>
-                <p id="username">Loading...</p>
+                <p id="username"></p>
+            </div>
 
+            <div class="info-item">
                 <label>Email Address</label>
-                <p id="email">Loading...</p>
-
+                <p id="email"></p>
             </div>
 
-            <div class="profile-buttons">
+            <div class="account-section">
+                <h3>Account Settings</h3>
+                <div class="setting-item" id="editProfileBtn">
+                    <div class="setting-left">
+                        <i class="fa-solid fa-user-pen"></i>
+                        <span>Edit Profile</span>
+                    </div>
 
-                <button class="edit-btn">
-                    <i class="fa-solid fa-user-pen"></i>
-                    Edit Profile
-                </button>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
 
-                <button class="password-btn">
-                    <i class="fa-solid fa-lock"></i>
-                    Change Password
-                </button>
+                <div class="setting-item" id="changePasswordBtn">
+                    <div class="setting-left">
+                        <i class="fa-solid fa-lock"></i>
+                        <span>Change Password</span>
+                    </div>
 
-                <button id="logoutBtn" class="logout-btn">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    Logout
-                </button>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
 
-            </div>
+                <div class="setting-item logout" id="logoutBtn">
+                    <div class="setting-left">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>Logout</span>
+                    </div>
+                </div>
+
+            </div>    
 
         </div>
 

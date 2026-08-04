@@ -3,6 +3,13 @@ from app.database import get_db
 
 router = APIRouter(tags=["products"])
 
+
+@router.get("/products/categories")
+async def get_categories(db=Depends(get_db)):
+    rows = await db.fetch("SELECT name FROM categories ORDER BY name")
+    return [r["name"] for r in rows]
+
+
 @router.get("/products")
 async def get_products(
     category: str | None = Query(None),

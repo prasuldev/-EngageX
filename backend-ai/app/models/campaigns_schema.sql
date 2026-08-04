@@ -107,3 +107,62 @@ CREATE TABLE user_game_streaks (
 CREATE INDEX idx_card_pairs_set ON game_card_pairs(card_set_id);
 CREATE INDEX idx_sessions_campaign ON game_sessions(campaign_id, played_at DESC);
 CREATE INDEX idx_sessions_user ON game_sessions(user_id, played_at DESC);
+
+-- === Skin Twin campaign tables ===
+
+CREATE TABLE IF NOT EXISTS product_tags (
+    product_id INT PRIMARY KEY REFERENCES products(id),
+    skin_types TEXT[] NOT NULL,
+    concerns TEXT[] NOT NULL,
+    sensitivity_safe BOOLEAN NOT NULL,
+    texture VARCHAR(20),
+    tagged_at TIMESTAMP DEFAULT NOW(),
+    tag_source VARCHAR(20) DEFAULT 'ai'
+);
+
+CREATE INDEX IF NOT EXISTS idx_product_tags_skin_types ON product_tags USING GIN (skin_types);
+CREATE INDEX IF NOT EXISTS idx_product_tags_concerns ON product_tags USING GIN (concerns);
+
+CREATE TABLE IF NOT EXISTS skin_profiles (
+    profile_hash VARCHAR(64) PRIMARY KEY,
+    skin_type VARCHAR(20) NOT NULL,
+    concerns TEXT[] NOT NULL,
+    ai_blurb TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS quiz_responses (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    campaign_id INT REFERENCES campaigns(id),
+    answers JSONB,
+    profile_hash VARCHAR(64) REFERENCES skin_profiles(profile_hash),
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- === Mood Ritual campaign tables ===
+
+CREATE TABLE IF NOT EXISTS mood_ritual_moods (
+    id SERIAL PRIMARY KEY,
+    slug VARCHAR(50) UNIQUE NOT NULL,
+    label VARCHAR(100) NOT NULL,
+    subtext VARCHAR(150),
+    emoji VARCHAR(10),
+    relevant_categories TEXT[] NOT NULL,
+    active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS mood_ritual_checkins (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    campaign_id INT REFERENCES campaigns(id) ON DELETE CASCADE,
+    mood_slug VARCHAR(50) REFERENCES mood_ritual_moods(slug),
+    resolved_products JSONB NOT NULL,
+    checkin_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    created_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(user_id, campaign_id, checkin_date)
+);
+
+CREATE INDEX IF NOT EXISTS idx_mood_ritual_checkins_user_date
+    ON mood_ritual_checkins (user_id, checkin_date DESC);
