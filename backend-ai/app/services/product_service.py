@@ -6,7 +6,9 @@ class ProductService:
         message,
         category=None,
         ingredient=None,
-        intent="recommendation"
+        intent="recommendation",
+        min_price=None,
+        max_price=None
     ):
 
         message = message.lower()
@@ -17,29 +19,40 @@ class ProductService:
 
         if category:
 
-            products = await db.fetch(
-                """
-                SELECT
-                    p.id,
-                    p.name,
-                    b.name AS brand,
-                    c.name AS category,
-                    p.description,
-                    p.price,
-                    p.rating,
-                    p.ingredients,
-                    p.image_url
-                FROM products p
-                LEFT JOIN brands b
-                    ON p.brand_id = b.id
-                LEFT JOIN categories c
-                    ON p.category_id = c.id
-                WHERE LOWER(c.name) = LOWER($1)
-                ORDER BY p.rating DESC
-                LIMIT 3
-                """,
-                category
-            )
+            query = """
+            SELECT
+                p.id,
+                p.name,
+               b.name AS brand,
+               c.name AS category,
+               p.description,
+               p.price,
+               p.rating,
+               p.ingredients
+            FROM products p
+            LEFT JOIN brands b
+                ON p.brand_id = b.id
+            LEFT JOIN categories c
+                ON p.category_id = c.id
+            WHERE LOWER(c.name) = LOWER($1)
+            """
+
+            params = [category]
+
+            if min_price is not None:
+                query += f" AND p.price >= ${len(params)+1}"
+                params.append(min_price)
+
+            if max_price is not None:
+                query += f" AND p.price <= ${len(params)+1}"
+                params.append(max_price)
+
+            query += """
+            ORDER BY p.rating DESC
+            LIMIT 3
+            """
+
+            products = await db.fetch(query, *params)
 
             if products:
                 return products

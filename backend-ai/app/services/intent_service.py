@@ -1,3 +1,5 @@
+import re
+
 class IntentService:
 
     CATEGORY_KEYWORDS = {
@@ -59,6 +61,33 @@ class IntentService:
 
         text = message.lower()
 
+        # -----------------------------
+        # Price Detection
+        # -----------------------------
+
+        min_price = None
+        max_price = None
+
+        # under ₹500 / below 500 / less than 500
+
+        match = re.search(
+            r"(?:under|below|less than)\s*₹?\s*(\d+)",
+            text
+        )
+
+        if match:
+            max_price = int(match.group(1))
+
+        # above ₹300 / over 300 / more than 300
+
+        match = re.search(
+            r"(?:above|over|more than)\s*₹?\s*(\d+)",
+            text
+        )
+
+        if match:
+            min_price = int(match.group(1))
+
         # Greeting
         if any(word in text for word in [
             "hi",
@@ -72,6 +101,8 @@ class IntentService:
                 "intent": "greeting",
                 "category": None,
                 "ingredient": None,
+                "min_price": min_price,
+                "max_price": max_price,
                 "products": []
             }
 
@@ -91,6 +122,8 @@ class IntentService:
                 "intent": "comparison",
                 "category": None,
                 "ingredient": None,
+                "min_price": min_price,
+                "max_price": max_price,
                 "products": []
             }
 
@@ -103,6 +136,8 @@ class IntentService:
                     "intent": "ingredient",
                     "category": None,
                     "ingredient": ingredient,
+                    "min_price": min_price,
+                    "max_price": max_price,
                     "products": []
                 }
 
@@ -113,6 +148,8 @@ class IntentService:
                 "intent": "routine",
                 "category": None,
                 "ingredient": None,
+                "min_price": min_price,
+                "max_price": max_price,
                 "products": []
             }
 
@@ -125,6 +162,8 @@ class IntentService:
                     "intent": "recommendation",
                     "category": category,
                     "ingredient": None,
+                    "min_price": min_price,
+                    "max_price": max_price,
                     "products": []
                 }
 
@@ -133,5 +172,7 @@ class IntentService:
             "intent": "product_details",
             "category": None,
             "ingredient": None,
+            "min_price": min_price,
+            "max_price": max_price,
             "products": []
         }

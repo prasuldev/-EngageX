@@ -1,0 +1,25 @@
+* { box-sizing: border-box; }
+body { font-family: system-ui, sans-serif; margin: 0; background: #f7f5f2; color: #2c2c2a; }
+
+.login-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+.login-box { background: #fff; padding: 40px; border-radius: 12px; width: 320px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.login-box h1 { margin: 0 0 4px; font-size: 20px; }
+.subtitle { margin: 0 0 24px; color: #666; font-size: 14px; }
+.login-box label { display: block; font-size: 13px; margin-bottom: 4px; margin-top: 12px; }
+.login-box input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+.login-box button { width: 100%; margin-top: 20px; padding: 10px; background: #d85a30; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+.error { color: #c0392b; font-size: 13px; margin-top: 10px; }
+
+.topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; background: #fff; border-bottom: 1px solid #e5e2dc; }
+.user-info { display: flex; align-items: center; gap: 12px; font-size: 14px; }
+.user-info button { padding: 6px 12px; border: 1px solid #ccc; background: #fff; border-radius: 6px; cursor: pointer; }
+
+main { padding: 24px; }
+.overview-cards { display: flex; gap: 16px; margin-bottom: 32px; }
+.card { background: #fff; border-radius: 10px; padding: 20px; flex: 1; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.card-label { display: block; font-size: 13px; color: #666; }
+.card-value { display: block; font-size: 28px; font-weight: 600; margin-top: 6px; }
+
+table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; margin-bottom: 32px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid #eee; font-size: 14px; }
+th { background: #faf8f5; font-weight: 500; }

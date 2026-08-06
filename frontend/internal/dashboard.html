@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EngageX Internal — Dashboard</title>
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>EngageX Dashboard</h1>
+    <div class="user-info">
+      <span id="user-greeting"></span>
+      <button id="logout-btn">Log out</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="overview-cards" id="overview-cards">
+      <div class="card"><span class="card-label">Active campaigns</span><span class="card-value" id="active-count">–</span></div>
+      <div class="card"><span class="card-label">Inactive campaigns</span><span class="card-value" id="inactive-count">–</span></div>
+      <div class="card"><span class="card-label">Total campaigns</span><span class="card-value" id="total-count">–</span></div>
+    </section>
+
+    <section>
+      <h2>Campaign performance</h2>
+      <table id="performance-table">
+        <thead>
+          <tr><th>Title</th><th>Type</th><th>Status</th><th>Participants</th><th>Responses</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Beauty Match performance</h2>
+      <table id="beauty-match-table">
+        <thead>
+          <tr><th>Title</th><th>Plays</th><th>Completions</th><th>Avg moves</th><th>Avg time (s)</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="js/auth.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

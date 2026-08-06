@@ -44,12 +44,19 @@ async def register(payload: RegisterRequest, db=Depends(get_db)):
 
 @router.post("/login")
 async def login(payload: LoginRequest, db=Depends(get_db)):
-    user = await db.fetchrow("SELECT * FROM users WHERE email=$1", payload.email)
+    user = await db.fetchrow(
+        """
+        SELECT u.*, r.name AS role
+        FROM users u JOIN roles r ON u.role_id = r.id
+        WHERE u.email = $1
+        """,
+        payload.email
+    )
     if not user or not verify_password(payload.password, user["password_hash"]):
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
     token = create_access_token({"sub": str(user["id"])})
-    return {"access_token": token, "token_type": "bearer", "user": {"id": user["id"], "full_name": user["full_name"], "email": user["email"]}}
+    return {"access_token": token, "token_type": "bearer", "user": {"id": user["id"], "full_name": user["full_name"], "email": user["email"], "role": user["role"]}}
 
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
@@ -63,7 +70,12 @@ async def get_current_user(
     user_id = int(payload["sub"])
 
     user = await db.fetchrow(
-        "SELECT * FROM users WHERE id=$1",
+        """
+        SELECT u.*, r.name AS role
+        FROM users u
+        JOIN roles r ON u.role_id = r.id
+        WHERE u.id = $1
+        """,
         user_id
     )
 

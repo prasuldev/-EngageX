@@ -12,7 +12,6 @@ router = APIRouter(
     tags=["Campaigns"]
 )
 
-
 @router.get("/active")
 async def get_active_campaigns(
     context: str = Query("global"),
@@ -276,6 +275,15 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
             payload.user_id, campaign_id, json.dumps(payload.answers), profile_hash
         )
 
+        await db.execute(
+            """
+            INSERT INTO campaign_participation (campaign_id, user_id)
+            VALUES ($1, $2)
+            ON CONFLICT (campaign_id, user_id) DO NOTHING
+            """,
+            campaign_id, payload.user_id
+        )
+
         cached_routine = await db.fetchrow(
             "SELECT routine_json FROM skin_profiles WHERE profile_hash = $1", profile_hash
         )
@@ -348,6 +356,15 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
             payload.user_id, campaign_id, payload.mood_slug, json.dumps(resolved, default=str)
         )
 
+        await db.execute(
+            """
+            INSERT INTO campaign_participation (campaign_id, user_id)
+            VALUES ($1, $2)
+            ON CONFLICT (campaign_id, user_id) DO NOTHING
+            """,
+            campaign_id, payload.user_id
+        )
+
         # Streak logic — reusing the exact same user_game_streaks table
         # and logic as memory_match, since streaks aren't game-specific
         today = await db.fetchval("SELECT CURRENT_DATE")
@@ -399,6 +416,15 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
         await db.execute(
             "INSERT INTO campaign_responses (campaign_id, user_id, question_id, answer) VALUES ($1, $2, $3, $4)",
             campaign_id, payload.user_id, first_answer["question_id"], first_answer["answer"]
+        )
+
+        await db.execute(
+            """
+            INSERT INTO campaign_participation (campaign_id, user_id)
+            VALUES ($1, $2)
+            ON CONFLICT (campaign_id, user_id) DO NOTHING
+            """,
+            campaign_id, payload.user_id
         )
 
     qa_pairs = [

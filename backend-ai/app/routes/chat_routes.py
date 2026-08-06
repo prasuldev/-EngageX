@@ -34,6 +34,8 @@ async def chat(payload: ChatRequest, db=Depends(get_db)):
         intent = intent_data["intent"]
         category = intent_data["category"]
         ingredient = intent_data["ingredient"]
+        min_price = intent_data["min_price"]
+        max_price = intent_data["max_price"]
 
         # -----------------------------------------
         # Greeting (No DB, No Gemini)
@@ -74,7 +76,9 @@ async def chat(payload: ChatRequest, db=Depends(get_db)):
                 message=payload.message,
                 category=category,
                 ingredient=ingredient,
-                intent=intent
+                intent=intent,
+                min_price=min_price,
+                max_price=max_price
             )
 
         # -----------------------------------------
@@ -127,8 +131,7 @@ async def chat(payload: ChatRequest, db=Depends(get_db)):
                     "brand": p["brand"],
                     "category": p["category"],
                     "price": float(p["price"]),
-                    "rating": float(p["rating"]),
-                    "image_url": p["image_url"]
+                    "rating": float(p["rating"])
                 }
 
                 for p in products
