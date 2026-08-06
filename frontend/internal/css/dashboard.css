@@ -1,25 +1,164 @@
-* { box-sizing: border-box; }
-body { font-family: system-ui, sans-serif; margin: 0; background: #f7f5f2; color: #2c2c2a; }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
 
-.login-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-.login-box { background: #fff; padding: 40px; border-radius: 12px; width: 320px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-.login-box h1 { margin: 0 0 4px; font-size: 20px; }
-.subtitle { margin: 0 0 24px; color: #666; font-size: 14px; }
-.login-box label { display: block; font-size: 13px; margin-bottom: 4px; margin-top: 12px; }
-.login-box input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
-.login-box button { width: 100%; margin-top: 20px; padding: 10px; background: #d85a30; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
-.error { color: #c0392b; font-size: 13px; margin-top: 10px; }
+body{
+    background:#f4f7fb;
+}
 
-.topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; background: #fff; border-bottom: 1px solid #e5e2dc; }
-.user-info { display: flex; align-items: center; gap: 12px; font-size: 14px; }
-.user-info button { padding: 6px 12px; border: 1px solid #ccc; background: #fff; border-radius: 6px; cursor: pointer; }
+.dashboard{
+    display:flex;
+    min-height:100vh;
+}
 
-main { padding: 24px; }
-.overview-cards { display: flex; gap: 16px; margin-bottom: 32px; }
-.card { background: #fff; border-radius: 10px; padding: 20px; flex: 1; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-.card-label { display: block; font-size: 13px; color: #666; }
-.card-value { display: block; font-size: 28px; font-weight: 600; margin-top: 6px; }
+/* Sidebar */
 
-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; margin-bottom: 32px; }
-th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid #eee; font-size: 14px; }
-th { background: #faf8f5; font-weight: 500; }
+.sidebar{
+    width:260px;
+    background:#0f172a;
+    color:white;
+    padding:30px;
+}
+
+.sidebar h2{
+    margin-bottom:40px;
+    font-size:28px;
+}
+
+.sidebar ul{
+    list-style:none;
+}
+
+.sidebar li{
+    padding:15px 0;
+    font-size:17px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.sidebar li:hover{
+    color:#38bdf8;
+    padding-left:8px;
+}
+
+/* Main Content */
+
+.content{
+    flex:1;
+    padding:40px;
+}
+
+/* Header */
+
+header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:40px;
+}
+
+header h1{
+    color:#1e293b;
+    font-size:34px;
+}
+
+header button{
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:14px 24px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+    transition:.3s;
+}
+
+header button:hover{
+    background:#1d4ed8;
+}
+
+/* Dashboard Cards */
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:25px;
+    margin-bottom:40px;
+}
+
+.card{
+    background:white;
+    border-radius:15px;
+    padding:25px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.card h3{
+    color:#64748b;
+    margin-bottom:15px;
+}
+
+.card h1{
+    color:#0f172a;
+    font-size:36px;
+}
+
+/* AI Generator */
+
+.ai-generator{
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.ai-generator h2{
+    margin-bottom:25px;
+    color:#0f172a;
+}
+
+.generator-box{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+}
+
+.generator-box input,
+.generator-box select{
+    padding:14px;
+    border:1px solid #d1d5db;
+    border-radius:8px;
+    outline:none;
+    font-size:15px;
+}
+
+.generator-box input:focus,
+.generator-box select:focus{
+    border-color:#2563eb;
+}
+
+.generator-box button{
+    background:#2563eb;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+    transition:.3s;
+}
+
+.generator-box button:hover{
+    background:#1d4ed8;
+}
+
+#campaignOutput{
+    margin-top:30px;
+    background:#f8fafc;
+    border-radius:10px;
+    padding:20px;
+    min-height:180px;
+    border:1px solid #e2e8f0;
+}
