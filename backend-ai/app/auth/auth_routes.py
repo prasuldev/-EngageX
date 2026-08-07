@@ -5,6 +5,7 @@ from pydantic import BaseModel, EmailStr
 from app.database import get_db
 from app.auth.password_utils import hash_password, verify_password
 from app.auth.jwt_utils import create_access_token, decode_access_token
+from app.services.audit_service import log_action
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -40,6 +41,9 @@ async def register(payload: RegisterRequest, db=Depends(get_db)):
         payload.full_name, payload.email, hashed
     )
     token = create_access_token({"sub": str(user["id"])})
+
+    await log_action(db, user["id"], "auth.register", "user", user["id"])
+
     return {"access_token": token, "token_type": "bearer", "user": dict(user)}
 
 @router.post("/login")
@@ -53,9 +57,13 @@ async def login(payload: LoginRequest, db=Depends(get_db)):
         payload.email
     )
     if not user or not verify_password(payload.password, user["password_hash"]):
+        await log_action(db, None, "auth.login_failed", "user", None, {"email": payload.email})
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
     token = create_access_token({"sub": str(user["id"])})
+
+    await log_action(db, user["id"], "auth.login_success", "user", user["id"])
+
     return {"access_token": token, "token_type": "bearer", "user": {"id": user["id"], "full_name": user["full_name"], "email": user["email"], "role": user["role"]}}
 
 async def get_current_user(
@@ -120,6 +128,11 @@ async def update_profile(
         current_user["id"]
     )
 
+    await log_action(
+        db, current_user["id"], "user.profile_updated", "user", current_user["id"],
+        {"old_email": current_user["email"], "new_email": payload.email}
+    )
+
     return dict(updated)
 
 @router.put("/change-password")
@@ -148,6 +161,8 @@ async def change_password(
         new_hash,
         current_user["id"]
     )
+
+    await log_action(db, current_user["id"], "user.password_changed", "user", current_user["id"])
 
     return {
         "message": "Password changed successfully"

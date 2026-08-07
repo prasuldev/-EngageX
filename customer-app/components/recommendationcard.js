@@ -2,40 +2,59 @@ export function createRecommendationCard(product) {
 
     return `
 
-    <div class="bg-white rounded-xl shadow p-4 mt-4">
+    <div class="bg-white rounded-xl shadow-md p-4 mt-4 border border-pink-100">
 
-        <img
-            src="${product.image}"
-            class="w-full h-40 object-cover rounded-lg">
+        <div class="flex justify-between items-start">
 
-        <h4 class="font-semibold mt-3">
+            <div>
 
-            ${product.name}
+                <p class="text-xs text-pink-600 font-semibold">
 
-        </h4>
+                    ${product.brand || "Maquillage"}
 
-        <p class="text-pink-600 font-bold">
+                </p>
 
-            ₹${product.price}
+                <h4 class="font-semibold text-gray-800 mt-1">
 
-        </p>
+                    ${product.name}
 
-        <p>
+                </h4>
 
-            ⭐ ${product.rating}
+                <p class="text-sm text-gray-500">
 
-        </p>
+                    ${product.category}
 
-        <a
-            href="../pages/product.html?id=${product.id}"
-            class="inline-block mt-3 bg-pink-600 text-white px-4 py-2 rounded-lg">
+                </p>
 
-            View Product
+            </div>
 
-        </a>
+            <div class="text-yellow-500">
+
+                ⭐ ${product.rating}
+
+            </div>
+
+        </div>
+
+        <div class="flex justify-between items-center mt-4">
+
+            <p class="text-pink-600 font-bold text-lg">
+
+                ₹${product.price}
+
+            </p>
+
+            <a
+                href="../pages/product.html?id=${product.id}"
+                class="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700">
+
+                View
+
+            </a>
+
+        </div>
 
     </div>
 
     `;
-
 }

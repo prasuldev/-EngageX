@@ -1,39 +1,25 @@
-import { getProducts } from "../services/productService.js";
-import { createProductCard } from "../components/productCard.js";
+import { getCategories } from "../services/productService.js";
 
 const loading = document.getElementById("loading");
-const grid = document.getElementById("productsGrid");
+const categoryGrid = document.getElementById("categoryGrid");
 
-let products = [];
+const categoryIcons = {
+    "Cleanser": "🧼",
+    "Moisturizer": "🧴",
+    "Face Mask": "🎭",
+    "Eye cream": "👁️",
+    "Sun protect": "☀️"
+};
 
-function shuffleArray(array) {
-
-    const shuffled = [...array];
-
-    for (let i = shuffled.length - 1; i > 0; i--) {
-
-        const j = Math.floor(Math.random() * (i + 1));
-
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-
-    }
-
-    return shuffled;
-
-}
-
-async function loadProducts() {
+async function loadCategories() {
 
     try {
 
         loading.classList.remove("hidden");
 
-        products = await getProducts();
+        const categories = await getCategories();
 
-        // Mix the products
-        products = shuffleArray(products);
-
-        renderProducts(products);
+        renderCategories(categories);
 
     }
 
@@ -41,9 +27,9 @@ async function loadProducts() {
 
         console.error(error);
 
-        grid.innerHTML = `
+        categoryGrid.innerHTML = `
             <div class="col-span-full text-center text-red-500">
-                Failed to load products.
+                Failed to load categories.
             </div>
         `;
 
@@ -57,31 +43,56 @@ async function loadProducts() {
 
 }
 
-function renderProducts(productList) {
+function renderCategories(categories) {
 
-    grid.innerHTML = "";
+    const row1 =document.getElementById("categoryRow1");
+    const row2 =document.getElementById("categoryRow2");
 
-    if (productList.length === 0) {
+    row1.innerHTML = "";
+    row2.innerHTML = "";
 
-        grid.innerHTML = `
-            <div class="col-span-full text-center text-gray-500">
-                No products found.
+    categories.forEach((category,index)=>{
+
+        const card = `
+            <div class="category-card"
+                data-category="${category}">
+
+                <div class="category-icon">
+                    ${categoryIcons[category] || "📦"}
+                </div>
+
+                <div class="category-name">
+                    ${category}
+                </div>
+
             </div>
         `;
 
-        return;
+        if(index < 3){
+            row1.insertAdjacentHTML("beforeend",card);
+        }else{
+            row2.insertAdjacentHTML("beforeend",card);
+        }
 
-    }
+    });
 
-    productList.forEach(product => {
+    document.querySelectorAll(".category-card").forEach(card => {
 
-        grid.insertAdjacentHTML(
-            "beforeend",
-            createProductCard(product)
-        );
+        card.addEventListener("click", () => {
+
+            const category =
+                card.dataset.category;
+
+            window.location.href =
+                `category.html?category=${encodeURIComponent(category)}`;
+
+        });
 
     });
 
 }
 
-document.addEventListener("DOMContentLoaded", loadProducts);
+document.addEventListener(
+    "DOMContentLoaded",
+    loadCategories
+);

@@ -1,0 +1,79 @@
+/* ================================
+   Category Selection Page
+================================ */
+
+.category-card{
+
+    background:#ffffff;
+
+    border-radius:20px;
+
+    padding:50px 30px;
+
+    text-align:center;
+
+    cursor:pointer;
+
+    border:1px solid #f1f1f1;
+
+    box-shadow:0 8px 20px rgba(0,0,0,0.08);
+
+    transition:all .3s ease;
+
+}
+
+.category-card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 18px 40px rgba(0,0,0,0.12);
+
+    border-color:#ec4899;
+
+}
+
+.category-icon{
+
+    font-size:70px;
+
+    margin-bottom:25px;
+
+}
+
+.category-name{
+
+    font-size:26px;
+
+    font-weight:700;
+
+    color:#222;
+
+}
+
+.category-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(3, 1fr);
+
+    gap:35px;
+
+    justify-items:center;
+
+    margin-top:40px;
+
+}
+
+.category-row{
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:35px;
+
+    margin-bottom:35px;
+
+    flex-wrap:wrap;
+
+}

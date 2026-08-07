@@ -6,6 +6,7 @@ from app.database import get_db
 from app.ai_recommender import get_ai_recommendation, generate_category_questions, generate_skin_blurb, generate_skin_routine
 from app.services.mood_ritual_resolver import resolve_product_for_category
 from app.services.mood_ritual_ai import generate_mood_captions
+from app.routes.dashboard_ws import manager
 
 router = APIRouter(
     prefix="/campaigns",
@@ -181,6 +182,8 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
                 campaign_id, payload.user_id
             )
 
+            await manager.broadcast({"event": "participation_update", "campaign_id": campaign_id})
+
             today = await db.fetchval("SELECT CURRENT_DATE")
             streak = await db.fetchrow(
                 "SELECT * FROM user_game_streaks WHERE user_id = $1", payload.user_id
@@ -284,6 +287,8 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
             campaign_id, payload.user_id
         )
 
+        await manager.broadcast({"event": "participation_update", "campaign_id": campaign_id})
+
         cached_routine = await db.fetchrow(
             "SELECT routine_json FROM skin_profiles WHERE profile_hash = $1", profile_hash
         )
@@ -365,6 +370,8 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
             campaign_id, payload.user_id
         )
 
+        await manager.broadcast({"event": "participation_update", "campaign_id": campaign_id})
+
         # Streak logic — reusing the exact same user_game_streaks table
         # and logic as memory_match, since streaks aren't game-specific
         today = await db.fetchval("SELECT CURRENT_DATE")
@@ -426,6 +433,8 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
             """,
             campaign_id, payload.user_id
         )
+
+        await manager.broadcast({"event": "participation_update", "campaign_id": campaign_id})
 
     qa_pairs = [
         {"question": a.get("question_text", ""), "answer": a.get("answer", "")}

@@ -54,13 +54,19 @@ async function loadProduct() {
                     <!-- Product Image -->
                     <div class="product-image">
 
-                        <img
-                            src="${product.image || "../assets/images/no-image.png"}"
-                            alt="${product.name}"
-                            class="w-full h-[500px] object-cover rounded-xl shadow"
-                            onerror="this.src='../assets/images/no-image.png'">
+                        <div class="product-placeholder">
+
+                            <div class="product-placeholder-icon">
+                                📦
+                            </div>
+
+                        <div class="product-placeholder-text">
+                            Product Image
+                        </div>
 
                     </div>
+
+                </div>
 
                     <!-- Product Information -->
                     <div class="product-info">
@@ -87,19 +93,6 @@ async function loadProduct() {
                             ₹${product.price}
                         </p>
 
-                        ${product.description ? `
-                            <div class="mb-6">
-
-                                <h2 class="text-xl font-semibold mb-2">
-                                    Description
-                                </h2>
-
-                                <p class="text-gray-700 leading-relaxed">
-                                    ${product.description}
-                                </p>
-
-                            </div>
-                        ` : ""}
 
                         ${product.ingredients ? `
                             <div class="mb-6">

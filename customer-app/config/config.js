@@ -5,7 +5,7 @@ export const CONFIG = {
 
     API: {
         PRODUCTS: "/products",
-        CATEGORIES: "/categories",
+        CATEGORIES: "/products/categories",
         BRANDS: "/brands",
         AUTH: "/auth",
         CAMPAIGNS: "/campaigns",

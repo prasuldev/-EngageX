@@ -1,8 +1,10 @@
 import { request } from "./api.js";
 import { CONFIG } from "../config/config.js";
 
-export async function getProducts() {
-    return request(CONFIG.API.PRODUCTS);
+export async function getProducts(query = "") {
+    return request(
+        `${CONFIG.API.PRODUCTS}${query}`
+    );
 }
 
 export async function getProduct(id) {
@@ -15,4 +17,12 @@ export async function getCategories() {
 
 export async function getBrands() {
     return request(CONFIG.API.BRANDS);
+}
+
+export async function getProductsByCategory(category) {
+
+    return request(
+        `${CONFIG.API.PRODUCTS}?category=${encodeURIComponent(category)}`
+    );
+
 }

@@ -1,6 +1,13 @@
 from fastapi import APIRouter, Depends
 from app.database import get_db
 from app.auth.role_guard import require_role
+from app.services.ai_insights_service import get_ai_insights
+from app.services.segmentation_service import (
+    get_skin_type_breakdown,
+    get_top_concerns,
+    get_skin_type_concern_crosstab,
+    get_response_funnel,
+)
 
 router = APIRouter(prefix="/api/internal/dashboard", tags=["dashboard"])
 
@@ -69,3 +76,28 @@ async def beauty_match_performance(
         """
     )
     return [dict(r) for r in rows]
+
+@router.get("/customer-segments")
+async def customer_segments(
+    db=Depends(get_db),
+    current_user=Depends(require_role(["admin", "marketing_manager"]))
+):
+    skin_types = await get_skin_type_breakdown(db)
+    concerns = await get_top_concerns(db)
+    crosstab = await get_skin_type_concern_crosstab(db)
+    funnel = await get_response_funnel(db)
+
+    return {
+        "skin_type_breakdown": [dict(r) for r in skin_types],
+        "top_concerns": [dict(r) for r in concerns],
+        "skin_type_concern_crosstab": [dict(r) for r in crosstab],
+        "response_funnel": dict(funnel),
+    }
+
+@router.get("/ai-insights")
+async def ai_insights(
+    refresh: bool = False,
+    db=Depends(get_db),
+    current_user=Depends(require_role(["admin", "marketing_manager"]))
+):
+    return await get_ai_insights(db, force_refresh=refresh)

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Category | Maquillage</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/ai.css">
+    <link rel="stylesheet" href="../css/category.css">
+
+</head>
+
+
+<body class="bg-gray-50">
+
+
+    <!-- Navbar -->
+    <div id="navbar"></div>
+
+
+    <main class="category-products-page max-w-7xl mx-auto px-6 py-10">
+
+
+        <!-- Back Button -->
+        <button
+            id="backBtn"
+            class="category-back-btn">
+
+            ← Back to Categories
+
+        </button>
+
+
+        <!-- Category Header -->
+        <div class="category-products-header">
+
+            <h1 id="categoryTitle">
+                Category
+            </h1>
+
+            <p>
+                Explore our beauty collection.
+            </p>
+
+        </div>
+
+
+        <!-- Search -->
+        <div class="category-search">
+
+            <input
+                id="searchInput"
+                type="text"
+                placeholder="Search products in this category...">
+
+        </div>
+
+
+        <!-- Loading -->
+        <div
+            id="loading"
+            class="text-center py-10">
+
+            Loading Products...
+
+        </div>
+
+
+        <!-- Products -->
+        <div
+            id="productsGrid"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+
+        </div>
+
+
+    </main>
+
+
+    <!-- Footer -->
+    <div id="footer"></div>
+
+
+    <!-- AI Assistant -->
+    <section id="ai-section"></section>
+
+
+    <!-- Common JS -->
+    <script src="../js/session.js"></script>
+    <script src="../js/loadComponents.js"></script>
+
+
+    <!-- Category JS -->
+    <script
+        type="module"
+        src="../js/category.js">
+    </script>
+
+
+</body>
+
+</html>

@@ -8,6 +8,7 @@
 <body>
   <header class="topbar">
     <h1>EngageX Dashboard</h1>
+    <span id="live-status" style="font-size:13px;"></span>
     <div class="user-info">
       <span id="user-greeting"></span>
       <button id="logout-btn">Log out</button>
@@ -40,9 +41,42 @@
         <tbody></tbody>
       </table>
     </section>
+
+    <section>
+      <h2>Customer segments</h2>
+      <div class="overview-cards" id="segment-funnel-cards">
+        <div class="card"><span class="card-label">Total responses</span><span class="card-value" id="funnel-total">–</span></div>
+        <div class="card"><span class="card-label">Unique profiles</span><span class="card-value" id="funnel-profiles">–</span></div>
+        <div class="card"><span class="card-label">Unique users</span><span class="card-value" id="funnel-users">–</span></div>
+      </div>
+
+      <h3>Skin type breakdown</h3>
+      <table id="skin-type-table">
+        <thead>
+          <tr><th>Skin type</th><th>Responses</th><th>Unique users</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <h3>Top concerns</h3>
+      <table id="top-concerns-table">
+        <thead>
+          <tr><th>Concern</th><th>Count</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>AI Insights</h2>
+      <button id="refresh-insights-btn">Refresh insights</button>
+      <ul id="ai-insights-list"></ul>
+      <span id="insights-generated-at" style="font-size:12px; color:#888;"></span>
+    </section>
   </main>
 
   <script src="js/auth.js"></script>
+  <script src="js/ws-client.js"></script>
   <script src="js/dashboard.js"></script>
 </body>
 </html>

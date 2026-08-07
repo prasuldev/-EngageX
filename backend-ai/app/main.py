@@ -12,6 +12,7 @@ from app.routes.category_routes import router as category_router
 from app.routes.chat_routes import router as chat_router
 from app.routes.campaign_routes import router as campaign_router
 from app.routes.dashboard_routes import router as dashboard_router
+from app.routes.dashboard_ws import router as dashboard_ws_router
 
 app = FastAPI(title="EngageX API")
 
@@ -37,6 +38,7 @@ app.include_router(category_router)
 app.include_router(chat_router)
 app.include_router(campaign_router)
 app.include_router(dashboard_router)
+app.include_router(dashboard_ws_router)
 
 @app.get("/")
 def home():
