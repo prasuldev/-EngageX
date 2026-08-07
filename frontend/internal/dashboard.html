@@ -32,7 +32,48 @@
     </section>
 
     <section>
-      <h2>Beauty Match performance</h2>
+  <h2>Beauty Match performance</h2>
+
+  <table id="beauty-match-table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Plays</th>
+        <th>Completions</th>
+        <th>Avg moves</th>
+        <th>Avg time (s)</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+<section class="ai-generator">
+  <h2>AI Campaign Generator</h2>
+
+  <div class="generator-box">
+    <input
+      type="text"
+      id="product"
+      placeholder="Product Name">
+
+    <input
+      type="text"
+      id="audience"
+      placeholder="Target Audience">
+
+    <input
+      type="text"
+      id="goal"
+      placeholder="Campaign Goal">
+
+    <button id="generateBtn">
+      Generate Campaign
+    </button>
+  </div>
+
+  <div id="campaignOutput"></div>
+</section>
       <table id="beauty-match-table">
         <thead>
           <tr><th>Title</th><th>Plays</th><th>Completions</th><th>Avg moves</th><th>Avg time (s)</th></tr>

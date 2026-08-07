@@ -1,25 +1,23 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-router = APIRouter(
-    prefix="/ai",
-    tags=["AI Campaign Generator"]
-)
+router = APIRouter(prefix="/campaign", tags=["AI Campaign"])
 
 
 class CampaignRequest(BaseModel):
     product: str
     audience: str
     goal: str
-    tone: str
 
 
-@router.post("/generate-campaign")
+@router.post("/generate")
 async def generate_campaign(data: CampaignRequest):
-
-    return {
+    campaign = {
         "title": f"{data.product} Campaign",
-        "description": f"Launch a {data.tone.lower()} campaign for {data.audience}.",
-        "cta": "Sign up today!",
-        "poll": f"What interests you most about {data.product}?"
+        "audience": data.audience,
+        "goal": data.goal,
+        "headline": f"Discover {data.product}",
+        "description": f"This campaign targets {data.audience} to achieve {data.goal}."
     }
+
+    return campaign
