@@ -5,7 +5,7 @@ from typing import AsyncGenerator
 # EngageX-specific database connection — independent of RP2
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql://postgres:yourpassword@localhost:5432/engagex_db"
+    "postgresql://apple@localhost:5432/engagex_db"
 )
 
 pool: asyncpg.Pool | None = None

@@ -1,69 +1,26 @@
 requireAuth();
 connectDashboardWS();
 
-const user = getInternalUser();
-document.getElementById("user-greeting").textContent = `${user.full_name} (${user.role})`;
-document.getElementById("logout-btn").addEventListener("click", logout);
 
-async function apiGet(path) {
-  const res = await fetch(`${API_BASE}${path}`, {
-    headers: { Authorization: `Bearer ${getInternalToken()}` }
-  });
-  if (res.status === 401 || res.status === 403) {
-    logout();
-    return null;
-  }
-  if (!res.ok) throw new Error(`Request failed: ${path}`);
-  return res.json();
+async function loadDashboard() {
+    try {
+        const res = await fetch("http://127.0.0.1:8002/api/internal/dashboard/campaign-overview");
+        const data = await res.json();
+
+        document.getElementById("active-count").textContent = data.active_campaigns;
+        document.getElementById("inactive-count").textContent = data.inactive_campaigns;
+        document.getElementById("total-count").textContent = data.total_campaigns;
+    } catch (err) {
+        console.error(err);
+    }
 }
 
-async function loadOverview() {
-  const data = await apiGet("/api/internal/dashboard/campaign-overview");
-  if (!data) return;
-  document.getElementById("active-count").textContent = data.active_campaigns;
-  document.getElementById("inactive-count").textContent = data.inactive_campaigns;
-  document.getElementById("total-count").textContent = data.total_campaigns;
-}
+loadDashboard();
 
-async function loadPerformance() {
-  const data = await apiGet("/api/internal/dashboard/campaign-performance");
-  if (!data) return;
-  const tbody = document.querySelector("#performance-table tbody");
-  tbody.innerHTML = "";
-  data.forEach(c => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${c.title}</td>
-      <td>${c.campaign_type}</td>
-      <td>${c.is_active ? "Active" : "Inactive"}</td>
-      <td>${c.participants}</td>
-      <td>${c.total_responses}</td>
-    `;
-    tbody.appendChild(row);
-  });
-}
+// ---------------- AI Generator ----------------
 
-async function loadBeautyMatch() {
-  const data = await apiGet("/api/internal/dashboard/beauty-match-performance");
-  if (!data) return;
-  const tbody = document.querySelector("#beauty-match-table tbody");
-  tbody.innerHTML = "";
-  if (data.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5">No Beauty Match activity yet</td></tr>`;
-    return;
-  }
-  data.forEach(c => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${c.title}</td>
-      <td>${c.total_plays}</td>
-      <td>${c.completions}</td>
-      <td>${c.avg_moves}</td>
-      <td>${c.avg_time_seconds}</td>
-    `;
-    tbody.appendChild(row);
-  });
-}
+const generateBtn = document.getElementById("generateBtn");
+
 
 async function loadCustomerSegments() {
   const data = await apiGet("/api/internal/dashboard/customer-segments");
@@ -133,3 +90,46 @@ loadPerformance();
 loadBeautyMatch();
 loadCustomerSegments();
 loadAIInsights();
+
+generateBtn.addEventListener("click", async () => {
+    const product = document.getElementById("product").value;
+    const audience = document.getElementById("audience").value;
+    const goal = document.getElementById("goal").value;
+
+    const output = document.getElementById("campaignOutput");
+
+    if (!product || !audience || !goal) {
+        output.innerHTML = "<p style='color:red;'>Please fill all fields.</p>";
+        return;
+    }
+
+    output.innerHTML = "<p>Generating campaign...</p>";
+
+    try {
+        const response = await fetch("http://127.0.0.1:8002/campaign/generate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                product,
+                audience,
+                goal
+            })
+        });
+
+        const data = await response.json();
+
+        output.innerHTML = `
+            <h3>${data.title}</h3>
+            <strong>Headline:</strong>
+            <p>${data.headline}</p>
+
+            <strong>Description:</strong>
+            <p>${data.description}</p>
+        `;
+    } catch (error) {
+        output.innerHTML = "<p style='color:red;'>Unable to connect to backend.</p>";
+        console.error(error);
+    }
+});
