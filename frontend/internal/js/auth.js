@@ -1,4 +1,4 @@
-const API_BASE = "http://127.0.0.1:8002";
+const API_BASE = "http://127.0.0.1:8000";
 
 async function login(email, password) {
   const res = await fetch(`${API_BASE}/auth/login`, {
@@ -34,7 +34,9 @@ function getInternalUser() {
 function requireAuth() {
   if (!getInternalToken()) {
     window.location.href = "index.html";
+    return false;
   }
+  return true;
 }
 
 function logout() {

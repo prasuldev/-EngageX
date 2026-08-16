@@ -24,6 +24,7 @@ function setLiveStatus(connected) {
 
 function connectDashboardWS() {
   const token = getInternalToken();
+  if (!token) return;
   const socket = new WebSocket(`ws://127.0.0.1:8000/api/internal/dashboard/ws?token=${token}`);
 
   socket.onopen = () => setLiveStatus(true);

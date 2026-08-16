@@ -17,13 +17,18 @@ async function apiGet(path) {
     }
 }
 
-requireAuth();
-connectDashboardWS();
-
+if (!requireAuth()) {
+  // stop here — redirect is in flight, don't run any dashboard init
+} else {
+  connectDashboardWS();
+  loadDashboard();
+  loadCustomerSegments();
+  loadAIInsights();
+}
 
 async function loadDashboard() {
     try {
-        const res = await fetch("http://127.0.0.1:8002/api/internal/dashboard/campaign-overview");
+        const res = await fetch("http://127.0.0.1:8000/api/internal/dashboard/campaign-overview");
         const data = await res.json();
 
         document.getElementById("active-count").textContent = data.active_campaigns;
@@ -123,7 +128,7 @@ generateBtn.addEventListener("click", async () => {
     output.innerHTML = "<p>Generating campaign...</p>";
 
     try {
-        const response = await fetch("http://127.0.0.1:8002/campaign/generate", {
+        const response = await fetch("http://127.0.0.1:8000/campaign/generate", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -157,8 +162,3 @@ output.innerHTML = `
         console.error(error);
     }
 });
-
-
-
-
-
