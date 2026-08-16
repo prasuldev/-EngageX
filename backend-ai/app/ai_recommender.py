@@ -25,11 +25,13 @@ import httpx
 # compete for quota with other Gemini usage (e.g. the AI assistant).
 # Falls back to the shared key if GEMINI_API_KEY_POLL isn't configured.
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY_POLL") or os.getenv("GEMINI_API_KEY")
-GEMINI_MODEL = "gemini-3.5-flash-lite"
+GEMINI_MODEL = "gemini-2.5-flash-lite"
 GEMINI_URL = (
     f"https://generativelanguage.googleapis.com/v1beta/models/"
     f"{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}"
 )
+
+
 
 # In-memory cache of generated questions per category. Resets on server
 # restart -- fine for this use case, keeps repeat visits consistent and

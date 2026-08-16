@@ -13,8 +13,7 @@ router = APIRouter(prefix="/api/internal/dashboard", tags=["dashboard"])
 
 @router.get("/campaign-performance")
 async def campaign_performance(
-    db=Depends(get_db),
-    current_user=Depends(require_role(["admin", "marketing_manager"]))
+    db=Depends(get_db)
 ):
     rows = await db.fetch(
         """
@@ -39,9 +38,9 @@ async def campaign_performance(
 
 @router.get("/campaign-overview")
 async def campaign_overview(
-    db=Depends(get_db),
-    current_user=Depends(require_role(["admin", "marketing_manager"]))
+    db=Depends(get_db)
 ):
+
     row = await db.fetchrow(
         """
         SELECT
@@ -56,8 +55,7 @@ async def campaign_overview(
 
 @router.get("/beauty-match-performance")
 async def beauty_match_performance(
-    db=Depends(get_db),
-    current_user=Depends(require_role(["admin", "marketing_manager"]))
+    db=Depends(get_db)
 ):
     rows = await db.fetch(
         """

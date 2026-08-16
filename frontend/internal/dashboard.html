@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>EngageX Internal — Dashboard</title>
-  <link rel="stylesheet" href="css/dashboard.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EngageX Dashboard</title>
+
+    <link rel="stylesheet" href="css/dashboard.css">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 </head>
+
 <body>
+
   <header class="topbar">
     <h1>EngageX Dashboard</h1>
     <span id="live-status" style="font-size:13px;"></span>
@@ -15,64 +21,44 @@
     </div>
   </header>
 
-  <main>
-    <section class="overview-cards" id="overview-cards">
-      <div class="card"><span class="card-label">Active campaigns</span><span class="card-value" id="active-count">–</span></div>
-      <div class="card"><span class="card-label">Inactive campaigns</span><span class="card-value" id="inactive-count">–</span></div>
-      <div class="card"><span class="card-label">Total campaigns</span><span class="card-value" id="total-count">–</span></div>
-    </section>
 
-    <section>
-      <h2>Campaign performance</h2>
-      <table id="performance-table">
-        <thead>
-          <tr><th>Title</th><th>Type</th><th>Status</th><th>Participants</th><th>Responses</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </section>
+<div class="container">
 
-    <section>
-  <h2>Beauty Match performance</h2>
+    <!-- Sidebar -->
+    <aside class="sidebar">
 
-  <table id="beauty-match-table">
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Plays</th>
-        <th>Completions</th>
-        <th>Avg moves</th>
-        <th>Avg time (s)</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</section>
+        <div class="logo">
+            <h2>EngageX</h2>
+        </div>
 
-<section class="ai-generator">
-  <h2>AI Campaign Generator</h2>
+        <ul>
 
-  <div class="generator-box">
-    <input
-      type="text"
-      id="product"
-      placeholder="Product Name">
+            <li class="active">
+                <i class="fa-solid fa-chart-line"></i>
+                Dashboard
+            </li>
 
-    <input
-      type="text"
-      id="audience"
-      placeholder="Target Audience">
+            <li>
+                <i class="fa-solid fa-bullhorn"></i>
+                Campaigns
+            </li>
 
-    <input
-      type="text"
-      id="goal"
-      placeholder="Campaign Goal">
+            <li>
+                <i class="fa-solid fa-chart-pie"></i>
+                Analytics
+            </li>
 
-    <button id="generateBtn">
-      Generate Campaign
-    </button>
-  </div>
+            <li>
+                <i class="fa-solid fa-robot"></i>
+                AI Generator
+            </li>
 
+            <li>
+                <i class="fa-solid fa-gear"></i>
+                Settings
+            </li>
+
+ Updated upstream
   <div id="campaignOutput"></div>
 </section>
       <table id="beauty-match-table">
@@ -116,8 +102,109 @@
     </section>
   </main>
 
-  <script src="js/auth.js"></script>
-  <script src="js/ws-client.js"></script>
-  <script src="js/dashboard.js"></script>
+
+
+
+        </ul>
+
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+
+        <header class="topbar">
+
+            <h1>Dashboard</h1>
+
+            <button id="logout-btn">
+                Logout
+            </button>
+
+        </header>
+
+        <section class="cards">
+
+            <div class="card">
+                <h3>Active Campaigns</h3>
+                <h2 id="active-count">0</h2>
+            </div>
+
+            <div class="card">
+                <h3>Inactive Campaigns</h3>
+                <h2 id="inactive-count">0</h2>
+            </div>
+
+            <div class="card">
+                <h3>Total Campaigns</h3>
+                <h2 id="total-count">0</h2>
+            </div>
+
+            <div class="card">
+                <h3>AI Generated</h3>
+                <h2>∞</h2>
+            </div>
+
+        </section>
+
+        <section class="generator">
+
+            <h2>AI Campaign Generator</h2>
+
+            <input id="product" placeholder="Product Name">
+
+            <input id="audience" placeholder="Target Audience">
+
+            <input id="goal" placeholder="Campaign Goal">
+
+            <button id="generateBtn">
+                Generate Campaign
+            </button>
+
+            <div id="campaignOutput"></div>
+
+        </section>
+
+        <section class="table-section">
+
+            <h2>Campaign Performance</h2>
+
+            <table id="performance-table">
+
+                <thead>
+
+                <tr>
+
+                    <th>Title</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Participants</th>
+                    <th>Responses</th>
+
+                </tr>
+
+                </thead>
+
+                <tbody></tbody>
+
+            </table>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/ws-client.js"></script>
+<script src="js/dashboard.js"></script>
+
+Stashed changes
 </body>
 </html>
+
+
+
+
+
+
+

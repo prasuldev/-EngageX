@@ -1,6 +1,6 @@
 const SESSION_KEY = "loggedInUser";
 const TOKEN_KEY = "authToken";
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "http://127.0.0.1:8002";
 
 // ---- Save session after login/register ----
 function saveSession(token, user) {

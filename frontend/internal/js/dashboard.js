@@ -1,3 +1,22 @@
+
+async function apiGet(path) {
+    try {
+        const token = localStorage.getItem("internal_token");
+        const response = await fetch(`${API_BASE}${path}`, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error("apiGet error:", error);
+        return null;
+    }
+}
+
 requireAuth();
 connectDashboardWS();
 
@@ -85,9 +104,7 @@ async function loadAIInsights(forceRefresh = false) {
 document.getElementById("refresh-insights-btn").addEventListener("click", () => loadAIInsights(true));
 
 
-loadOverview();
-loadPerformance();
-loadBeautyMatch();
+loadDashboard();
 loadCustomerSegments();
 loadAIInsights();
 
@@ -120,16 +137,28 @@ generateBtn.addEventListener("click", async () => {
 
         const data = await response.json();
 
-        output.innerHTML = `
-            <h3>${data.title}</h3>
-            <strong>Headline:</strong>
-            <p>${data.headline}</p>
+output.innerHTML = `
+    <div class="campaign-result">
+        <h3>✨ AI Generated Campaign</h3>
 
-            <strong>Description:</strong>
-            <p>${data.description}</p>
-        `;
+        <div class="campaign-meta">
+            <p><strong>Product:</strong> ${data.product}</p>
+            <p><strong>Audience:</strong> ${data.audience}</p>
+            <p><strong>Goal:</strong> ${data.goal}</p>
+        </div>
+
+        <div class="campaign-content">
+            <pre>${data.campaign}</pre>
+        </div>
+    </div>
+`;
     } catch (error) {
         output.innerHTML = "<p style='color:red;'>Unable to connect to backend.</p>";
         console.error(error);
     }
 });
+
+
+
+
+
