@@ -6,205 +6,166 @@
     <title>EngageX Dashboard</title>
 
     <link rel="stylesheet" href="css/dashboard.css">
-
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 </head>
-
 <body>
 
-  <header class="topbar">
+<header class="topbar">
     <h1>EngageX Dashboard</h1>
     <span id="live-status" style="font-size:13px;"></span>
     <div class="user-info">
-      <span id="user-greeting"></span>
-      <button id="logout-btn">Log out</button>
+        <span id="user-greeting"></span>
+        <button id="logout-btn">Log out</button>
     </div>
-  </header>
-
+</header>
 
 <div class="container">
 
     <!-- Sidebar -->
     <aside class="sidebar">
-
         <div class="logo">
             <h2>EngageX</h2>
         </div>
 
-        <ul>
-
-            <li class="active">
-                <i class="fa-solid fa-chart-line"></i>
-                Dashboard
+        <ul id="sidebar-nav">
+            <li class="active" data-target="panel-dashboard">
+                <i class="fa-solid fa-chart-line"></i> Dashboard
             </li>
-
-            <li>
-                <i class="fa-solid fa-bullhorn"></i>
-                Campaigns
+            <li data-target="panel-campaigns">
+                <i class="fa-solid fa-bullhorn"></i> Campaigns
             </li>
-
-            <li>
-                <i class="fa-solid fa-chart-pie"></i>
-                Analytics
+            <li data-target="panel-analytics">
+                <i class="fa-solid fa-chart-pie"></i> Analytics
             </li>
-
-            <li>
-                <i class="fa-solid fa-robot"></i>
-                AI Generator
+            <li data-target="panel-generator">
+                <i class="fa-solid fa-robot"></i> AI Generator
             </li>
-
-            <li>
-                <i class="fa-solid fa-gear"></i>
-                Settings
+            <li data-target="panel-settings">
+                <i class="fa-solid fa-gear"></i> Settings
             </li>
-
- Updated upstream
-  <div id="campaignOutput"></div>
-</section>
-      <table id="beauty-match-table">
-        <thead>
-          <tr><th>Title</th><th>Plays</th><th>Completions</th><th>Avg moves</th><th>Avg time (s)</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </section>
-
-    <section>
-      <h2>Customer segments</h2>
-      <div class="overview-cards" id="segment-funnel-cards">
-        <div class="card"><span class="card-label">Total responses</span><span class="card-value" id="funnel-total">–</span></div>
-        <div class="card"><span class="card-label">Unique profiles</span><span class="card-value" id="funnel-profiles">–</span></div>
-        <div class="card"><span class="card-label">Unique users</span><span class="card-value" id="funnel-users">–</span></div>
-      </div>
-
-      <h3>Skin type breakdown</h3>
-      <table id="skin-type-table">
-        <thead>
-          <tr><th>Skin type</th><th>Responses</th><th>Unique users</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-
-      <h3>Top concerns</h3>
-      <table id="top-concerns-table">
-        <thead>
-          <tr><th>Concern</th><th>Count</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </section>
-
-    <section>
-      <h2>AI Insights</h2>
-      <button id="refresh-insights-btn">Refresh insights</button>
-      <ul id="ai-insights-list"></ul>
-      <span id="insights-generated-at" style="font-size:12px; color:#888;"></span>
-    </section>
-  </main>
-
-
-
-
         </ul>
-
     </aside>
 
     <!-- Main -->
     <main class="main">
 
-        <header class="topbar">
-
-            <h1>Dashboard</h1>
-
-            <button id="logout-btn">
-                Logout
-            </button>
-
-        </header>
-
-        <section class="cards">
-
-            <div class="card">
-                <h3>Active Campaigns</h3>
-                <h2 id="active-count">0</h2>
+        <!-- Dashboard panel -->
+        <section id="panel-dashboard" class="panel active">
+            <h2>Dashboard</h2>
+            <div class="cards">
+                <div class="card">
+                    <h3>Active Campaigns</h3>
+                    <h2 id="active-count">0</h2>
+                </div>
+                <div class="card">
+                    <h3>Inactive Campaigns</h3>
+                    <h2 id="inactive-count">0</h2>
+                </div>
+                <div class="card">
+                    <h3>Total Campaigns</h3>
+                    <h2 id="total-count">0</h2>
+                </div>
+                <div class="card">
+                    <h3>AI Generated</h3>
+                    <h2>&#8734;</h2>
+                </div>
             </div>
-
-            <div class="card">
-                <h3>Inactive Campaigns</h3>
-                <h2 id="inactive-count">0</h2>
-            </div>
-
-            <div class="card">
-                <h3>Total Campaigns</h3>
-                <h2 id="total-count">0</h2>
-            </div>
-
-            <div class="card">
-                <h3>AI Generated</h3>
-                <h2>∞</h2>
-            </div>
-
         </section>
 
-        <section class="generator">
-
-            <h2>AI Campaign Generator</h2>
-
-            <input id="product" placeholder="Product Name">
-
-            <input id="audience" placeholder="Target Audience">
-
-            <input id="goal" placeholder="Campaign Goal">
-
-            <button id="generateBtn">
-                Generate Campaign
-            </button>
-
-            <div id="campaignOutput"></div>
-
-        </section>
-
-        <section class="table-section">
-
+        <!-- Campaigns panel -->
+        <section id="panel-campaigns" class="panel">
             <h2>Campaign Performance</h2>
-
             <table id="performance-table">
-
                 <thead>
-
-                <tr>
-
-                    <th>Title</th>
-                    <th>Type</th>
-                    <th>Status</th>
-                    <th>Participants</th>
-                    <th>Responses</th>
-
-                </tr>
-
+                    <tr>
+                        <th>Title</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Participants</th>
+                        <th>Responses</th>
+                    </tr>
                 </thead>
-
                 <tbody></tbody>
+            </table>
+        </section>
 
+        <!-- Analytics panel -->
+        <section id="panel-analytics" class="panel">
+            <h2>Beauty Match performance</h2>
+            <table id="beauty-match-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Plays</th>
+                        <th>Completions</th>
+                        <th>Avg moves</th>
+                        <th>Avg time (s)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
             </table>
 
+            <h2>Customer segments</h2>
+            <div class="overview-cards" id="segment-funnel-cards">
+                <div class="card">
+                    <span class="card-label">Total responses</span>
+                    <span class="card-value" id="funnel-total">–</span>
+                </div>
+                <div class="card">
+                    <span class="card-label">Unique profiles</span>
+                    <span class="card-value" id="funnel-profiles">–</span>
+                </div>
+                <div class="card">
+                    <span class="card-label">Unique users</span>
+                    <span class="card-value" id="funnel-users">–</span>
+                </div>
+            </div>
+
+            <h3>Skin type breakdown</h3>
+            <table id="skin-type-table">
+                <thead>
+                    <tr><th>Skin type</th><th>Responses</th><th>Unique users</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+            <h3>Top concerns</h3>
+            <table id="top-concerns-table">
+                <thead>
+                    <tr><th>Concern</th><th>Count</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+            <h2>AI Insights</h2>
+            <button id="refresh-insights-btn">Refresh insights</button>
+            <ul id="ai-insights-list"></ul>
+            <span id="insights-generated-at" style="font-size:12px; color:#888;"></span>
+        </section>
+
+        <!-- AI Generator panel -->
+        <section id="panel-generator" class="panel">
+            <h2>AI Campaign Generator</h2>
+            <input id="product" placeholder="Product Name">
+            <input id="audience" placeholder="Target Audience">
+            <input id="goal" placeholder="Campaign Goal">
+            <button id="generateBtn">Generate Campaign</button>
+            <div id="campaignOutput"></div>
+        </section>
+
+        <!-- Settings panel -->
+        <section id="panel-settings" class="panel">
+            <h2>Settings</h2>
+            <p>Nothing here yet.</p>
         </section>
 
     </main>
-
 </div>
 
 <script src="js/auth.js"></script>
 <script src="js/ws-client.js"></script>
+<script src="js/sidebar-nav.js"></script>
 <script src="js/dashboard.js"></script>
 
-Stashed changes
 </body>
 </html>
-
-
-
-
-
-
-

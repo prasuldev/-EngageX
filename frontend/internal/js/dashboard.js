@@ -168,6 +168,7 @@ function initDashboard() {
 
     document.getElementById("generateBtn")
         .addEventListener("click", handleGenerateCampaign);
+
 }
 
 document.addEventListener("DOMContentLoaded", initDashboard);
