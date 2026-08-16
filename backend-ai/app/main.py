@@ -14,7 +14,12 @@ from app.routes.campaign_routes import router as campaign_router
 from app.routes.dashboard_routes import router as dashboard_router
 from app.routes.dashboard_ws import router as dashboard_ws_router
 from app.routes.ai_campaign_routes import router as ai_campaign_router
-
+from app.routes.wishlist_routes import router as wishlist_router
+from app.routes.cart_routes import router as cart_router
+from app.routes.address_routes import router as address_router
+from app.routes.order_routes import router as order_router
+from app.routes.review_routes import router as review_router
+from app.routes.profile_routes import router as profile_router
 
 app = FastAPI(title="EngageX API")
 
@@ -42,6 +47,12 @@ app.include_router(campaign_router)
 app.include_router(dashboard_router)
 app.include_router(dashboard_ws_router)
 app.include_router(ai_campaign_router)
+app.include_router(wishlist_router)
+app.include_router(cart_router)
+app.include_router(address_router)
+app.include_router(order_router)
+app.include_router(review_router)
+app.include_router(profile_router)
 
 @app.get("/")
 def home():

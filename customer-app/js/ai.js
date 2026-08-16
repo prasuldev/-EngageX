@@ -1,224 +1,216 @@
 import { sendMessage } from "../services/aiservice.js";
-import { renderAIResponse } from "../components/messagerenderer.js";
-import { getChatHistory, saveMessage } from "../services/chathistoryservice.js";
-import { clearChatHistory } from "../services/chathistoryservice.js";
+import { appendMessage, renderAIResponse } from "../components/messagerenderer.js";
+import { getChatHistory, saveMessage, clearChatHistory } from "../services/chathistoryservice.js";
+
 function initializeAI() {
 
-    console.log("AI JS Started");
-    /* ===========================================
-       Get Elements
-    =========================================== */
+    const toggleBtn = document.getElementById("ai-toggle-btn");
+    const welcomeCard = document.getElementById("ai-welcome-card");
+    const openChatBtn = document.getElementById("open-chat-btn");
+    const closeWelcomeBtn = document.getElementById("close-welcome");
+    const clearChatBtn = document.getElementById("clear-chat");
+    const chatWindow = document.getElementById("ai-chat-window");
+    const closeChatBtn = document.getElementById("close-chat");
+    const sendBtn = document.getElementById("send-btn");
+    const input = document.getElementById("message-input");
+    const chatMessages = document.getElementById("chat-messages");
+    const typingIndicator = document.getElementById("typing-indicator");
+    const quickActions = document.querySelectorAll(".quick-action");
+    const statusDot = document.querySelector(".assistant-info span");
 
-const toggleBtn = document.getElementById("ai-toggle-btn");
-const welcomeCard = document.getElementById("ai-welcome-card");
-const openChatBtn = document.getElementById("open-chat-btn");
-const closeWelcomeBtn = document.getElementById("close-welcome");
-const chatWindow = document.getElementById("ai-chat-window");
-const closeChatBtn = document.getElementById("close-chat");
-const sendBtn = document.getElementById("send-btn");
-const input = document.getElementById("message-input");
-const chatMessages = document.getElementById("chat-messages");
-const typingIndicator = document.getElementById("typing-indicator");
-const quickActions = document.querySelectorAll(".quick-action");
+    let isWaitingForReply = false;
+    let welcomeShowTimer = null;
+    let welcomeHideTimer = null;
 
-    /* ===========================================
-       Show Welcome Popup
-    =========================================== */
-
-setTimeout(() => {
-    if (welcomeCard) {
-        welcomeCard.style.display = "block";
+    // Accessibility: announce new messages to screen readers
+    if (chatMessages) {
+        chatMessages.setAttribute("aria-live", "polite");
+        chatMessages.setAttribute("aria-relevant", "additions");
     }
-}, 3000);
 
     /* ===========================================
-       Auto Hide Welcome
+       Welcome Popup — shown to all visitors
     =========================================== */
 
-setTimeout(() => {
     if (welcomeCard) {
-        welcomeCard.style.display = "none";
+        welcomeShowTimer = setTimeout(() => {
+            welcomeCard.style.display = "block";
+            welcomeHideTimer = setTimeout(() => {
+                welcomeCard.style.display = "none";
+            }, 10000);
+        }, 3000);
     }
-}, 13000);
 
-    /* ===========================================
-       Close Welcome
-    =========================================== */
-
-if (closeWelcomeBtn) {
-    closeWelcomeBtn.addEventListener("click", () => {
-        welcomeCard.style.display = "none";
-    });
-}
-
-    /* ===========================================
-       Open Chat
-    =========================================== */
-
-function openChat() {
-    if (welcomeCard) {
-        welcomeCard.style.display = "none";
+    function dismissWelcome() {
+        clearTimeout(welcomeShowTimer);
+        clearTimeout(welcomeHideTimer);
+        if (welcomeCard) welcomeCard.style.display = "none";
     }
-    chatWindow.style.display = "flex";
-    input.focus();
-}
+
+    if (closeWelcomeBtn) {
+        closeWelcomeBtn.addEventListener("click", dismissWelcome);
+    }
 
     /* ===========================================
-       Close Chat
+       Open / Close Chat
     =========================================== */
 
-function closeChat() {
-    chatWindow.style.display = "none";
-}
-if (toggleBtn) {
-    toggleBtn.addEventListener("click", openChat);
-}
+    function openChat() {
+        dismissWelcome();
+        chatWindow.style.display = "flex";
+        input.focus();
+    }
 
-if (openChatBtn) {
-    openChatBtn.addEventListener("click", openChat);
-}
+    function closeChat() {
+        chatWindow.style.display = "none";
+    }
 
-if (closeChatBtn) {
-    closeChatBtn.addEventListener("click", closeChat);
-}
+    if (toggleBtn) toggleBtn.addEventListener("click", openChat);
+    if (openChatBtn) openChatBtn.addEventListener("click", openChat);
+    if (closeChatBtn) closeChatBtn.addEventListener("click", closeChat);
 
     /* ===========================================
-       Add Message
+       Clear Chat
     =========================================== */
 
-function addMessage(message, sender) {
-    const wrapper = document.createElement("div");
-    wrapper.className = sender + "-message";
-    const content = document.createElement("div");
-    content.className = "message-content";
-    content.textContent = message;
-    wrapper.appendChild(content);
-    chatMessages.appendChild(wrapper);
-    scrollBottom();
-}
-
-    /* ===========================================
-       Scroll Bottom
-    =========================================== */
-const chatBody = document.querySelector(".chat-body");
-
-function scrollBottom() {
-    chatBody.scrollTop = chatBody.scrollHeight;
-}
+    if (clearChatBtn) {
+        clearChatBtn.addEventListener("click", () => {
+            if (!confirm("Clear this conversation? This can't be undone.")) return;
+            clearChatHistory();
+            chatMessages.innerHTML = "";
+        });
+    }
 
     /* ===========================================
        Typing Animation
     =========================================== */
 
-function showTyping() {
-    if (typingIndicator) {
-        typingIndicator.style.display = "flex";
+    function showTyping() {
+        if (typingIndicator) typingIndicator.style.display = "flex";
+        const chatBody = document.querySelector(".chat-body");
+        if (chatBody) chatBody.scrollTop = chatBody.scrollHeight;
     }
-    scrollBottom();
-}
 
-function hideTyping() {
-    if (typingIndicator) {
-        typingIndicator.style.display = "none";
+    function hideTyping() {
+        if (typingIndicator) typingIndicator.style.display = "none";
     }
-}
 
-async function botReply(userMessage) {
-    showTyping();
+    /* ===========================================
+       Connection status indicator
+    =========================================== */
 
-    try {
+    function setStatus(state) {
+        if (!statusDot) return;
+        const labels = {
+            online: "● Online",
+            waiting: "● Thinking…",
+            error: "● Connection issue",
+        };
+        statusDot.textContent = labels[state] || labels.online;
+        statusDot.dataset.state = state;
+    }
 
-        const history = getChatHistory();
-        const data = await sendMessage(userMessage, history);
-        hideTyping();
-        if (data.reply) {
-            renderAIResponse(data);
-            saveMessage("assistant", data.reply);
+    /* ===========================================
+       Send lock — prevents concurrent/duplicate sends
+    =========================================== */
 
-        } else {
-            addMessage(
-                "Sorry, I couldn't process that.",
-                "bot"
-            );
+    function setSending(sending) {
+        isWaitingForReply = sending;
+        if (sendBtn) sendBtn.disabled = sending;
+        if (input) input.disabled = sending;
+        quickActions.forEach(btn => btn.disabled = sending);
+    }
+
+    /* ===========================================
+       Bot reply with real error differentiation
+    =========================================== */
+
+    async function botReply(userMessage) {
+        setSending(true);
+        setStatus("waiting");
+        showTyping();
+
+        try {
+            const history = getChatHistory();
+            const data = await sendMessage(userMessage, history);
+            hideTyping();
+            setStatus("online");
+
+            if (data && data.reply) {
+                renderAIResponse(data);
+                saveMessage("assistant", data.reply);
+            } else {
+                appendMessage("I couldn't quite process that — could you rephrase?", "bot");
+            }
+
+        } catch (error) {
+            hideTyping();
+            setStatus("error");
+            console.error("AI chat error:", error);
+
+            const status = error?.status;
+
+            if (status === 429) {
+                appendMessage("I'm getting a lot of requests right now — please try again in a moment.", "bot");
+            } else if (error.name === "AbortError") {
+                appendMessage("That took too long to respond. Please try again.", "bot");
+            } else if (!navigator.onLine) {
+                appendMessage("You're offline — check your connection and try again.", "bot");
+            } else {
+                appendMessage("Something went wrong on my end. Please try again shortly.", "bot");
+            }
+        } finally {
+            setSending(false);
+            input.focus();
         }
-
-    } catch (error) {
-        console.error(error);
-        hideTyping();
-        addMessage(
-            "Sorry, I'm having trouble connecting.",
-            "bot"
-        );
-
     }
-}
 
     /* ===========================================
        Send Message
     =========================================== */
 
-function handlesendMessage() {
-    const message = input.value.trim();
-    if (message === "") return;
-    addMessage(message, "user");
-    saveMessage("user", message);
-    input.value = "";
-    botReply(message);
-}
+    function handlesendMessage() {
+        if (isWaitingForReply) return;
+        const message = input.value.trim();
+        if (message === "") return;
 
-if (sendBtn) {
-    sendBtn.addEventListener("click", handlesendMessage);
-}
+        appendMessage(message, "user");
+        saveMessage("user", message);
+        input.value = "";
+        botReply(message);
+    }
 
-    /* ===========================================
-       Enter Key
-    =========================================== */
+    if (sendBtn) sendBtn.addEventListener("click", handlesendMessage);
 
-if (input) {
+    if (input) {
+        input.addEventListener("keypress", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                handlesendMessage();
+            }
+        });
+    }
 
-    input.addEventListener("keypress", function (event) {
-
-        if (event.key === "Enter") {
-
-            event.preventDefault();
-
+    quickActions.forEach(button => {
+        button.addEventListener("click", () => {
+            if (isWaitingForReply) return;
+            const query = button.dataset.query || button.textContent.trim();
+            input.value = query;
             handlesendMessage();
-
-        }
-
+        });
     });
-
-}
 
     /* ===========================================
-       Quick Actions
+       Load previous messages (persisted via sessionStorage)
     =========================================== */
 
-quickActions.forEach(button => {
-    button.addEventListener("click", () => {
-        const query = button.dataset.query || button.textContent.trim();
-        input.value = query;
-        handlesendMessage();
-    });
-});
-
-function loadPreviousMessages() {
-
-    const history = getChatHistory();
-
-    history.forEach(msg => {
-
-        addMessage(
-            msg.content,
-            msg.role === "assistant"
-                ? "bot"
-                : "user"
-        );
-
-    });
-}
-loadPreviousMessages();
-
+    function loadPreviousMessages() {
+        const history = getChatHistory();
+        history.forEach(msg => {
+            appendMessage(msg.content, msg.role === "assistant" ? "bot" : "user");
+        });
+    }
+    loadPreviousMessages();
 }
 
 initializeAI();

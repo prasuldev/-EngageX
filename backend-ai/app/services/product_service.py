@@ -166,7 +166,7 @@ class ProductService:
                 c.name AS category,
                 p.price,
                 p.rating,
-                p.ingredients,
+                p.ingredients
             FROM products p
             LEFT JOIN brands b
                 ON p.brand_id = b.id

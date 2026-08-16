@@ -56,6 +56,35 @@ class IntentService:
 
     ]
 
+    PURCHASE_KEYWORDS = [
+
+        "how to buy",
+        "how do i buy",
+        "how can i buy",
+        "how to purchase",
+        "how do i purchase",
+        "how can i purchase",
+        "how to order",
+        "how do i order",
+        "how can i order",
+        "buy this",
+        "purchase this",
+        "order this"
+
+    ]
+
+    @staticmethod
+    def _detect_category(text: str):
+        """
+        Shared category-keyword lookup, used both for plain category
+        recommendations and to give purchase queries product context
+        (e.g. "how do I buy a moisturizer" still carries category="Moisturizer").
+        """
+        for category, keywords in IntentService.CATEGORY_KEYWORDS.items():
+            if any(keyword in text for keyword in keywords):
+                return category
+        return None
+
     @staticmethod
     def detect_intent(message: str):
 
@@ -100,6 +129,21 @@ class IntentService:
             return {
                 "intent": "greeting",
                 "category": None,
+                "ingredient": None,
+                "min_price": min_price,
+                "max_price": max_price,
+                "products": []
+            }
+
+        # Purchase
+        # Checked before comparison/ingredient/routine/category so a message
+        # like "how do I buy a moisturizer" is classified as a purchase
+        # question rather than a plain category recommendation.
+        if any(keyword in text for keyword in IntentService.PURCHASE_KEYWORDS):
+
+            return {
+                "intent": "purchase",
+                "category": IntentService._detect_category(text),
                 "ingredient": None,
                 "min_price": min_price,
                 "max_price": max_price,
@@ -154,18 +198,18 @@ class IntentService:
             }
 
         # Category Recommendation
-        for category, keywords in IntentService.CATEGORY_KEYWORDS.items():
+        category = IntentService._detect_category(text)
 
-            if any(keyword in text for keyword in keywords):
+        if category:
 
-                return {
-                    "intent": "recommendation",
-                    "category": category,
-                    "ingredient": None,
-                    "min_price": min_price,
-                    "max_price": max_price,
-                    "products": []
-                }
+            return {
+                "intent": "recommendation",
+                "category": category,
+                "ingredient": None,
+                "min_price": min_price,
+                "max_price": max_price,
+                "products": []
+            }
 
         # Default
         return {
