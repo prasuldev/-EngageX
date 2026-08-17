@@ -33,30 +33,38 @@ manager = ConnectionManager()
 
 @router.websocket("/api/internal/dashboard/ws")
 async def dashboard_ws(websocket: WebSocket, token: str = Query(...)):
-    payload = decode_access_token(token)
-    if payload is None:
-        await websocket.close(code=1008)
-        return
-
-    user_id = int(payload["sub"])
-
-    async with database.pool.acquire() as conn:
-        user = await conn.fetchrow(
-            """
-            SELECT r.name AS role
-            FROM users u JOIN roles r ON u.role_id = r.id
-            WHERE u.id = $1
-            """,
-            user_id
-        )
-
-    if not user or user["role"] not in ("admin", "marketing_manager"):
-        await websocket.close(code=1008)
-        return
-
-    await manager.connect(websocket)
+    await websocket.accept()
     try:
-        while True:
-            await websocket.receive_text()  # keep connection alive; content unused
-    except WebSocketDisconnect:
-        manager.disconnect(websocket)
+        payload = decode_access_token(token)
+        if payload is None:
+            await websocket.close(code=4401, reason="Invalid or expired token")
+            return
+
+        user_id = int(payload["sub"])
+
+        async with database.pool.acquire() as conn:
+            user = await conn.fetchrow(
+                """
+                SELECT r.name AS role
+                FROM users u JOIN roles r ON u.role_id = r.id
+                WHERE u.id = $1
+                """,
+                user_id
+            )
+
+        if not user or user["role"] not in ("admin", "marketing_manager"):
+            await websocket.close(code=1008)
+            return
+
+        await manager.connect(websocket)
+        try:
+            while True:
+                await websocket.receive_text()  # keep connection alive; content unused
+        except WebSocketDisconnect:
+            manager.disconnect(websocket)
+            
+    except Exception as e:
+        import traceback
+        print(f"[dashboard_ws] error for user token: {e}")
+        traceback.print_exc()
+        await websocket.close(code=1011, reason="Internal error")

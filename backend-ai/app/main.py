@@ -20,12 +20,15 @@ from app.routes.address_routes import router as address_router
 from app.routes.order_routes import router as order_router
 from app.routes.review_routes import router as review_router
 from app.routes.profile_routes import router as profile_router
+from app.routes.admin_order_routes import router as admin_order_router
+from app.routes.recommendation_routes import router as recommendation_router
+from app.routes.activity_routes import router as activity_router
 
 app = FastAPI(title="EngageX API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:5500", "http://localhost:5500"],
+    allow_origins=["http://127.0.0.1:5500", "http://localhost:5500", "http://127.0.0.1:<mac_port>"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -53,6 +56,9 @@ app.include_router(address_router)
 app.include_router(order_router)
 app.include_router(review_router)
 app.include_router(profile_router)
+app.include_router(admin_order_router)
+app.include_router(recommendation_router)
+app.include_router(activity_router)
 
 @app.get("/")
 def home():
