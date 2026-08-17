@@ -1,3 +1,5 @@
+from app.services.activity_service import ActivityService
+
 class WishlistService:
 
     @staticmethod
@@ -13,6 +15,7 @@ class WishlistService:
                 user_id,
                 product_id
             )
+
             VALUES ($1, $2)
             ON CONFLICT (
                 user_id,
@@ -22,6 +25,12 @@ class WishlistService:
             """,
             user_id,
             product_id
+        )
+        await ActivityService.log_activity(
+            db,
+            user_id,
+            product_id,
+            "wishlist_add"
         )
 
         return {

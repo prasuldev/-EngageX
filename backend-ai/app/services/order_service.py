@@ -1,3 +1,5 @@
+from app.services.activity_service import ActivityService
+
 class OrderService:
 
     @staticmethod
@@ -73,6 +75,13 @@ class OrderService:
                 item["product_id"],
                 item["quantity"],
                 item["price"]
+            )
+
+            await ActivityService.log_activity(
+                db,
+                user_id,
+                item["product_id"],
+                "purchase"
             )
 
         # Clear cart
@@ -248,4 +257,37 @@ class OrderService:
             "success": True,
             "order": dict(order),
             "items": [dict(item) for item in items]
+        }
+
+    @staticmethod
+    async def track_order(
+        db,
+        user_id: int,
+        order_id: int
+    ):
+
+        order = await db.fetchrow(
+            """
+            SELECT
+                id,
+                total_amount,
+                status,
+                created_at
+            FROM orders
+            WHERE id = $1
+            AND user_id = $2
+            """,
+            order_id,
+            user_id
+        )
+
+        if not order:
+            return {
+                "success": False,
+                "message": "Order not found"
+            }
+
+        return {
+            "success": True,
+            "order": dict(order)
         }

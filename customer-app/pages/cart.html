@@ -1,0 +1,93 @@
+# cart.html
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart | Maquillage</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-50">
+
+    <div class="max-w-7xl mx-auto px-6 py-10">
+
+        <h1 class="text-4xl font-bold mb-10">
+            Shopping Cart
+        </h1>
+
+        <div class="grid lg:grid-cols-3 gap-10">
+
+            <!-- Cart Items -->
+            <div
+                id="cart-items"
+                class="lg:col-span-2 space-y-6">
+
+            </div>
+
+            <!-- Order Summary -->
+            <div
+                class="bg-white rounded-xl shadow-md p-6 h-fit">
+
+                <h2 class="text-2xl font-semibold mb-6">
+                    Order Summary
+                </h2>
+
+                <div class="space-y-3">
+
+                    <div class="flex justify-between">
+                        <span>Subtotal</span>
+                        <span id="subtotal">
+                            ₹0
+                        </span>
+                    </div>
+
+                    <div class="flex justify-between">
+                        <span>Shipping</span>
+                        <span>
+                            Free
+                        </span>
+                    </div>
+
+                    <hr>
+
+                    <div
+                        class="flex justify-between text-xl font-bold">
+
+                        <span>Total</span>
+
+                        <span
+                            id="total"
+                            class="text-pink-600">
+
+                            ₹0
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <button
+                    class="w-full mt-6 bg-pink-600 text-white py-3 rounded-lg hover:bg-pink-700 transition">
+
+                    Proceed to Checkout
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script type="module" src="../js/cart.js"></script>
+
+</body>
+
+</html>
+```

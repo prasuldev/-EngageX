@@ -63,3 +63,17 @@ async def get_order_details(
         user_id,
         order_id
     )
+
+@router.get("/{order_id}/track")
+async def track_order(
+    order_id: int,
+    db: asyncpg.Connection = Depends(get_db)
+):
+
+    user_id = 1
+
+    return await OrderService.track_order(
+        db,
+        user_id,
+        order_id
+    )

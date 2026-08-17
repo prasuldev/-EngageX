@@ -1,3 +1,5 @@
+from app.services.activity_service import ActivityService
+
 class CartService:
 
     @staticmethod
@@ -15,6 +17,7 @@ class CartService:
                 product_id,
                 quantity
             )
+
             VALUES ($1,$2,$3)
 
             ON CONFLICT (
@@ -28,6 +31,13 @@ class CartService:
             user_id,
             product_id,
             quantity
+        )
+
+        await ActivityService.log_activity(
+            db,
+            user_id,
+            product_id,
+            "cart_add"
         )
 
         return {

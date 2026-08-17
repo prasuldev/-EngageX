@@ -1,3 +1,5 @@
+from app.services.activity_service import ActivityService
+
 class ReviewService:
 
     @staticmethod
@@ -49,6 +51,13 @@ class ReviewService:
             product_id,
             rating,
             review
+        )
+
+        await ActivityService.log_activity(
+            db,
+            user_id,
+            product_id,
+            "review"
         )
 
         # Calculate average rating
