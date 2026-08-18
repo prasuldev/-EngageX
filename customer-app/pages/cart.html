@@ -1,56 +1,144 @@
-# cart.html
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Shopping Cart | Maquillage</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
 
 <body class="bg-gray-50">
 
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+
+        <div class="max-w-7xl mx-auto px-6">
+
+            <div class="flex items-center justify-between h-20">
+
+                <a
+                    href="../pages/home.html"
+                    class="flex items-center gap-3">
+
+                    <span class="text-4xl">🌸</span>
+
+                    <span class="text-3xl font-bold text-pink-600">
+                        Maquillage
+                    </span>
+
+                </a>
+
+                <a
+                    href="../pages/cart.html"
+                    class="relative">
+
+                    🛒
+
+                    <span
+                        id="cart-count"
+                        class="absolute -top-2 -right-2
+                               w-5 h-5
+                               flex items-center justify-center
+                               bg-pink-600 text-white
+                               rounded-full
+                               text-[10px]
+                               font-semibold
+                               hidden">
+
+                        0
+
+                    </span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+    <!-- Page Content -->
     <div class="max-w-7xl mx-auto px-6 py-10">
 
-        <h1 class="text-4xl font-bold mb-10">
-            Shopping Cart
-        </h1>
+        <div class="mb-10">
 
-        <div class="grid lg:grid-cols-3 gap-10">
+            <h1 class="text-4xl font-bold">
+                Shopping Cart
+            </h1>
 
-            <!-- Cart Items -->
-            <div
-                id="cart-items"
-                class="lg:col-span-2 space-y-6">
+            <p class="text-gray-500 mt-2">
+                Review your selected beauty products
+            </p>
+
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+
+            <!-- Cart Section -->
+            <div class="lg:col-span-2">
+
+                <div
+                    id="cart-items"
+                    class="space-y-6">
+
+                </div>
+
+                <!-- Continue Shopping -->
+                <div class="mt-8">
+
+                    <a
+                        href="../pages/products.html"
+                        class="inline-flex items-center gap-2 text-pink-600 font-medium hover:underline">
+
+                        ← Continue Shopping
+
+                    </a>
+
+                </div>
 
             </div>
 
             <!-- Order Summary -->
             <div
-                class="bg-white rounded-xl shadow-md p-6 h-fit">
+                class="bg-white rounded-2xl shadow-md p-6 h-fit sticky top-24">
 
                 <h2 class="text-2xl font-semibold mb-6">
                     Order Summary
                 </h2>
 
-                <div class="space-y-3">
+                <div class="space-y-4">
 
                     <div class="flex justify-between">
-                        <span>Subtotal</span>
-                        <span id="subtotal">
-                            ₹0
+
+                        <span class="text-gray-600">
+                            Subtotal
                         </span>
+
+                        <span
+                            id="subtotal"
+                            class="font-medium">
+
+                            ₹0
+
+                        </span>
+
                     </div>
 
                     <div class="flex justify-between">
-                        <span>Shipping</span>
-                        <span>
+
+                        <span class="text-gray-600">
+                            Shipping
+                        </span>
+
+                        <span class="text-green-600">
                             Free
                         </span>
+
                     </div>
 
                     <hr>
@@ -58,7 +146,9 @@
                     <div
                         class="flex justify-between text-xl font-bold">
 
-                        <span>Total</span>
+                        <span>
+                            Total
+                        </span>
 
                         <span
                             id="total"
@@ -73,11 +163,22 @@
                 </div>
 
                 <button
-                    class="w-full mt-6 bg-pink-600 text-white py-3 rounded-lg hover:bg-pink-700 transition">
+                    id="checkoutBtn"
+                    class="w-full mt-6 bg-pink-600 text-white py-3 rounded-xl hover:bg-pink-700 transition font-medium">
 
-                    Proceed to Checkout
+                    Secure Checkout
 
                 </button>
+
+                <div class="mt-6 text-sm text-gray-500 space-y-2">
+
+                    <div>🔒 Secure Payments</div>
+
+                    <div>🚚 Free Shipping</div>
+
+                    <div>↩ Easy Returns</div>
+
+                </div>
 
             </div>
 
@@ -85,9 +186,9 @@
 
     </div>
 
+    <script type="module" src="../js/navbar.js"></script>
     <script type="module" src="../js/cart.js"></script>
 
 </body>
 
 </html>
-```

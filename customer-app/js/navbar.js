@@ -7,9 +7,7 @@ function initializeNavbar() {
     if (mobileBtn && mobileMenu) {
 
         mobileBtn.addEventListener("click", () => {
-
             mobileMenu.classList.toggle("hidden");
-
         });
 
     }
@@ -19,9 +17,13 @@ function initializeNavbar() {
 
     if (profileBtn) {
 
-        profileBtn.addEventListener("click", () => {
+        profileBtn.addEventListener("click", (e) => {
 
-            const user = JSON.parse(localStorage.getItem("loggedInUser"));
+            e.preventDefault();
+
+            const user = JSON.parse(
+                localStorage.getItem("loggedInUser")
+            );
 
             if (user) {
                 window.location.href = "../pages/profile.html";
@@ -38,6 +40,8 @@ function initializeNavbar() {
         lucide.createIcons();
     }
 
+    // Initial Cart Count
+    updateCartCount();
 }
 
 function updateCartCount() {
@@ -55,11 +59,63 @@ function updateCartCount() {
         document.getElementById("cart-count");
 
     if (countElement) {
+
         countElement.textContent = totalItems;
+
+        // Hide badge when cart is empty
+        if (totalItems === 0) {
+            countElement.classList.add("hidden");
+        } else {
+            countElement.classList.remove("hidden");
+        }
+
     }
 }
 
+function updateWishlistCount() {
+
+    const wishlist = JSON.parse(
+        localStorage.getItem("wishlist") || "[]"
+    );
+
+    const countElement =
+        document.getElementById("wishlist-count");
+
+    if (!countElement) return;
+
+    if (wishlist.length > 0) {
+
+        countElement.textContent = wishlist.length;
+
+        countElement.classList.remove("hidden");
+
+    } else {
+
+        countElement.classList.add("hidden");
+    }
+}
+
+// Update when page loads
 document.addEventListener(
     "DOMContentLoaded",
+    () => {
+        initializeNavbar();
+        updateCartCount();
+        updateWishlistCount();
+    }
+);
+
+window.addEventListener(
+    "wishlistUpdated",
+    updateWishlistCount
+);
+
+// Update when cart changes
+window.addEventListener(
+    "cartUpdated",
     updateCartCount
 );
+
+window.initializeNavbar = initializeNavbar;
+window.updateCartCount = updateCartCount;
+window.updateWishlistCount = updateWishlistCount;

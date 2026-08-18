@@ -73,9 +73,22 @@
             <!-- Icons -->
             <div class="flex items-center gap-5">
 
-                <a href="../pages/wishlist.html" title="Wishlist">
+                <a
+                    href="../pages/wishlist.html"
+                    class="relative"
+                    title="Wishlist">
 
                     <i data-lucide="heart"></i>
+
+                    <span
+                        id="wishlist-count"
+                        class="hidden absolute -top-2 -right-2
+                                bg-pink-600 text-white
+                                rounded-full text-xs
+                                min-w-[18px] h-[18px]
+                                flex items-center justify-center">
+
+                    </span>
 
                 </a>
 

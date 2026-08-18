@@ -50,6 +50,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         initializeNavbar();
     }
 
+    if (typeof updateCartCount === "function") {
+        updateCartCount();
+    }
+
+    if (typeof updateWishlistCount === "function") {
+        updateWishlistCount();
+    }
+
     if (typeof initializeAI === "function") {
         initializeAI();
     }

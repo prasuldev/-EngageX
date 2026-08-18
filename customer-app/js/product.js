@@ -32,18 +32,145 @@ function addToCart(product) {
     );
 }
 
+function toggleWishlist(product) {
 
-function addToWishlist(product) {
+    const wishlist = JSON.parse(
+        localStorage.getItem("wishlist") || "[]"
+    );
 
-    const wishlist =
-        JSON.parse(localStorage.getItem("wishlist")) || [];
+    const exists = wishlist.find(
+        item => item.id === product.id
+    );
 
-    wishlist.push(product);
+    let updatedWishlist;
+
+    if (exists) {
+
+        updatedWishlist = wishlist.filter(
+            item => item.id !== product.id
+        );
+
+        showToast("Removed from Wishlist");
+
+    } else {
+
+        updatedWishlist = [
+            ...wishlist,
+            product
+        ];
+
+        showToast("❤ Added to Wishlist");
+    }
 
     localStorage.setItem(
         "wishlist",
-        JSON.stringify(wishlist)
+        JSON.stringify(updatedWishlist)
     );
+
+    window.dispatchEvent(
+        new Event("wishlistUpdated")
+    );
+}
+
+function isInCart(productId) {
+
+    const cart = JSON.parse(
+        localStorage.getItem("cart") || "[]"
+    );
+
+    return cart.some(
+        item => item.id === productId
+    );
+}
+
+function showToast(message) {
+
+    const existingToast =
+        document.getElementById("toast-message");
+
+    if (existingToast) {
+        existingToast.remove();
+    }
+
+    const toast = document.createElement("div");
+
+    toast.id = "toast-message";
+
+    toast.className =
+        "fixed top-24 right-6 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50";
+
+    toast.textContent = message;
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.remove();
+    }, 2500);
+}
+
+function updateCartButton(product, addCartBtn) {
+
+    if (!addCartBtn) return;
+
+    if (isInCart(product.id)) {
+
+        addCartBtn.textContent = "✓ Added to Cart";
+
+        addCartBtn.className =
+            "buy-btn bg-green-600 text-white";
+
+    } else {
+
+        addCartBtn.textContent = "Add to Cart";
+
+        addCartBtn.className = "buy-btn";
+    }
+}
+
+function removeFromCart(productId) {
+
+    const cart = JSON.parse(
+        localStorage.getItem("cart") || "[]"
+    );
+
+    const updatedCart = cart.filter(
+        item => item.id !== productId
+    );
+
+    localStorage.setItem(
+        "cart",
+        JSON.stringify(updatedCart)
+    );
+}
+
+function updateWishlistButton(product, button) {
+
+    const wishlist = JSON.parse(
+        localStorage.getItem("wishlist") || "[]"
+    );
+
+    const exists = wishlist.some(
+        item => item.id === product.id
+    );
+
+    if (exists) {
+
+        button.innerHTML = "❤ Wishlisted";
+
+        button.classList.add(
+            "bg-pink-600",
+            "text-white"
+        );
+
+    } else {
+
+        button.innerHTML = "❤ Wishlist";
+
+        button.classList.remove(
+            "bg-pink-600",
+            "text-white"
+        );
+    }
 }
 
 async function loadProduct() {
@@ -227,20 +354,44 @@ async function loadProduct() {
 
         // Button Events
         const addCartBtn = document.getElementById("addCart");
+        updateCartButton(product, addCartBtn);
+
+        window.addEventListener(
+            "cartUpdated",
+            () => updateCartButton(product, addCartBtn)
+        );
+
         const wishlistBtn = document.getElementById("wishlistBtn");
+        updateWishlistButton(product, wishlistBtn);
 
         addCartBtn?.addEventListener("click", () => {
-             addToCart(product);
-             window.dispatchEvent(
+
+            if (isInCart(product.id)) {
+
+                removeFromCart(product.id);
+
+                showToast("Removed from Cart");
+
+            } else {
+
+                addToCart(product);
+
+                showToast("✓ Added to Cart");
+
+            }
+
+            window.dispatchEvent(
                 new Event("cartUpdated")
             );
-             alert("Added to Cart");
+
+            updateCartButton(product, addCartBtn);
+
         });
+       
 
         wishlistBtn?.addEventListener("click", () => {
-            addToWishlist(product);
-            alert("Added to Wishlist");
-            
+            toggleWishlist(product);
+            updateWishlistButton(product, wishlistBtn);
         });
 
     }
