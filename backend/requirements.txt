@@ -6,3 +6,4 @@ uvicorn
 asyncpg
 pydantic
 google-generativeai
+npm
