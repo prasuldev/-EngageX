@@ -1,7 +1,11 @@
 from datetime import datetime, timedelta
 from jose import jwt
+import os
 
-SECRET_KEY = "change-this-in-env"  # move to .env in production
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise ValueError("SECRET_KEY environment variable is not set")
+
 ALGORITHM = "HS256"
 EXPIRE_MINUTES = 60 * 24  # 1 day
 

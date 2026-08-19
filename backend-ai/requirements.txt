@@ -13,6 +13,7 @@ grpcio-status
 cffi
 cryptography
 google-genai
+google-generativeai
 httpx
 bcrypt
 python-multipart
