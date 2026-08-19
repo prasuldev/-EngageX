@@ -28,7 +28,7 @@ app = FastAPI(title="EngageX API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://leafy-brioche-7b0536.netlify.app/"],
+    allow_origins=["https://engagex-v1.netlify.app/"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
