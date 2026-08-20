@@ -1,5 +1,4 @@
-const API_BASE = "https://engagex-3.onrender.com";
-
+const API_BASE = "http://localhost:8000";
 export async function getActiveCampaigns(context = "global") {
     const response = await fetch(
         `${API_BASE}/campaigns/active?context=${context}`
