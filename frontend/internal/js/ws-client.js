@@ -1,6 +1,6 @@
 function connectDashboardWS() {
   const token = getInternalToken();
-  const socket = new WebSocket(`ws://127.0.0.1:8000/api/internal/dashboard/ws?token=${token}`);
+  const socket = new WebSocket(`${API_BASE.replace(/^http/, "ws")}/api/internal/dashboard/ws?token=${token}`);
 
   socket.onopen = () => setLiveStatus(true);
   socket.onmessage = () => {
@@ -25,7 +25,7 @@ function setLiveStatus(connected) {
 function connectDashboardWS() {
   const token = getInternalToken();
   if (!token) return;
-  const socket = new WebSocket(`ws://127.0.0.1:8000/api/internal/dashboard/ws?token=${token}`);
+  const socket = new WebSocket(`${API_BASE.replace(/^http/, "ws")}/api/internal/dashboard/ws?token=${token}`);
 
   socket.onopen = () => setLiveStatus(true);
   socket.onmessage = () => {
