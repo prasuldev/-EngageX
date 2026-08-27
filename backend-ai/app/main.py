@@ -37,6 +37,9 @@ app.add_middleware(
 
         "http://localhost:5500",
         "http://127.0.0.1:5500",
+
+        # Production
+        "https://engagex-customer-ui.onrender.com",
     ],
     allow_credentials=True,
     allow_methods=["*"],
