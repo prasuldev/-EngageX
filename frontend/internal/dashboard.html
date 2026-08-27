@@ -3,19 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EngageX Dashboard</title>
+    <title>EngageX — Sales Console</title>
 
-    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashboard.css">
 </head>
 <body>
 
 <header class="topbar">
-    <h1>EngageX Dashboard</h1>
-    <span id="live-status" style="font-size:13px;"></span>
-    <div class="user-info">
-        <span id="user-greeting"></span>
-        <button id="logout-btn">Log out</button>
+    <div class="brand">
+        <span class="brand-mark" aria-hidden="true">EX</span>
+        <div class="brand-text">
+            <span class="brand-name">EngageX</span>
+            <span class="brand-sub">Sales Console</span>
+        </div>
+    </div>
+
+    <div class="topbar-right">
+        <span id="live-status" class="live-status"></span>
+        <div class="user-info">
+            <span id="user-greeting"></span>
+            <button id="logout-btn" class="btn-logout">Log out</button>
+        </div>
     </div>
 </header>
 
@@ -23,27 +35,40 @@
 
     <!-- Sidebar -->
     <aside class="sidebar">
-        <div class="logo">
-            <h2>EngageX</h2>
-        </div>
+        <nav aria-label="Primary">
+            <ul id="sidebar-nav">
+                <li class="active" data-target="panel-dashboard" data-accent="berry">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Dashboard</span>
+                    <i class="dot" aria-hidden="true"></i>
+                </li>
+                <li data-target="panel-campaigns" data-accent="teal">
+                    <i class="fa-solid fa-bullhorn"></i>
+                    <span>Campaigns</span>
+                    <i class="dot" aria-hidden="true"></i>
+                </li>
+                <li data-target="panel-analytics" data-accent="gold">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Analytics</span>
+                    <i class="dot" aria-hidden="true"></i>
+                </li>
+                <li data-target="panel-generator" data-accent="plum">
+                    <i class="fa-solid fa-robot"></i>
+                    <span>AI Generator</span>
+                    <i class="dot" aria-hidden="true"></i>
+                </li>
+                <li data-target="panel-settings" data-accent="mute">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Settings</span>
+                    <i class="dot" aria-hidden="true"></i>
+                </li>
+            </ul>
+        </nav>
 
-        <ul id="sidebar-nav">
-            <li class="active" data-target="panel-dashboard">
-                <i class="fa-solid fa-chart-line"></i> Dashboard
-            </li>
-            <li data-target="panel-campaigns">
-                <i class="fa-solid fa-bullhorn"></i> Campaigns
-            </li>
-            <li data-target="panel-analytics">
-                <i class="fa-solid fa-chart-pie"></i> Analytics
-            </li>
-            <li data-target="panel-generator">
-                <i class="fa-solid fa-robot"></i> AI Generator
-            </li>
-            <li data-target="panel-settings">
-                <i class="fa-solid fa-gear"></i> Settings
-            </li>
-        </ul>
+        <div class="sidebar-foot">
+            <span>EngageX Internal</span>
+            <span>v1.0</span>
+        </div>
     </aside>
 
     <!-- Main -->
@@ -51,61 +76,85 @@
 
         <!-- Dashboard panel -->
         <section id="panel-dashboard" class="panel active">
-            <h2>Dashboard</h2>
+            <header class="panel-head">
+                <p class="eyebrow"><i class="dot" style="background:var(--berry)"></i>Overview</p>
+                <h1>Dashboard</h1>
+                <p class="panel-desc">Where every campaign stands, right now.</p>
+            </header>
+
             <div class="cards">
-                <div class="card">
-                    <h3>Active Campaigns</h3>
-                    <h2 id="active-count">0</h2>
+                <div class="card kpi">
+                    <p class="kpi-eyebrow">Active campaigns</p>
+                    <p class="kpi-value" id="active-count">0</p>
+                    <div class="swatch-strip" data-swatch="active" style="--fill-color:var(--teal)"></div>
                 </div>
-                <div class="card">
-                    <h3>Inactive Campaigns</h3>
-                    <h2 id="inactive-count">0</h2>
+                <div class="card kpi">
+                    <p class="kpi-eyebrow">Inactive campaigns</p>
+                    <p class="kpi-value" id="inactive-count">0</p>
+                    <div class="swatch-strip" data-swatch="inactive" style="--fill-color:var(--mute)"></div>
                 </div>
-                <div class="card">
-                    <h3>Total Campaigns</h3>
-                    <h2 id="total-count">0</h2>
+                <div class="card kpi">
+                    <p class="kpi-eyebrow">Total campaigns</p>
+                    <p class="kpi-value" id="total-count">0</p>
+                    <div class="swatch-strip" data-swatch="total" style="--fill-color:var(--ink)"></div>
                 </div>
-                <div class="card">
-                    <h3>AI Generated</h3>
-                    <h2>&#8734;</h2>
+                <div class="card kpi kpi-accent">
+                    <p class="kpi-eyebrow">AI generated</p>
+                    <p class="kpi-value">&#8734;</p>
+                    <div class="swatch-strip swatch-strip--pattern" aria-hidden="true"></div>
                 </div>
             </div>
         </section>
 
         <!-- Campaigns panel -->
         <section id="panel-campaigns" class="panel">
-            <h2>Campaign Performance</h2>
-            <table id="performance-table">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Type</th>
-                        <th>Status</th>
-                        <th>Participants</th>
-                        <th>Responses</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+            <header class="panel-head">
+                <p class="eyebrow"><i class="dot" style="background:var(--teal)"></i>Campaigns</p>
+                <h1>Campaign performance</h1>
+                <p class="panel-desc">Participation and response rates across every live campaign.</p>
+            </header>
+
+            <div class="surface-card">
+                <table id="performance-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Participants</th>
+                            <th>Responses</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </section>
 
         <!-- Analytics panel -->
         <section id="panel-analytics" class="panel">
-            <h2>Beauty Match performance</h2>
-            <table id="beauty-match-table">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Plays</th>
-                        <th>Completions</th>
-                        <th>Avg moves</th>
-                        <th>Avg time (s)</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+            <header class="panel-head">
+                <p class="eyebrow"><i class="dot" style="background:var(--gold)"></i>Analytics</p>
+                <h1>Analytics</h1>
+                <p class="panel-desc">Game performance, customer segments, and AI-surfaced patterns.</p>
+            </header>
 
-            <h2>Customer segments</h2>
+            <h2 class="section-title">Beauty Match performance</h2>
+            <div class="surface-card">
+                <table id="beauty-match-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Plays</th>
+                            <th>Completions</th>
+                            <th>Avg moves</th>
+                            <th>Avg time (s)</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <h2 class="section-title">Customer segments</h2>
             <div class="overview-cards" id="segment-funnel-cards">
                 <div class="card">
                     <span class="card-label">Total responses</span>
@@ -121,42 +170,83 @@
                 </div>
             </div>
 
-            <h3>Skin type breakdown</h3>
-            <table id="skin-type-table">
-                <thead>
-                    <tr><th>Skin type</th><th>Responses</th><th>Unique users</th></tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+            <div class="split-grid">
+                <div class="surface-card">
+                    <h3 class="subsection-title">Skin type breakdown</h3>
+                    <table id="skin-type-table">
+                        <thead>
+                            <tr><th>Skin type</th><th>Responses</th><th>Unique users</th></tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
 
-            <h3>Top concerns</h3>
-            <table id="top-concerns-table">
-                <thead>
-                    <tr><th>Concern</th><th>Count</th></tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+                <div class="surface-card">
+                    <h3 class="subsection-title">Top concerns</h3>
+                    <table id="top-concerns-table">
+                        <thead>
+                            <tr><th>Concern</th><th>Count</th></tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
 
-            <h2>AI Insights</h2>
-            <button id="refresh-insights-btn">Refresh insights</button>
-            <ul id="ai-insights-list"></ul>
-            <span id="insights-generated-at" style="font-size:12px; color:#888;"></span>
+            <div class="surface-card insights-card">
+                <div class="insights-head">
+                    <h3 class="subsection-title">AI insights</h3>
+                    <button id="refresh-insights-btn" class="btn-secondary">
+                        <i class="fa-solid fa-rotate"></i> Refresh insights
+                    </button>
+                </div>
+                <ul id="ai-insights-list"></ul>
+                <span id="insights-generated-at" class="insights-meta"></span>
+            </div>
         </section>
 
         <!-- AI Generator panel -->
         <section id="panel-generator" class="panel">
-            <h2>AI Campaign Generator</h2>
-            <input id="product" placeholder="Product Name">
-            <input id="audience" placeholder="Target Audience">
-            <input id="goal" placeholder="Campaign Goal">
-            <button id="generateBtn">Generate Campaign</button>
-            <div id="campaignOutput"></div>
+            <header class="panel-head">
+                <p class="eyebrow"><i class="dot" style="background:var(--plum)"></i>AI Generator</p>
+                <h1>Campaign generator</h1>
+                <p class="panel-desc">Describe the product, audience, and goal — get a draft campaign back.</p>
+            </header>
+
+            <div class="surface-card generator-card">
+                <div class="generator-fields">
+                    <label class="field">
+                        <span>Product name</span>
+                        <input id="product" placeholder="e.g. Velvet Matte Lipstick">
+                    </label>
+                    <label class="field">
+                        <span>Target audience</span>
+                        <input id="audience" placeholder="e.g. Gen Z, oily skin">
+                    </label>
+                    <label class="field">
+                        <span>Campaign goal</span>
+                        <input id="goal" placeholder="e.g. Drive repeat purchases">
+                    </label>
+                </div>
+                <button id="generateBtn" class="btn-primary">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Generate campaign
+                </button>
+                <div id="campaignOutput"></div>
+            </div>
         </section>
 
         <!-- Settings panel -->
         <section id="panel-settings" class="panel">
-            <h2>Settings</h2>
-            <p>Nothing here yet.</p>
+            <header class="panel-head">
+                <p class="eyebrow"><i class="dot" style="background:var(--mute)"></i>Settings</p>
+                <h1>Settings</h1>
+                <p class="panel-desc">Preferences for this console.</p>
+            </header>
+
+            <div class="surface-card empty-state">
+                <i class="fa-solid fa-sliders"></i>
+                <p>No settings to configure yet.</p>
+                <span>This panel is reserved for upcoming preferences.</span>
+            </div>
         </section>
 
     </main>
@@ -166,6 +256,7 @@
 <script src="js/ws-client.js"></script>
 <script src="js/sidebar-nav.js"></script>
 <script src="js/dashboard.js"></script>
+<script src="js/kpi-swatches.js"></script>
 
 </body>
 </html>

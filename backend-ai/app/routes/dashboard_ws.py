@@ -4,6 +4,21 @@ from app import database
 
 router = APIRouter()
 
+# ============================================================
+# TEMPORARY: this route currently checks the OLD users/roles
+# tables and does NOT check the `scope` claim, because the
+# internal/customer auth split hasn't been fully applied yet
+# (auth_routes.py and role_guard.py are still on the pre-split
+# version as of this change).
+#
+# This means: a valid CUSTOMER token that happens to have an id
+# matching an admin/marketing_manager row will be accepted here.
+# Low risk today, but revert this block once the split is
+# finished — see APPLY_THESE_CHANGES.md, and swap this back to
+# checking payload.get("scope") == "internal" against
+# internal_users / internal_roles, matching get_current_internal_user.
+# ============================================================
+
 
 class ConnectionManager:
     def __init__(self):
@@ -33,7 +48,10 @@ manager = ConnectionManager()
 
 @router.websocket("/api/internal/dashboard/ws")
 async def dashboard_ws(websocket: WebSocket, token: str = Query(...)):
-    await websocket.accept()
+    # Validate BEFORE accepting — reject the handshake outright on a bad
+    # token instead of accepting then immediately closing. This also
+    # keeps manager.connect() as the only place that ever calls accept(),
+    # which is what fixed the original double-accept crash.
     try:
         payload = decode_access_token(token)
         if payload is None:
@@ -62,7 +80,7 @@ async def dashboard_ws(websocket: WebSocket, token: str = Query(...)):
                 await websocket.receive_text()  # keep connection alive; content unused
         except WebSocketDisconnect:
             manager.disconnect(websocket)
-            
+
     except Exception as e:
         import traceback
         print(f"[dashboard_ws] error for user token: {e}")

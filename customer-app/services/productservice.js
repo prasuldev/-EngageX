@@ -15,10 +15,6 @@ export async function getCategories() {
     return request(CONFIG.API.CATEGORIES);
 }
 
-export async function getBrands() {
-    return request(CONFIG.API.BRANDS);
-}
-
 export async function getProductsByCategory(category) {
 
     return request(
