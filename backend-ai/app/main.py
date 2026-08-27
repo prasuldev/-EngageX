@@ -40,6 +40,7 @@ app.add_middleware(
 
         # Production
         "https://engagex-customer-ui.onrender.com",
+        "https://engagex-dashborad-ui.onrender.com",
     ],
     allow_credentials=True,
     allow_methods=["*"],
