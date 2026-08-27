@@ -1,4 +1,4 @@
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "https://engagex-3.onrender.com";
 
 async function login(email, password) {
   const res = await fetch(`${API_BASE}/auth/login`, {
@@ -61,4 +61,9 @@ if (form) {
       errorEl.textContent = err.message;
     }
   });
+}
+
+const logoutBtn = document.getElementById("logout-btn");
+if (logoutBtn) {
+    logoutBtn.addEventListener("click", logout);
 }
