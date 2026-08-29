@@ -1,4 +1,4 @@
-import { getProduct } from "../services/productService.js";
+import { getProduct } from "../services/productservice.js";
 
 const productContainer = document.getElementById("product-details");
 

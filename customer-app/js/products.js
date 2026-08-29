@@ -1,4 +1,4 @@
-import { getCategories } from "../services/productService.js";
+import { getCategories } from "../services/productservice.js";
 
 const loading = document.getElementById("loading");
 const categoryGrid = document.getElementById("categoryGrid");

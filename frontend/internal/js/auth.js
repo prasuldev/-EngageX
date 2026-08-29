@@ -1,4 +1,4 @@
-const API_BASE = "https://engagex-3.onrender.com";
+const API_BASE = "http://127.0.0.1:8000";
 
 async function login(email, password) {
   const res = await fetch(`${API_BASE}/auth/login`, {
@@ -11,15 +11,16 @@ async function login(email, password) {
     throw new Error("Invalid email or password");
   }
 
-  const data = await res.json();
-  const role = data.user.role;
+  const data = await res.json(); // { access_token, token_type, user }
 
-  if (!["admin", "marketing_manager"].includes(role)) {
-    throw new Error("This account does not have access to the internal dashboard");
+  if (!["admin", "marketing_manager"].includes(data.user.role)) {
+    throw new Error("This portal is for staff accounts only.");
   }
 
   localStorage.setItem("internal_token", data.access_token);
   localStorage.setItem("internal_user", JSON.stringify(data.user));
+
+  return data.user.role;
 }
 
 function getInternalToken() {
@@ -39,6 +40,15 @@ function requireAuth() {
   return true;
 }
 
+function requireRole(allowedRoles) {
+  const user = getInternalUser();
+  if (!user || !allowedRoles.includes(user.role)) {
+    window.location.href = "index.html";
+    return false;
+  }
+  return true;
+}
+
 function logout() {
   localStorage.removeItem("internal_token");
   localStorage.removeItem("internal_user");
@@ -52,11 +62,11 @@ if (form) {
     const errorEl = document.getElementById("error-msg");
     errorEl.textContent = "";
     try {
-      await login(
+      const role = await login(
         document.getElementById("email").value,
         document.getElementById("password").value
       );
-      window.location.href = "dashboard.html";
+      window.location.href = role === "admin" ? "admin.html" : "dashboard.html";
     } catch (err) {
       errorEl.textContent = err.message;
     }
@@ -65,5 +75,5 @@ if (form) {
 
 const logoutBtn = document.getElementById("logout-btn");
 if (logoutBtn) {
-    logoutBtn.addEventListener("click", logout);
+  logoutBtn.addEventListener("click", logout);
 }

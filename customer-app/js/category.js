@@ -1,4 +1,4 @@
-import { getProducts } from "../services/productService.js";
+import { getProducts } from "../services/productservice.js";
 import { createProductCard } from "../components/productCard.js";
 
 
