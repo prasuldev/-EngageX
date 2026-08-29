@@ -1,35 +1,66 @@
+.campaign-slot {
+    grid-column: 1 / -1;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
 .campaign-strip {
     position: relative;
-    max-width: 720px;
-    margin: 20px auto;
+    width: 100%;
+    max-width: 100%;
+    margin: 28px 0;
     z-index: 10;
+    box-sizing: border-box;
 }
 
 .campaign-collapsed {
-    background: linear-gradient(135deg, #EC4899, #DB2777);
-    color: white;
-    border-radius: 14px;
-    padding: 14px 20px;
+    position: relative;
+    overflow: hidden;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    box-shadow: 0 8px 20px rgba(0,0,0,.15);
+    gap: 28px;
+    width: 100%;
+    min-height: 110px;
+    padding: 22px 30px;
+    background: linear-gradient(
+        120deg,
+        #F472B6,
+        #EC4899,
+        #BE185D
+    );
+    background-size: 200% 200%;
+    animation: campaignGradientShift 6s ease infinite;
+    border-radius: 18px;
+    box-shadow: 0 12px 30px rgba(219, 39, 119, 0.35);
+    box-sizing: border-box;
 }
 
 #campaign-title-text {
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 1.3;
+}
+
+.campaign-description {
     font-size: 15px;
+    line-height: 1.5;
+    margin-top: 6px;
+    opacity: 0.95;
 }
 
 #campaign-open-btn {
     background: white;
     color: #DB2777;
     border: none;
-    padding: 8px 18px;
+    padding: 12px 26px;
+    min-width: 120px;
     border-radius: 30px;
-    font-weight: 600;
+    font-size: 15px;
+    font-weight: 700;
     cursor: pointer;
     transition: .2s;
+    flex-shrink: 0;
 }
 
 #campaign-open-btn:hover {
@@ -38,11 +69,15 @@
 
 .campaign-expanded {
     background: white;
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.15);
+    width: 100%;
+    max-width: 100%;
+    min-height: 220px;
+    border-radius: 18px;
+    padding: 32px;
+    box-shadow: 0 12px 32px rgba(0,0,0,.15);
     position: relative;
     animation: slideUp .3s ease;
+    box-sizing: border-box;
 }
 
 .campaign-close {

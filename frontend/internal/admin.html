@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EngageX — Admin Console</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<header class="topbar">
+    <div class="brand">
+        <span class="brand-mark" aria-hidden="true">EX</span>
+        <div class="brand-text">
+            <span class="brand-name">EngageX</span>
+            <span class="brand-sub">Admin Console</span>
+        </div>
+    </div>
+
+    <div class="topbar-right">
+        <div class="user-info">
+            <span id="user-greeting"></span>
+            <button id="logout-btn" class="btn-logout">Log out</button>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+
+    <aside class="sidebar">
+        <nav aria-label="Primary">
+            <ul id="sidebar-nav">
+                <li class="active" data-target="panel-overview" data-accent="berry">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Team overview</span>
+                    <i class="dot" aria-hidden="true"></i>
+                </li>
+                <li data-target="panel-team" data-accent="teal">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Manage team</span>
+                    <i class="dot" aria-hidden="true"></i>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="sidebar-foot">
+            <span>EngageX Internal</span>
+            <span>v1.0</span>
+        </div>
+    </aside>
+
+    <main class="main">
+
+        <!-- Team overview panel -->
+        <section id="panel-overview" class="panel active">
+            <header class="panel-head">
+                <p class="eyebrow"><i class="dot" style="background:var(--berry)"></i>Overview</p>
+                <h1>Sales team performance</h1>
+                <p class="panel-desc">How each team member is doing, at a glance.</p>
+            </header>
+
+            <div class="surface-card">
+                <table id="team-overview-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Campaigns generated</th>
+                            <th>Orders updated</th>
+                            <th>Last active</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Manage team panel -->
+        <section id="panel-team" class="panel">
+            <header class="panel-head">
+                <p class="eyebrow"><i class="dot" style="background:var(--teal)"></i>Team</p>
+                <h1>Manage team</h1>
+                <p class="panel-desc">Add or review sales team and admin accounts.</p>
+            </header>
+
+            <div class="surface-card">
+                <h3 class="subsection-title">Team members</h3>
+                <table id="team-table">
+                    <thead><tr><th>Name</th><th>Email</th><th>Role</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+
+                <form id="add-team-form" class="generator-fields">
+                    <label class="field"><span>Full name</span><input id="new-name" required></label>
+                    <label class="field"><span>Email</span><input id="new-email" type="email" required></label>
+                    <label class="field"><span>Password</span><input id="new-password" type="password" required></label>
+                    <label class="field">
+                        <span>Role</span>
+                        <select id="new-role">
+                            <option value="marketing_manager">Marketing manager</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </label>
+                    <button type="submit" class="btn-primary">Add team member</button>
+                </form>
+                <p id="team-error" class="form-error"></p>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/sidebar-nav.js"></script>
+<script src="js/admin.js"></script>
+
+</body>
+</html>

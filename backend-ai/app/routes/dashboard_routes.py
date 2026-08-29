@@ -13,17 +13,13 @@ router = APIRouter(prefix="/api/internal/dashboard", tags=["dashboard"])
 
 @router.get("/campaign-performance")
 async def campaign_performance(
-    db=Depends(get_db)
+    db=Depends(get_db),
+    current_user=Depends(require_role(["admin", "marketing_manager"]))
 ):
     rows = await db.fetch(
         """
         SELECT
-            c.id,
-            c.title,
-            c.campaign_type,
-            c.is_active,
-            c.start_date,
-            c.end_date,
+            c.id, c.title, c.campaign_type, c.is_active, c.start_date, c.end_date,
             COUNT(DISTINCT cp.user_id) AS participants,
             COUNT(DISTINCT cr.id) AS total_responses
         FROM campaigns c
@@ -38,9 +34,9 @@ async def campaign_performance(
 
 @router.get("/campaign-overview")
 async def campaign_overview(
-    db=Depends(get_db)
+    db=Depends(get_db),
+    current_user=Depends(require_role(["admin", "marketing_manager"]))
 ):
-
     row = await db.fetchrow(
         """
         SELECT
@@ -55,13 +51,13 @@ async def campaign_overview(
 
 @router.get("/beauty-match-performance")
 async def beauty_match_performance(
-    db=Depends(get_db)
+    db=Depends(get_db),
+    current_user=Depends(require_role(["admin", "marketing_manager"]))
 ):
     rows = await db.fetch(
         """
         SELECT
-            c.id AS campaign_id,
-            c.title,
+            c.id AS campaign_id, c.title,
             COUNT(gs.id) AS total_plays,
             COUNT(*) FILTER (WHERE gs.completed = true) AS completions,
             ROUND(AVG(gs.moves_taken)) AS avg_moves,
@@ -75,6 +71,7 @@ async def beauty_match_performance(
     )
     return [dict(r) for r in rows]
 
+
 @router.get("/customer-segments")
 async def customer_segments(
     db=Depends(get_db),
@@ -84,13 +81,13 @@ async def customer_segments(
     concerns = await get_top_concerns(db)
     crosstab = await get_skin_type_concern_crosstab(db)
     funnel = await get_response_funnel(db)
-
     return {
         "skin_type_breakdown": [dict(r) for r in skin_types],
         "top_concerns": [dict(r) for r in concerns],
         "skin_type_concern_crosstab": [dict(r) for r in crosstab],
         "response_funnel": dict(funnel),
     }
+
 
 @router.get("/ai-insights")
 async def ai_insights(

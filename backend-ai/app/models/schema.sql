@@ -171,3 +171,51 @@ CREATE TABLE IF NOT EXISTS user_activity (
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- New tables for internal (staff) accounts
+CREATE TABLE internal_roles (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR NOT NULL UNIQUE
+);
+
+INSERT INTO internal_roles (name) VALUES ('admin') ON CONFLICT (name) DO NOTHING;
+INSERT INTO internal_roles (name) VALUES ('marketing_manager') ON CONFLICT (name) DO NOTHING;
+
+CREATE TABLE internal_users (
+    id SERIAL PRIMARY KEY,
+    full_name VARCHAR NOT NULL,
+    email VARCHAR NOT NULL UNIQUE,
+    password_hash VARCHAR NOT NULL,
+    role_id INTEGER NOT NULL REFERENCES internal_roles(id),
+    created_at TIMESTAMP DEFAULT now()
+);
+
+-- Move admin/marketing_manager rows out of users
+INSERT INTO internal_users (full_name, email, password_hash, role_id, created_at)
+SELECT u.full_name, u.email, u.password_hash, ir.id, u.created_at
+FROM users u
+JOIN roles r ON u.role_id = r.id
+JOIN internal_roles ir ON ir.name = r.name
+WHERE r.name IN ('admin', 'marketing_manager');
+
+DELETE FROM users
+WHERE role_id IN (SELECT id FROM roles WHERE name IN ('admin', 'marketing_manager'));
+
+-- roles table becomes customer-only
+DELETE FROM roles WHERE name IN ('admin', 'marketing_manager');
+
+-- sanity check
+SELECT 'users' AS table_name, id, full_name, email, role_id FROM users
+UNION ALL
+SELECT 'internal_users', id, full_name, email, role_id FROM internal_users
+ORDER BY table_name, id;
+
+CREATE TABLE password_reset_tokens (
+    id SERIAL PRIMARY KEY,
+    scope VARCHAR NOT NULL CHECK (scope IN ('customer', 'internal')),
+    user_id INTEGER NOT NULL,
+    token_hash VARCHAR NOT NULL UNIQUE,
+    expires_at TIMESTAMP NOT NULL,
+    used_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT now()
+);

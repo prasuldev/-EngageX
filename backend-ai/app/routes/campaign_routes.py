@@ -7,6 +7,7 @@ from app.ai_recommender import get_ai_recommendation, generate_category_question
 from app.services.mood_ritual_resolver import resolve_product_for_category
 from app.services.mood_ritual_ai import generate_mood_captions
 from app.routes.dashboard_ws import manager
+from app.auth.dependencies import get_current_customer
 
 router = APIRouter(
     prefix="/campaigns",
@@ -100,7 +101,6 @@ async def get_category_questions(
 
 
 class ResponseSubmission(BaseModel):
-    user_id: int | None = None
     answers: list[dict] | None = None
     moves_taken: int | None = None
     time_taken_seconds: int | None = None
@@ -108,7 +108,7 @@ class ResponseSubmission(BaseModel):
 
 
 @router.post("/{slug}/respond")
-async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get_db)):
+async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get_db), current_user=Depends(get_current_customer)):
     campaign = await db.fetchrow("SELECT * FROM campaigns WHERE slug = $1", slug)
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaign not found")
@@ -119,6 +119,7 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
     if payload.user_id is None:
         raise HTTPException(status_code=401, detail="You must be logged in to participate in campaigns")
 
+    user_id = current_user["id"]
     campaign_id = campaign["id"]
 
     if campaign["campaign_type"] == "memory_match":

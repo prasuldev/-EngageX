@@ -1,12 +1,14 @@
 function connectDashboardWS() {
   const token = getInternalToken();
+  if (!token) return;
   const socket = new WebSocket(`${API_BASE.replace(/^http/, "ws")}/api/internal/dashboard/ws?token=${token}`);
 
   socket.onopen = () => setLiveStatus(true);
   socket.onmessage = () => {
-    loadOverview();
-    loadPerformance();
-    loadBeautyMatch();
+    loadDashboard();
+    loadCampaignPerformance();
+    loadBeautyMatchPerformance();
+    loadCustomerSegments();
   };
   socket.onclose = () => {
     setLiveStatus(false);

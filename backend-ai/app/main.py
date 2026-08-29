@@ -23,6 +23,7 @@ from app.routes.profile_routes import router as profile_router
 from app.routes.admin_order_routes import router as admin_order_router
 from app.routes.recommendation_routes import router as recommendation_router
 from app.routes.activity_routes import router as activity_router
+from app.routes.internal_users import router as internal_users_router
 
 app = FastAPI(title="EngageX API")
 
@@ -72,6 +73,7 @@ app.include_router(profile_router)
 app.include_router(admin_order_router)
 app.include_router(recommendation_router)
 app.include_router(activity_router)
+app.include_router(internal_users_router)
 
 @app.get("/")
 def home():

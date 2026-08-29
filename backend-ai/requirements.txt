@@ -19,3 +19,4 @@ bcrypt
 python-multipart
 requests
 typing-extensions
+aiosmtplib

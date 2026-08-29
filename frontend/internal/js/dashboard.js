@@ -90,6 +90,42 @@ async function loadCustomerSegments() {
     }
 }
 
+async function loadCampaignPerformance() {
+    const rows = await apiGet("/api/internal/dashboard/campaign-performance");
+    if (!rows) return;
+
+    const tbody = document.querySelector("#performance-table tbody");
+    tbody.innerHTML = rows.length
+        ? rows.map(r => `
+            <tr>
+                <td>${r.title}</td>
+                <td>${r.campaign_type}</td>
+                <td>${r.is_active ? "Active" : "Inactive"}</td>
+                <td>${r.participants}</td>
+                <td>${r.total_responses}</td>
+            </tr>
+        `).join("")
+        : `<tr><td colspan="5">No campaigns yet</td></tr>`;
+}
+
+async function loadBeautyMatchPerformance() {
+    const rows = await apiGet("/api/internal/dashboard/beauty-match-performance");
+    if (!rows) return;
+
+    const tbody = document.querySelector("#beauty-match-table tbody");
+    tbody.innerHTML = rows.length
+        ? rows.map(r => `
+            <tr>
+                <td>${r.title}</td>
+                <td>${r.total_plays}</td>
+                <td>${r.completions}</td>
+                <td>${r.avg_moves}</td>
+                <td>${r.avg_time_seconds}</td>
+            </tr>
+        `).join("")
+        : `<tr><td colspan="5">No games played yet</td></tr>`;
+}
+
 async function loadAIInsights(forceRefresh = false) {
     const path = forceRefresh
         ? "/api/internal/dashboard/ai-insights?refresh=true"
@@ -156,10 +192,13 @@ async function handleGenerateCampaign() {
 // ---------------- Init ----------------
 
 function initDashboard() {
-    if (!requireAuth()) return; // redirect is in flight, stop here
+    if (!requireAuth()) return;
+    if (!requireRole(["marketing_manager"])) return; // add this line
 
     connectDashboardWS();
     loadDashboard();
+    loadCampaignPerformance();
+    loadBeautyMatchPerformance();
     loadCustomerSegments();
     loadAIInsights();
 
@@ -168,7 +207,6 @@ function initDashboard() {
 
     document.getElementById("generateBtn")
         .addEventListener("click", handleGenerateCampaign);
-
 }
 
 document.addEventListener("DOMContentLoaded", initDashboard);

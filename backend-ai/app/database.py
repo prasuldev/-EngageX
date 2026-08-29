@@ -12,7 +12,7 @@ pool: asyncpg.Pool | None = None
 
 async def connect_db():
     global pool
-    pool = await asyncpg.create_pool(dsn=DATABASE_URL, min_size=1, max_size=10)
+    pool = await asyncpg.create_pool(dsn=DATABASE_URL, min_size=1, max_size=10, statement_cache_size=0)
     print("✅ Connected to EngageX database")
 
 async def disconnect_db():

@@ -70,6 +70,9 @@ async function renderProductsWithCampaigns(container, products) {
         ? await loadActiveCampaigns("home")
         : [];
 
+    console.log("HOME CAMPAIGNS:", campaigns);
+    console.log("HOME CAMPAIGN COUNT:", campaigns.length);
+
     const insertPositions = getCampaignInsertPositions(products.length, campaigns.length);
     let campaignIndex = 0;
 
