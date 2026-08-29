@@ -1,0 +1,271 @@
+.settings-page {
+    min-height: 100vh;
+    background: #f7f7f9;
+    padding: 50px 20px;
+}
+
+.settings-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 35px;
+}
+
+.settings-eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #ec4899;
+    margin-bottom: 8px;
+}
+
+.settings-header h1 {
+    font-size: 38px;
+    margin-bottom: 8px;
+}
+
+.settings-header p {
+    color: #6b7280;
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: #374151;
+    background: white;
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+}
+
+.settings-card {
+    background: white;
+    border-radius: 16px;
+    margin-bottom: 22px;
+    padding: 24px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.settings-card-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.settings-card-header h2 {
+    margin-bottom: 4px;
+}
+
+.settings-card-header p {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.settings-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #fce7f3;
+    color: #db2777;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.setting-row,
+.setting-action {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 17px 5px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.setting-action {
+    background: transparent;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+}
+
+.setting-action:hover {
+    background: #fafafa;
+}
+
+.setting-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.setting-info > i {
+    width: 24px;
+    color: #6b7280;
+    text-align: center;
+}
+
+.setting-info strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.setting-info span {
+    display: block;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.setting-action > i {
+    color: #9ca3af;
+}
+
+.logout {
+    color: #dc2626;
+}
+
+
+/* Toggle */
+
+.switch {
+    position: relative;
+    width: 50px;
+    height: 28px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    inset: 0;
+    background: #d1d5db;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.slider::before {
+    content: "";
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    left: 3px;
+    top: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.2s;
+}
+
+.switch input:checked + .slider {
+    background: #db2777;
+}
+
+.switch input:checked + .slider::before {
+    transform: translateX(22px);
+}
+
+
+
+    .settings-page {
+        padding: 30px 15px;
+    }
+
+    .settings-header {
+        align-items: center;
+    }
+
+    .settings-header h1 {
+        font-size: 30px;
+    }
+
+    .setting-info span {
+        max-width: 220px;
+    }
+
+}
+    @media (max-width: 600px) {
+
+    .settings-page {
+        padding: 30px 15px;
+    }
+
+    .settings-header {
+        align-items: center;
+    }
+
+    .settings-header h1 {
+        font-size: 30px;
+    }
+
+    .setting-info span {
+        max-width: 220px;
+    }
+
+}
+/* =========================
+   DARK MODE
+   ========================= */
+
+body.dark-mode {
+    background: #111827;
+    color: #f9fafb;
+}
+
+body.dark-mode .settings-page {
+    background: #111827;
+}
+
+body.dark-mode .settings-card {
+    background: #1f2937;
+    border-color: #374151;
+    color: #f9fafb;
+}
+
+body.dark-mode .settings-header p,
+body.dark-mode .settings-card-header p,
+body.dark-mode .setting-info span {
+    color: #9ca3af;
+}
+
+body.dark-mode .settings-header h1,
+body.dark-mode .settings-card-header h2,
+body.dark-mode .setting-info strong {
+    color: #f9fafb;
+}
+
+body.dark-mode .back-btn {
+    background: #1f2937;
+    color: #f9fafb;
+    border-color: #374151;
+}
+
+body.dark-mode .setting-row,
+body.dark-mode .setting-action {
+    border-color: #374151;
+}
+
+body.dark-mode .setting-action:hover {
+    background: #374151;
+}
+
+body.dark-mode .setting-info > i {
+    color: #9ca3af;
+}
+o
+

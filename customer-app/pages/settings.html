@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Settings | Maquillage</title>
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/settings.css">
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="settings-page">
+
+        <div class="settings-container">
+
+            <header class="settings-header">
+                <div>
+                    <p class="settings-eyebrow">ACCOUNT</p>
+                    <h1>Settings</h1>
+                    <p>Manage your preferences and get help.</p>
+                </div>
+
+                <a href="home.html" class="back-btn">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Back
+                </a>
+            </header>
+
+
+            <!-- Appearance -->
+
+            <section class="settings-card">
+
+                <div class="settings-card-header">
+                    <div class="settings-icon">
+                        <i class="fa-solid fa-palette"></i>
+                    </div>
+
+                    <div>
+                        <h2>Appearance</h2>
+                        <p>Customize how Maquillage looks.</p>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+
+                    <div class="setting-info">
+                        <i class="fa-solid fa-moon"></i>
+
+                        <div>
+                            <strong>Dark Mode</strong>
+                            <span>Use a darker appearance across the app.</span>
+                        </div>
+                    </div>
+
+                    <label class="switch">
+                        <input type="checkbox" id="darkModeToggle">
+                        <span class="slider"></span>
+                    </label>
+
+                </div>
+
+            </section>
+
+
+            <!-- Help & Support -->
+
+            <section class="settings-card">
+
+                <div class="settings-card-header">
+
+                    <div class="settings-icon">
+                        <i class="fa-solid fa-circle-question"></i>
+                    </div>
+
+                    <div>
+                        <h2>Help & Support</h2>
+                        <p>Get answers to your questions.</p>
+                    </div>
+
+                </div>
+
+
+                <button class="setting-action" id="helpBtn">
+
+                    <div class="setting-info">
+
+                        <i class="fa-solid fa-book-open"></i>
+
+                        <div>
+                            <strong>Help Center</strong>
+                            <span>Find answers to common questions.</span>
+                        </div>
+
+                    </div>
+
+                    <i class="fa-solid fa-chevron-right"></i>
+
+                </button>
+
+
+                <button class="setting-action" id="askAiBtn">
+
+                    <div class="setting-info">
+
+                        <i class="fa-solid fa-robot"></i>
+
+                        <div>
+                            <strong>Ask AI Assistant</strong>
+                            <span>Ask questions about products and your account.</span>
+                        </div>
+
+                    </div>
+
+                    <i class="fa-solid fa-chevron-right"></i>
+
+                </button>
+
+
+                <button class="setting-action" id="contactBtn">
+
+                    <div class="setting-info">
+
+                        <i class="fa-solid fa-headset"></i>
+
+                        <div>
+                            <strong>Contact Support</strong>
+                            <span>Need more help? Contact our support team.</span>
+                        </div>
+
+                    </div>
+
+                    <i class="fa-solid fa-chevron-right"></i>
+
+                </button>
+
+            </section>
+
+
+            <!-- Account -->
+
+            <section class="settings-card">
+
+                <div class="settings-card-header">
+
+                    <div class="settings-icon">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+
+                    <div>
+                        <h2>Account</h2>
+                        <p>Manage your account.</p>
+                    </div>
+
+                </div>
+
+
+                <a href="profile.html" class="setting-action">
+
+                    <div class="setting-info">
+
+                        <i class="fa-solid fa-user-pen"></i>
+
+                        <div>
+                            <strong>Profile</strong>
+                            <span>Edit your name, email and password.</span>
+                        </div>
+
+                    </div>
+
+                    <i class="fa-solid fa-chevron-right"></i>
+
+                </a>
+
+
+                <button class="setting-action logout" id="logoutBtn">
+
+                    <div class="setting-info">
+
+                        <i class="fa-solid fa-right-from-bracket"></i>
+
+                        <div>
+                            <strong>Logout</strong>
+                            <span>Sign out of your account.</span>
+                        </div>
+
+                    </div>
+
+                </button>
+
+            </section>
+
+        </div>
+
+    </div>
+
+
+    <script src="../js/session.js"></script>
+    <script src="../js/settings.js"></script>
+
+</body>
+
+</html>
