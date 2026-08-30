@@ -242,13 +242,93 @@
                 <p class="panel-desc">Preferences for this console.</p>
             </header>
 
-            <div class="surface-card empty-state" id="settings-empty">
-                <i class="fa-solid fa-sliders"></i>
-                <p>No settings to configure yet.</p>
+            <div class="settings-grid">
+
+                <!-- Appearance -->
+                <div class="surface-card settings-card">
+                    <div class="settings-card-head">
+                        <div class="settings-icon">
+                            <i class="fa-solid fa-circle-half-stroke"></i>
+                        </div>
+                        <div>
+                            <h2>Appearance</h2>
+                            <p>Choose how the EngageX console looks.</p>
+                        </div>
+                    </div>
+
+                    <label class="settings-field" for="theme-select">
+                        <span>Theme</span>
+                        <select id="theme-select">
+                            <option value="system">System</option>
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                        </select>
+                    </label>
+                </div>
+
+                <!-- Help & Support -->
+                <div class="surface-card settings-card">
+                    <div class="settings-card-head">
+                        <div class="settings-icon">
+                            <i class="fa-solid fa-circle-question"></i>
+                        </div>
+                        <div>
+                            <h2>Help &amp; Support</h2>
+                            <p>Get help with your EngageX account.</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-actions">
+                        <a class="settings-action" href="#" id="help-center-link">
+                            <i class="fa-solid fa-book-open"></i>
+                            <span>
+                                <strong>Help Center</strong>
+                                <small>Browse guides and documentation</small>
+                            </span>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
+
+                        <a class="settings-action"
+                           href="mailto:support@engagex.com"
+                           id="support-email-link">
+                            <i class="fa-solid fa-envelope"></i>
+                            <span>
+                                <strong>Contact Support</strong>
+                                <small>Send us an email</small>
+                            </span>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- AI Assistant -->
+                <div class="surface-card settings-card">
+                    <div class="settings-card-head">
+                        <div class="settings-icon">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <div>
+                            <h2>AI Assistant</h2>
+                            <p>Get assistance from the EngageX AI chatbot.</p>
+                        </div>
+                    </div>
+
+                    <button type="button"
+                            class="settings-action settings-action-button"
+                            id="open-chatbot-btn">
+                        <i class="fa-solid fa-comments"></i>
+                        <span>
+                            <strong>Open AI Assistant</strong>
+                            <small>Ask questions and get help</small>
+                        </span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+
             </div>
         </section>
 
-    </main>
+
 </div>
 
 <script src="js/auth.js"></script>

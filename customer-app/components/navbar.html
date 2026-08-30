@@ -4,13 +4,14 @@
 
         <div class="flex items-center justify-between h-20">
 
+            <!-- Mobile Menu Button -->
             <button id="mobile-menu-btn" class="lg:hidden">
                 <i data-lucide="menu"></i>
             </button>
 
             <!-- Logo -->
             <a href="../pages/home.html"
-                class="flex items-center gap-3 flex-shrink-0">
+               class="flex items-center gap-3 flex-shrink-0">
 
                 <span class="text-4xl">🌸</span>
 
@@ -24,19 +25,14 @@
             <div class="hidden lg:flex items-center gap-8">
 
                 <a href="../pages/home.html"
-                    class="font-medium hover:text-pink-600 transition">
-
+                   class="font-medium hover:text-pink-600 transition">
                     Home
-
                 </a>
 
                 <a href="../pages/products.html"
-                    class="font-medium hover:text-pink-600 transition">
-
+                   class="font-medium hover:text-pink-600 transition">
                     Products
-
                 </a>
-
 
             </div>
 
@@ -57,9 +53,10 @@
 
             </div>
 
-            <!-- Icons -->
+            <!-- Right Icons -->
             <div class="flex items-center gap-5">
 
+                <!-- Wishlist -->
                 <a
                     href="../pages/wishlist.html"
                     class="relative"
@@ -70,16 +67,17 @@
                     <span
                         id="wishlist-count"
                         class="hidden absolute -top-2 -right-2
-                                bg-pink-600 text-white
-                                rounded-full text-xs
-                                min-w-[18px] h-[18px]
-                                flex items-center justify-center">
-
+                               bg-pink-600 text-white
+                               rounded-full text-xs
+                               min-w-[18px] h-[18px]
+                               flex items-center justify-center">
                     </span>
 
                 </a>
 
-                <a href="../pages/cart.html"
+                <!-- Cart -->
+                <a
+                    href="../pages/cart.html"
                     class="relative"
                     title="Cart">
 
@@ -87,22 +85,33 @@
 
                     <span
                         id="cart-count"
-                        class="absolute -top-2 -right-2 bg-pink-600 text-white rounded-full text-xs px-1">
-
+                        class="absolute -top-2 -right-2
+                               bg-pink-600 text-white
+                               rounded-full text-xs px-1">
                         0
-
                     </span>
 
                 </a>
 
-                <a 
-                    id="profileBtn"    
+                <!-- Profile -->
+                <a
+                    id="profileBtn"
                     href="../pages/profile.html"
                     title="Profile">
-                    
+
                     <i data-lucide="user"></i>
 
                 </a>
+
+                <!-- Settings -->
+<a
+    href="../pages/settings.html"
+    title="Settings"
+    class="hover:text-pink-600 transition">
+
+    <i data-lucide="settings" width="24" height="24"></i>
+
+</a>
 
             </div>
 
@@ -111,41 +120,62 @@
     </div>
 
     <!-- Mobile Menu -->
-
     <div id="mobileMenu" class="hidden bg-white border-t">
 
-    <a href="../pages/home.html" class="block px-6 py-4 hover:bg-pink-50">
-        Home
-    </a>
+        <a
+            href="../pages/home.html"
+            class="block px-6 py-4 hover:bg-pink-50">
+            Home
+        </a>
 
-    <a href="../pages/products.html" class="block px-6 py-4 hover:bg-pink-50">
-        Products
-    </a>
+        <a
+            href="../pages/products.html"
+            class="block px-6 py-4 hover:bg-pink-50">
+            Products
+        </a>
 
-    <a href="../pages/categories.html" class="block px-6 py-4 hover:bg-pink-50">
-        Categories
-    </a>
+        <a
+            href="../pages/categories.html"
+            class="block px-6 py-4 hover:bg-pink-50">
+            Categories
+        </a>
 
-    <a href="../pages/offers.html" class="block px-6 py-4 hover:bg-pink-50">
-        Offers
-    </a>
+        <a
+            href="../pages/offers.html"
+            class="block px-6 py-4 hover:bg-pink-50">
+            Offers
+        </a>
 
-    <a href="../pages/campaigns.html" class="block px-6 py-4 hover:bg-pink-50">
-        Campaigns
-    </a>
+        <a
+            href="../pages/campaigns.html"
+            class="block px-6 py-4 hover:bg-pink-50">
+            Campaigns
+        </a>
 
-    <a href="../pages/wishlist.html" class="block px-6 py-4 hover:bg-pink-50">
-        Wishlist
-    </a>
+        <a
+            href="../pages/wishlist.html"
+            class="block px-6 py-4 hover:bg-pink-50">
+            Wishlist
+        </a>
 
-    <a href="../pages/cart.html" class="block px-6 py-4 hover:bg-pink-50">
-        Cart
-    </a>
+        <a
+            href="../pages/cart.html"
+            class="block px-6 py-4 hover:bg-pink-50">
+            Cart
+        </a>
 
-    <a href="../pages/profile.html" class="block px-6 py-4 hover:bg-pink-50">
-        Profile
-    </a>
+        <a
+            href="../pages/profile.html"
+            class="block px-6 py-4 hover:bg-pink-50">
+            Profile
+        </a>
 
-</div>
+        <a
+            href="../pages/settings.html"
+            class="block px-6 py-4 hover:bg-pink-50">
+            Settings
+        </a>
+
+    </div>
 
 </nav>

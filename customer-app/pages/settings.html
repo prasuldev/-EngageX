@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Settings | Maquillage</title>
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/settings.css">
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="settings-page">
+
+        <div class="settings-container">
+
+            <header class="settings-header">
+                <div>
+                    <p class="settings-eyebrow">ACCOUNT</p>
+                    <h1>Settings</h1>
+                    <p>Manage your preferences and get help.</p>
+                </div>
+
+                <a href="home.html" class="back-btn">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Back
+                </a>
+            </header>
+
+
+            <!-- Appearance -->
+
+            <section class="settings-card">
+
+                <div class="settings-card-header">
+                    <div class="settings-icon">
+                        <i class="fa-solid fa-palette"></i>
+                    </div>
+
+                    <div>
+                        <h2>Appearance</h2>
+                        <p>Customize how Maquillage looks.</p>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+
+                    <div class="setting-info">
+                        <i class="fa-solid fa-moon"></i>
+
+                        <div>
+                            <strong>Dark Mode</strong>
+                            <span>Use a darker appearance across the app.</span>
+                        </div>
+                    </div>
+
+                    <label class="switch">
+                        <input type="checkbox" id="darkModeToggle">
+                        <span class="slider"></span>
+                    </label>
+
+                </div>
+
+            </section>
+
+
+            <!-- Help & Support -->
+
+            <section class="settings-card">
+
+                <div class="settings-card-header">
+
+                    <div class="settings-icon">
+                        <i class="fa-solid fa-circle-question"></i>
+                    </div>
+
+                    <div>
+                        <h2>Help & Support</h2>
+                        <p>Get answers to your questions.</p>
+                    </div>
+
+                </div>
+
+
+                <button class="setting-action" id="helpBtn">
+
+                    <div class="setting-info">
+
+                        <i class="fa-solid fa-book-open"></i>
+
+                        <div>
+                            <strong>Help Center</strong>
+                            <span>Find answers to common questions.</span>
+                        </div>
+
+                    </div>
+
+                    <i class="fa-solid fa-chevron-right"></i>
+
+                </button>
+
+
+                
+
+
+                <button class="setting-action" id="contactBtn">
+
+                    <div class="setting-info">
+
+                        <i class="fa-solid fa-headset"></i>
+
+                        <div>
+                            <strong>Contact Support</strong>
+                            <span>Need more help? Contact our support team.</span>
+                        </div>
+
+                    </div>
+
+                    <i class="fa-solid fa-chevron-right"></i>
+
+                </button>
+
+            </section>
+
+
+            
+<!-- Help Center Modal -->
+<div id="helpCenterModal" class="modal hidden">
+    <div class="modal-content help-center-modal">
+
+        <button type="button" id="closeHelpModal" class="modal-close" aria-label="Close">
+            &times;
+        </button>
+
+        <div class="help-modal-header">
+            <div class="help-modal-icon">
+                <i class="fa-solid fa-book-open"></i>
+            </div>
+            <div>
+                <h2>Help Center</h2>
+                <p>Find quick answers to common questions.</p>
+            </div>
+        </div>
+
+        <div class="faq-list">
+
+            <details class="faq-item">
+                <summary>
+                    <span>I can't log in to my account. What should I do?</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </summary>
+                <p>
+                    Select Sign Up on the login page and enter your name,
+                    email address, and password. Follow the instructions
+                    to complete your account.
+                </p>
+            </details>
+
+            <details class="faq-item">
+                <summary>
+                    <span>I want to change my name or email. Where can I do that?</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </summary>
+                <p>
+                    Go to Settings, open Profile, and select Edit Profile.
+                    You can update your name and email address there.
+                </p>
+            </details>
+
+            <details class="faq-item">
+                <summary>
+                    <span>I forgot my password. How can I change it?</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </summary>
+                <p>
+                    Open Settings, select Reset Password, enter your current
+                    password, then enter and confirm your new password.
+                </p>
+            </details>
+
+            <details class="faq-item">
+                <summary>
+                    <span>I added something to my wishlist by mistake. How do I remove it?</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </summary>
+                <p>
+                    Open a product and select the wishlist button.
+                    You can view saved products from the Wishlist section.
+                </p>
+            </details>
+
+            <details class="faq-item">
+                <summary>
+                    <span>I don't want an item in my cart anymore. How can I remove it?</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </summary>
+                <p>
+                    Open your Cart and use the remove option next to the
+                    product you no longer want to purchase.
+                </p>
+            </details>
+
+            <details class="faq-item">
+                <summary>
+                    <span>I have a problem with my order. Who can I contact?</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </summary>
+                <p>
+                    Select Contact Support in Settings. You can send an
+                    email directly to our customer support team.
+                </p>
+            </details>
+
+        </div>
+
+        <div class="help-footer">
+            <span>Didn't find what you were looking for?</span>
+            <button type="button" id="helpContactBtn">
+                Contact Support
+            </button>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- Contact Support Modal -->
+<div id="contactSupportModal" class="modal hidden">
+    <div class="modal-content contact-support-modal">
+
+        <button type="button" id="closeContactModal" class="modal-close" aria-label="Close">
+            &times;
+        </button>
+
+        <div class="help-modal-header">
+            <div class="help-modal-icon">
+                <i class="fa-solid fa-headset"></i>
+            </div>
+
+            <div>
+                <h2>Contact Support</h2>
+                <p>Tell us what you need help with.</p>
+            </div>
+        </div>
+
+        <form id="contactSupportForm">
+
+            <label for="supportName">Your Name</label>
+            <input
+                type="text"
+                id="supportName"
+                readonly
+            >
+
+            <label for="supportEmail">Email Address</label>
+            <input
+                type="email"
+                id="supportEmail"
+                readonly
+            >
+
+            <label for="supportSubject">Subject</label>
+            <input
+                type="text"
+                id="supportSubject"
+                placeholder="What can we help you with?"
+                required
+            >
+
+            <label for="supportMessage">Message</label>
+            <textarea
+                id="supportMessage"
+                rows="5"
+                placeholder="Tell us about your issue..."
+                required
+            ></textarea>
+
+            <button type="submit" class="support-submit">
+                <i class="fa-solid fa-envelope"></i>
+                Send Email to Support
+            </button>
+
+        </form>
+
+    </div>
+</div>
+
+<!-- Account -->
+
+            <section class="settings-card">
+
+                <div class="settings-card-header">
+
+                    <div class="settings-icon">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+
+                    <div>
+                        <h2>Account</h2>
+                        <p>Manage your account.</p>
+                    </div>
+
+                </div>
+
+
+                <a href="profile.html" class="setting-action">
+
+                    <div class="setting-info">
+
+                        <i class="fa-solid fa-user-pen"></i>
+
+                        <div>
+                            <strong>Profile</strong>
+                            <span>Edit your name and email.</span>
+                        </div>
+
+                    </div>
+
+                    <i class="fa-solid fa-chevron-right"></i>
+
+                </a>
+
+                <button class="setting-action" id="resetPasswordBtn" type="button">
+                    <div class="setting-info">
+                        <i class="fa-solid fa-lock"></i>
+                        <div>
+                            <strong>Reset Password</strong>
+                            <span>Update your account password.</span>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+
+                <button class="setting-action logout" id="logoutBtn" type="button">
+                    <div class="setting-info">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <div>
+                            <strong>Logout</strong>
+                            <span>Sign out of your account.</span>
+                        </div>
+                    </div>
+                </button>
+
+</section>
+
+        </div>
+
+    </div>
+<script src="../js/session.js"></script>
+    <script src="../js/settings.js"></script>
+
+    <!-- Reset Password Modal -->
+    <div id="passwordModal" class="modal hidden">
+        <div class="modal-content">
+
+            <span id="closeModal" class="close">&times;</span>
+
+            <h2>Reset Password</h2>
+
+            <form id="changePasswordForm">
+
+                <label>Current Password</label>
+                <input
+                    type="password"
+                    id="currentPassword"
+                    required
+                >
+
+                <label>New Password</label>
+                <input
+                    type="password"
+                    id="newPassword"
+                    required
+                >
+
+                <label>Confirm New Password</label>
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    required
+                >
+
+                <button type="submit">
+                    Update Password
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+</body>
+</html>

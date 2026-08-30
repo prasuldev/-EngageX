@@ -189,12 +189,64 @@ async function handleGenerateCampaign() {
     }
 }
 
-// ---------------- Init ----------------
 
+// ---------------- Theme ----------------
+
+function getSystemTheme() {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light";
+}
+
+function applyTheme(theme) {
+    const resolvedTheme = theme === "system"
+        ? getSystemTheme()
+        : theme;
+
+    document.documentElement.setAttribute("data-theme", resolvedTheme);
+
+    const themeSelect = document.getElementById("theme-select");
+
+    if (themeSelect && themeSelect.value !== theme) {
+        themeSelect.value = theme;
+    }
+}
+
+function initTheme() {
+    const savedTheme = localStorage.getItem("engagex_theme") || "system";
+
+    applyTheme(savedTheme);
+
+    const themeSelect = document.getElementById("theme-select");
+
+    if (!themeSelect) return;
+
+    themeSelect.value = savedTheme;
+
+    themeSelect.addEventListener("change", (event) => {
+        const theme = event.target.value;
+
+        localStorage.setItem("engagex_theme", theme);
+        applyTheme(theme);
+    });
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+    mediaQuery.addEventListener("change", () => {
+        const currentTheme =
+            localStorage.getItem("engagex_theme") || "system";
+
+        if (currentTheme === "system") {
+            applyTheme("system");
+        }
+    });
+}
+// ---------------- Init ----------------
 function initDashboard() {
     if (!requireAuth()) return;
     if (!requireRole(["marketing_manager"])) return; // add this line
 
+    initTheme();
     connectDashboardWS();
     loadDashboard();
     loadCampaignPerformance();

@@ -13,3 +13,14 @@
     --shadow:0px 4px 10px rgba(0,0,0,0.1);
     --radius:12px;
 }
+/* =========================
+   CUSTOMER DARK MODE
+   ========================= */
+
+body.dark-mode {
+    --text: #F3F4F6;
+    --light: #1F2937;
+    --background: #111827;
+    --white: #1F2937;
+    --shadow: 0px 4px 10px rgba(0,0,0,0.35);
+}
