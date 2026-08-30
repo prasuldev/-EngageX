@@ -1,6 +1,6 @@
 const SESSION_KEY = "loggedInUser";
 const TOKEN_KEY = "authToken";
-const API_BASE = "https://engagex-3.onrender.com";
+const API_BASE = "http://127.0.0.1:8000";
 
 // ---- Save session after login/register ----
 function saveSession(token, user) {
