@@ -113,12 +113,6 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaign not found")
 
-    # Only logged-in users may participate in campaigns at all -- the
-    # frontend already blocks guests from opening a campaign, but this is
-    # enforced here too as the real source of truth.
-    if payload.user_id is None:
-        raise HTTPException(status_code=401, detail="You must be logged in to participate in campaigns")
-
     user_id = current_user["id"]
     campaign_id = campaign["id"]
 
@@ -128,7 +122,7 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
         # regardless of whether it earns a reward.
         existing = await db.fetchrow(
             "SELECT 1 FROM campaign_participation WHERE campaign_id = $1 AND user_id = $2",
-            campaign_id, payload.user_id
+            campaign_id, user_id
         )
         already_participated = existing is not None
         grants_reward = not already_participated
@@ -168,7 +162,7 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
                 (campaign_id, user_id, moves_taken, time_taken_seconds, completed, reward_rule_id, reward_issued_value)
             VALUES ($1, $2, $3, $4, true, $5, $6)
             """,
-            campaign_id, payload.user_id, payload.moves_taken, payload.time_taken_seconds,
+            campaign_id, user_id, payload.moves_taken, payload.time_taken_seconds,
             matched_rule["id"] if matched_rule else None,
             reward_value if grants_reward else None
         )
@@ -180,14 +174,14 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
                 VALUES ($1, $2)
                 ON CONFLICT (campaign_id, user_id) DO NOTHING
                 """,
-                campaign_id, payload.user_id
+                campaign_id, user_id
             )
 
             await manager.broadcast({"event": "participation_update", "campaign_id": campaign_id})
 
             today = await db.fetchval("SELECT CURRENT_DATE")
             streak = await db.fetchrow(
-                "SELECT * FROM user_game_streaks WHERE user_id = $1", payload.user_id
+                "SELECT * FROM user_game_streaks WHERE user_id = $1", user_id
             )
             if streak is None:
                 await db.execute(
@@ -195,7 +189,7 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
                     INSERT INTO user_game_streaks (user_id, current_streak, longest_streak, last_played_date)
                     VALUES ($1, 1, 1, $2)
                     """,
-                    payload.user_id, today
+                    user_id, today
                 )
             else:
                 gap = (today - streak["last_played_date"]).days if streak["last_played_date"] else None
@@ -207,7 +201,7 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
                     SET current_streak = $1, longest_streak = $2, last_played_date = $3, updated_at = NOW()
                     WHERE user_id = $4
                     """,
-                    new_streak, longest, today, payload.user_id
+                    new_streak, longest, today, user_id
                 )
 
         return {
@@ -232,7 +226,7 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
             if a.get("question_id") is not None:
                 await db.execute(
                     "INSERT INTO campaign_responses (campaign_id, user_id, question_id, answer) VALUES ($1, $2, $3, $4)",
-                    campaign_id, payload.user_id, a["question_id"], str(a["answer"])
+                    campaign_id, user_id, a["question_id"], str(a["answer"])
                 )
 
         profile_hash = hashlib.sha256(
@@ -276,7 +270,7 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
             INSERT INTO quiz_responses (user_id, campaign_id, answers, profile_hash)
             VALUES ($1, $2, $3, $4)
             """,
-            payload.user_id, campaign_id, json.dumps(payload.answers), profile_hash
+            user_id, campaign_id, json.dumps(payload.answers), profile_hash
         )
 
         await db.execute(
@@ -285,7 +279,7 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
             VALUES ($1, $2)
             ON CONFLICT (campaign_id, user_id) DO NOTHING
             """,
-            campaign_id, payload.user_id
+            campaign_id, user_id
         )
 
         await manager.broadcast({"event": "participation_update", "campaign_id": campaign_id})
@@ -359,7 +353,7 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
             ON CONFLICT (user_id, campaign_id, checkin_date)
             DO UPDATE SET mood_slug = $3, resolved_products = $4
             """,
-            payload.user_id, campaign_id, payload.mood_slug, json.dumps(resolved, default=str)
+            user_id, campaign_id, payload.mood_slug, json.dumps(resolved, default=str)
         )
 
         await db.execute(
@@ -368,7 +362,7 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
             VALUES ($1, $2)
             ON CONFLICT (campaign_id, user_id) DO NOTHING
             """,
-            campaign_id, payload.user_id
+            campaign_id, user_id
         )
 
         await manager.broadcast({"event": "participation_update", "campaign_id": campaign_id})
@@ -377,7 +371,7 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
         # and logic as memory_match, since streaks aren't game-specific
         today = await db.fetchval("SELECT CURRENT_DATE")
         streak = await db.fetchrow(
-            "SELECT * FROM user_game_streaks WHERE user_id = $1", payload.user_id
+            "SELECT * FROM user_game_streaks WHERE user_id = $1", user_id
         )
         if streak is None:
             await db.execute(
@@ -385,7 +379,7 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
                 INSERT INTO user_game_streaks (user_id, current_streak, longest_streak, last_played_date)
                 VALUES ($1, 1, 1, $2)
                 """,
-                payload.user_id, today
+                user_id, today
             )
             current_streak = 1
         else:
@@ -398,7 +392,7 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
                 SET current_streak = $1, longest_streak = $2, last_played_date = $3, updated_at = NOW()
                 WHERE user_id = $4
                 """,
-                new_streak, longest, today, payload.user_id
+                new_streak, longest, today, user_id
             )
             current_streak = new_streak
 
@@ -423,7 +417,7 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
     if first_answer.get("question_id") is not None:
         await db.execute(
             "INSERT INTO campaign_responses (campaign_id, user_id, question_id, answer) VALUES ($1, $2, $3, $4)",
-            campaign_id, payload.user_id, first_answer["question_id"], first_answer["answer"]
+            campaign_id, user_id, first_answer["question_id"], first_answer["answer"]
         )
 
         await db.execute(
@@ -432,7 +426,7 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
             VALUES ($1, $2)
             ON CONFLICT (campaign_id, user_id) DO NOTHING
             """,
-            campaign_id, payload.user_id
+            campaign_id, user_id
         )
 
         await manager.broadcast({"event": "participation_update", "campaign_id": campaign_id})

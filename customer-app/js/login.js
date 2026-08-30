@@ -26,6 +26,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const data = await res.json();
 
+            if (data.user.role !== "customer") {
+                alert("This login is for customers only.");
+                return;
+            }
+
             // Store JWT + user info via session.js
             saveSession(data.access_token, data.user);
 

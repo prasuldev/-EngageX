@@ -2,346 +2,36 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Wishlist | Maquillage</title>
 
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-
 </head>
 
 <body class="bg-gray-50">
 
-    <!-- Navbar -->
-
-    <nav class="bg-white shadow-md sticky top-0 z-50">
-
-        <div class="max-w-7xl mx-auto px-6">
-
-            <div class="flex items-center justify-between h-20">
-
-                <button id="mobile-menu-btn" class="lg:hidden">
-
-                    <i data-lucide="menu"></i>
-
-                </button>
-
-                <!-- Logo -->
-
-                <a href="../pages/home.html"
-                    class="flex items-center gap-3 flex-shrink-0">
-
-                    <span class="text-4xl">🌸</span>
-
-                    <span class="text-3xl font-bold text-pink-600">
-
-                        Maquillage
-
-                    </span>
-
-                </a>
-
-                <!-- Desktop Menu -->
-
-                <div class="hidden lg:flex items-center gap-8">
-
-                    <a href="../pages/home.html"
-                        class="font-medium hover:text-pink-600 transition">
-
-                        Home
-
-                    </a>
-
-                    <a href="../pages/products.html"
-                        class="font-medium hover:text-pink-600 transition">
-
-                        Products
-
-                    </a>
-
-                    <a href="#"
-                        class="font-medium hover:text-pink-600 transition">
-
-                        Offers
-
-                    </a>
-
-                </div>
-
-                <!-- Search -->
-
-                <div class="hidden lg:flex flex-1 max-w-lg mx-8">
-
-                    <input
-                        type="text"
-                        placeholder="Search products..."
-                        class="w-full px-4 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-pink-500">
-
-                    <button
-                        class="bg-pink-600 text-white px-5 rounded-r-lg hover:bg-pink-700">
-
-                        <i data-lucide="search"></i>
-
-                    </button>
-
-                </div>
-
-                <!-- Icons -->
-
-                <div class="flex items-center gap-5">
-
-                    <a
-                        href="../pages/wishlist.html"
-                        class="relative text-pink-600"
-                        title="Wishlist">
-
-                        <i data-lucide="heart"></i>
-
-                        <span
-                            id="wishlist-badge"
-                            class="absolute -top-2 -right-2
-                                   min-w-[18px] h-[18px]
-                                   hidden
-                                   items-center justify-center
-                                   bg-pink-600 text-white
-                                   rounded-full
-                                   text-[10px]
-                                   font-semibold">
-
-                            0
-
-                        </span>
-
-                    </a>
-
-                    <a
-                        href="../pages/cart.html"
-                        class="relative"
-                        title="Cart">
-
-                        <i data-lucide="shopping-cart"></i>
-
-                        <span
-                            id="cart-count"
-                            class="absolute -top-2 -right-2
-                                   min-w-[18px] h-[18px]
-                                   hidden
-                                   items-center justify-center
-                                   bg-pink-600 text-white
-                                   rounded-full
-                                   text-[10px]
-                                   font-semibold">
-
-                            0
-
-                        </span>
-
-                    </a>
-
-                    <a
-                        id="profileBtn"
-                        href="../pages/profile.html"
-                        title="Profile">
-
-                        <i data-lucide="user"></i>
-
-                    </a>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- Mobile Menu -->
-
-        <div id="mobileMenu" class="hidden bg-white border-t">
-
-            <a href="../pages/home.html"
-                class="block px-6 py-4 hover:bg-pink-50">
-
-                Home
-
-            </a>
-
-            <a href="../pages/products.html"
-                class="block px-6 py-4 hover:bg-pink-50">
-
-                Products
-
-            </a>
-
-            <a href="../pages/categories.html"
-                class="block px-6 py-4 hover:bg-pink-50">
-
-                Categories
-
-            </a>
-
-            <a href="../pages/offers.html"
-                class="block px-6 py-4 hover:bg-pink-50">
-
-                Offers
-
-            </a>
-
-            <a href="../pages/campaigns.html"
-                class="block px-6 py-4 hover:bg-pink-50">
-
-                Campaigns
-
-            </a>
-
-            <a href="../pages/wishlist.html"
-                class="block px-6 py-4 hover:bg-pink-50">
-
-                Wishlist
-
-            </a>
-
-            <a href="../pages/cart.html"
-                class="block px-6 py-4 hover:bg-pink-50">
-
-                Cart
-
-            </a>
-
-            <a href="../pages/profile.html"
-                class="block px-6 py-4 hover:bg-pink-50">
-
-                Profile
-
-            </a>
-
-        </div>
-
-    </nav>
-
-    <!-- Wishlist Content -->
+    <div id="navbar"></div>
 
     <div class="max-w-7xl mx-auto px-6 py-10">
 
         <div class="flex items-center justify-between mb-10">
-
             <div>
-
-                <h1 class="text-4xl font-bold">
-
-                    My Wishlist
-
-                </h1>
-
-                <p
-                    id="wishlist-count"
-                    class="text-gray-500 mt-2">
-
-                    0 Saved Items
-
-                </p>
-
+                <h1 class="text-4xl font-bold">My Wishlist</h1>
+                <p id="wishlist-saved-count" class="text-gray-500 mt-2">0 Saved Items</p>
             </div>
-
         </div>
 
-        <div
-            id="wishlist-container"
+        <div id="wishlist-container"
             class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-
         </div>
 
     </div>
 
+    <script src="../js/session.js"></script>
+    <script src="../js/loadComponents.js"></script>
     <script type="module" src="../js/wishlist.js"></script>
-
-    <script src="https://unpkg.com/lucide@latest"></script>
-
-    <script>
-
-        lucide.createIcons();
-
-        // Mobile Menu
-
-        const mobileBtn =
-            document.getElementById("mobile-menu-btn");
-
-        const mobileMenu =
-            document.getElementById("mobileMenu");
-
-        mobileBtn?.addEventListener("click", () => {
-
-            mobileMenu.classList.toggle("hidden");
-
-        });
-
-        // Cart Badge
-
-        function updateCartCount() {
-
-            const cart = JSON.parse(
-                localStorage.getItem("cart") || "[]"
-            );
-
-            const totalItems = cart.reduce(
-                (sum, item) => sum + (item.quantity || 1),
-                0
-            );
-
-            const badge =
-                document.getElementById("cart-count");
-
-            if (!badge) return;
-
-            if (totalItems > 0) {
-
-                badge.textContent = totalItems;
-
-                badge.classList.remove("hidden");
-
-                badge.classList.add("flex");
-
-            } else {
-
-                badge.classList.add("hidden");
-
-            }
-
-        }
-
-        // Wishlist Badge
-
-        function updateWishlistCount() {
-
-            const wishlist = JSON.parse(
-                localStorage.getItem("wishlist") || "[]"
-            );
-
-            const badge =
-                document.getElementById("wishlist-badge");
-
-            if (!badge) return;
-
-            if (wishlist.length > 0) {
-
-                badge.textContent = wishlist.length;
-
-                badge.classList.remove("hidden");
-
-                badge.classList.add("flex");
-
-            } else {
-
-                badge.classList.add("hidden");
-
-            }
-
-        }
-
-        updateCartCount();
-        updateWishlistCount();
-
-    </script>
 
 </body>
 

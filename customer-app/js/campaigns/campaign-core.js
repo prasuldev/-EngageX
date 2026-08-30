@@ -200,62 +200,54 @@ async function mountCampaignWidget(campaign, containerEl) {
         }
     }
 
-    async function submitCampaignResult(payload) {
-        try {
-            const user = getLoggedInUser();
+async function submitCampaignResult(payload) {
+    try {
+        const res = await authFetch(`${API_BASE}/campaigns/${campaign.slug}/respond`, {
+            method: "POST",
+            body: JSON.stringify(payload)
+        });
 
-            const res = await fetch(`${API_BASE}/campaigns/${campaign.slug}/respond`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    user_id: user ? user.id : null,
-                    ...payload
-                })
-            });
+        if (!res) return; // authFetch already redirected to login on 401
 
-            if (!res.ok) {
-                el.questionText.textContent = "Something went wrong";
-                el.reward.textContent = "Please log in and try again.";
-                setTimeout(() => {
-                    el.expanded.style.display = "none";
-                    el.collapsed.style.display = "flex";
-                }, 3000);
-                return;
-            }
-
-            const data = await res.json();
-            console.log("Campaign response:", data); // temporary -- confirms what the backend actually sent
-
-            el.content.style.display = "none";
-            el.reward.style.display = "block";
-
-            if (data.products) {
-                el.questionText.textContent = "Here's your skin twin match!";
-                el.reward.innerHTML = renderSkinTwinResult(data);
-            } else if (data.routine && data.mood) {
-                el.questionText.textContent = "Your ritual is ready ✨";
-                el.reward.innerHTML = renderMoodRitualResult(data);
-            } else if (data.recommended_product) {
-                el.questionText.textContent = "Here's your match!";
-                el.reward.innerHTML = renderRecommendationCard(data.recommended_product, data);
-                el.reward.querySelector(".campaign-recommendation-later")
-                    ?.addEventListener("click", closeCampaign);
-            } else if (data.already_rewarded) {
-                el.questionText.textContent = "Thanks for playing again!";
-                el.reward.textContent = "You've already claimed your reward for this campaign.";
-            } else {
-                el.questionText.textContent = "Thanks!";
-                el.reward.textContent = `🎉 You unlocked: ${data.reward_value}`;
-            }
-
-            // No auto-close here -- the user reviews the result (and can
-            // click "Buy Now" for a recommendation) and closes manually
-            // via the × button whenever they're ready.
-
-        } catch (error) {
-            console.error("Error submitting campaign result:", error);
+        if (!res.ok) {
+            el.questionText.textContent = "Something went wrong";
+            el.reward.textContent = "Please log in and try again.";
+            setTimeout(() => {
+                el.expanded.style.display = "none";
+                el.collapsed.style.display = "flex";
+            }, 3000);
+            return;
         }
+
+        const data = await res.json();
+        console.log("Campaign response:", data);
+
+        el.content.style.display = "none";
+        el.reward.style.display = "block";
+
+        if (data.products) {
+            el.questionText.textContent = "Here's your skin twin match!";
+            el.reward.innerHTML = renderSkinTwinResult(data);
+        } else if (data.routine && data.mood) {
+            el.questionText.textContent = "Your ritual is ready ✨";
+            el.reward.innerHTML = renderMoodRitualResult(data);
+        } else if (data.recommended_product) {
+            el.questionText.textContent = "Here's your match!";
+            el.reward.innerHTML = renderRecommendationCard(data.recommended_product, data);
+            el.reward.querySelector(".campaign-recommendation-later")
+                ?.addEventListener("click", closeCampaign);
+        } else if (data.already_rewarded) {
+            el.questionText.textContent = "Thanks for playing again!";
+            el.reward.textContent = "You've already claimed your reward for this campaign.";
+        } else {
+            el.questionText.textContent = "Thanks!";
+            el.reward.textContent = `🎉 You unlocked: ${data.reward_value}`;
+        }
+
+    } catch (error) {
+        console.error("Error submitting campaign result:", error);
     }
+}
 
     function closeCampaign() {
         el.expanded.style.display = "none";

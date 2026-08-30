@@ -97,4 +97,18 @@ class CartService:
             "message": "Removed from cart"
         }
 
+    @staticmethod
+    async def update_quantity(db, user_id: int, product_id: int, quantity: int):
+        result = await db.execute(
+            """
+            UPDATE cart_items
+            SET quantity = $1
+            WHERE user_id = $2 AND product_id = $3
+            """,
+            quantity, user_id, product_id
+        )
+        if result == "UPDATE 0":
+            return None
+        return {"success": True, "message": "Quantity updated"}
+
     

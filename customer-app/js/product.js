@@ -2,85 +2,33 @@ import { getProduct } from "../services/productservice.js";
 
 const productContainer = document.getElementById("product-details");
 
-function addToCart(product) {
-
-    const cart = JSON.parse(
-        localStorage.getItem("cart") || "[]"
-    );
-
-    const existingProduct = cart.find(
-        item => item.id === product.id
-    );
-
-    if (existingProduct) {
-
-        existingProduct.quantity =
-            (existingProduct.quantity || 1) + 1;
-
-    } else {
-
-        cart.push({
-            ...product,
+async function addToCart(product) {
+    const response = await authFetch(`${API_BASE}/cart/add`, {
+        method: "POST",
+        body: JSON.stringify({
+            product_id: product.id,
             quantity: 1
-        });
+        })
+    });
 
+    if (!response) return false;
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        alert(data.detail || "Failed to add to cart");
+        return false;
     }
 
-    localStorage.setItem(
-        "cart",
-        JSON.stringify(cart)
-    );
+    return true;
 }
 
-function toggleWishlist(product) {
+async function isInCart(productId) {
+    const response = await authFetch(`${API_BASE}/cart`, { method: "GET" });
+    if (!response || !response.ok) return false;
 
-    const wishlist = JSON.parse(
-        localStorage.getItem("wishlist") || "[]"
-    );
-
-    const exists = wishlist.find(
-        item => item.id === product.id
-    );
-
-    let updatedWishlist;
-
-    if (exists) {
-
-        updatedWishlist = wishlist.filter(
-            item => item.id !== product.id
-        );
-
-        showToast("Removed from Wishlist");
-
-    } else {
-
-        updatedWishlist = [
-            ...wishlist,
-            product
-        ];
-
-        showToast("❤ Added to Wishlist");
-    }
-
-    localStorage.setItem(
-        "wishlist",
-        JSON.stringify(updatedWishlist)
-    );
-
-    window.dispatchEvent(
-        new Event("wishlistUpdated")
-    );
-}
-
-function isInCart(productId) {
-
-    const cart = JSON.parse(
-        localStorage.getItem("cart") || "[]"
-    );
-
-    return cart.some(
-        item => item.id === productId
-    );
+    const cart = await response.json();
+    return cart.some(item => item.id === productId);
 }
 
 function showToast(message) {
@@ -108,68 +56,61 @@ function showToast(message) {
     }, 2500);
 }
 
-function updateCartButton(product, addCartBtn) {
-
+async function updateCartButton(product, addCartBtn) {
     if (!addCartBtn) return;
 
-    if (isInCart(product.id)) {
+    const inCart = await isInCart(product.id);
 
+    if (inCart) {
         addCartBtn.textContent = "✓ Added to Cart";
-
-        addCartBtn.className =
-            "buy-btn bg-green-600 text-white";
-
+        addCartBtn.className = "buy-btn bg-green-600 text-white";
     } else {
-
         addCartBtn.textContent = "Add to Cart";
-
         addCartBtn.className = "buy-btn";
     }
 }
 
-function removeFromCart(productId) {
-
-    const cart = JSON.parse(
-        localStorage.getItem("cart") || "[]"
-    );
-
-    const updatedCart = cart.filter(
-        item => item.id !== productId
-    );
-
-    localStorage.setItem(
-        "cart",
-        JSON.stringify(updatedCart)
-    );
+async function removeFromCart(productId) {
+    const response = await authFetch(`${API_BASE}/cart/${productId}`, {
+        method: "DELETE"
+    });
+    return !!response;
 }
 
-function updateWishlistButton(product, button) {
+async function isInWishlist(productId) {
+    const response = await authFetch(`${API_BASE}/wishlist`, { method: "GET" });
+    if (!response || !response.ok) return false;
 
-    const wishlist = JSON.parse(
-        localStorage.getItem("wishlist") || "[]"
-    );
+    const wishlist = await response.json();
+    return wishlist.some(item => item.id === productId);
+}
 
-    const exists = wishlist.some(
-        item => item.id === product.id
-    );
+async function toggleWishlist(product) {
+    const inWishlist = await isInWishlist(product.id);
 
-    if (exists) {
-
-        button.innerHTML = "❤ Wishlisted";
-
-        button.classList.add(
-            "bg-pink-600",
-            "text-white"
-        );
-
+    if (inWishlist) {
+        await authFetch(`${API_BASE}/wishlist/${product.id}`, { method: "DELETE" });
+        showToast("Removed from Wishlist");
     } else {
+        await authFetch(`${API_BASE}/wishlist/add`, {
+            method: "POST",
+            body: JSON.stringify({ product_id: product.id })
+        });
+        showToast("❤ Added to Wishlist");
+    }
 
+    window.dispatchEvent(new Event("wishlistUpdated"));
+}
+
+async function updateWishlistButton(product, button) {
+    const inWishlist = await isInWishlist(product.id);
+
+    if (inWishlist) {
+        button.innerHTML = "❤ Wishlisted";
+        button.classList.add("bg-pink-600", "text-white");
+    } else {
         button.innerHTML = "❤ Wishlist";
-
-        button.classList.remove(
-            "bg-pink-600",
-            "text-white"
-        );
+        button.classList.remove("bg-pink-600", "text-white");
     }
 }
 
@@ -354,7 +295,7 @@ async function loadProduct() {
 
         // Button Events
         const addCartBtn = document.getElementById("addCart");
-        updateCartButton(product, addCartBtn);
+        await updateCartButton(product, addCartBtn);
 
         window.addEventListener(
             "cartUpdated",
@@ -362,36 +303,28 @@ async function loadProduct() {
         );
 
         const wishlistBtn = document.getElementById("wishlistBtn");
-        updateWishlistButton(product, wishlistBtn);
+        await updateWishlistButton(product, wishlistBtn);
 
-        addCartBtn?.addEventListener("click", () => {
+        wishlistBtn?.addEventListener("click", async () => {
+            await toggleWishlist(product);
+            await updateWishlistButton(product, wishlistBtn);
+        });
 
-            if (isInCart(product.id)) {
+        addCartBtn?.addEventListener("click", async () => {
+            const inCart = await isInCart(product.id);
 
-                removeFromCart(product.id);
-
+            if (inCart) {
+                await removeFromCart(product.id);
                 showToast("Removed from Cart");
-
             } else {
-
-                addToCart(product);
-
+                const success = await addToCart(product);
+                if (!success) return;
                 showToast("✓ Added to Cart");
-
             }
 
-            window.dispatchEvent(
-                new Event("cartUpdated")
-            );
+            window.dispatchEvent(new Event("cartUpdated"));
+            await updateCartButton(product, addCartBtn);
 
-            updateCartButton(product, addCartBtn);
-
-        });
-       
-
-        wishlistBtn?.addEventListener("click", () => {
-            toggleWishlist(product);
-            updateWishlistButton(product, wishlistBtn);
         });
 
     }

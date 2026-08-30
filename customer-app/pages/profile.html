@@ -4,145 +4,259 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | Maquillage</title>
 
-    <title>My Profile</title>
-
-    <link rel="stylesheet" href="../css/profile.css">
-
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <style>
+        /* Styles for content generated dynamically by addresses.js — kept separate
+           since that file builds these class names directly into its template strings. */
+        .address-card { border: 1px solid #efefef; border-radius: 14px; padding: 16px 20px; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,.04); text-align: left; }
+        .address-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+        .address-card-header strong { font-size: 16px; color: #333; }
+        .default-badge { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: #fff; background: #d63384; padding: 3px 10px; border-radius: 999px; }
+        .address-card p { margin: 2px 0; font-size: 14px; color: #666; line-height: 1.5; }
+        .address-card-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .address-card-actions button.editAddressBtn, .address-card-actions button.setDefaultBtn, .address-card-actions button.deleteAddressBtn {
+            width: auto; margin-top: 0; padding: 6px 14px; border-radius: 8px; border: 1px solid #ddd; background: #fff; color: #555; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all .2s ease;
+        }
+        .address-card-actions button.editAddressBtn:hover { border-color: #d63384; background: #fde8f3; color: #d63384; }
+        .address-card-actions button.setDefaultBtn:hover { border-color: #2e7d32; background: #eef7ee; color: #2e7d32; }
+        .address-card-actions button.deleteAddressBtn { margin-left: auto; }
+        .address-card-actions button.deleteAddressBtn:hover { border-color: #ff4d6d; background: #fff0f3; color: #ff4d6d; }
+        .checkbox-label { display: flex !important; align-items: center; gap: 8px; font-weight: 500 !important; margin-top: 18px !important; cursor: pointer; color: #555; }
+        .checkbox-label input[type="checkbox"] { width: auto; }
+        .address-list-message { text-align: center; padding: 30px 10px; color: #999; font-size: 14px; }
+        .address-list-message.loading::before {
+            content: ""; display: inline-block; width: 18px; height: 18px; border: 2px solid #f3d4e4;
+            border-top-color: #d63384; border-radius: 50%; margin-right: 8px; vertical-align: middle;
+            animation: address-spin .7s linear infinite;
+        }
+        @keyframes address-spin { to { transform: rotate(360deg); } }
+        .address-list-message.empty i { display: block; font-size: 28px; color: #ddd; margin-bottom: 10px; }
+    </style>
 </head>
 
-<body>
+<body class="bg-gray-50">
 
     <!-- Change Password Modal -->
-    <div id="passwordModal" class="modal hidden">
+    <div id="passwordModal" class="hidden fixed inset-0 bg-black/45 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
+            <span id="closeModal" class="absolute top-4 right-5 text-2xl text-gray-400 hover:text-pink-600 cursor-pointer">&times;</span>
+            <h2 class="text-xl font-bold text-pink-600 text-center mb-6">Change Password</h2>
 
-        <div class="modal-content">
-
-            <span id="closeModal" class="close">&times;</span>
-
-            <h2>Change Password</h2>
-
-            <form id="changePasswordForm">
-
-                <label>Current Password</label>
-                <input
-                    type="password"
-                    id="currentPassword"
-                    required
-                >
-
-                <label>New Password</label>
-                <input
-                   type="password"
-                   id="newPassword"
-                   required
-                >
-
-                <label>Confirm Password</label>
-                <input
-                    type="password"
-                    id="confirmPassword"
-                    required
-                >
-
-                <button type="submit">
+            <form id="changePasswordForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">Current Password</label>
+                    <input type="password" id="currentPassword" required
+                        class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">New Password</label>
+                    <input type="password" id="newPassword" required
+                        class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">Confirm Password</label>
+                    <input type="password" id="confirmPassword" required
+                        class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500">
+                </div>
+                <button type="submit" class="w-full py-3 bg-pink-600 text-white rounded-xl font-semibold hover:bg-pink-700 transition">
                     Update Password
                 </button>
-
             </form>
-
         </div>
-
     </div>
 
-    <div id="editProfileModal" class="modal hidden">
-        <div class="modal-content">
-            <span id="closeEditModal" class="close">&times;</span>
-            <h2>Edit Profile</h2>
-            <form id="editProfileForm">
-                <label>Full Name</label>
-                <input
-                    type="text"
-                    id="editName"
-                    required
-                >
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="hidden fixed inset-0 bg-black/45 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
+            <span id="closeEditModal" class="absolute top-4 right-5 text-2xl text-gray-400 hover:text-pink-600 cursor-pointer">&times;</span>
+            <h2 class="text-xl font-bold text-pink-600 text-center mb-6">Edit Profile</h2>
 
-                <label>Email</label>
-                <input
-                    type="email"
-                    id="editEmail"
-                    required
-                >
-
-                <button type="submit">
+            <form id="editProfileForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">Full Name</label>
+                    <input type="text" id="editName" required
+                        class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">Email</label>
+                    <input type="email" id="editEmail" required
+                        class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500">
+                </div>
+                <button type="submit" class="w-full py-3 bg-pink-600 text-white rounded-xl font-semibold hover:bg-pink-700 transition">
                     Save Changes
                 </button>
-
             </form>
-
         </div>
-
     </div>
 
-    <div class="profile-container">
+    <!-- Addresses Modal -->
+    <div id="addressesModal" class="hidden fixed inset-0 bg-black/45 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-8 max-h-[85vh] overflow-y-auto">
+            <span id="closeAddressesModal" class="absolute top-4 right-5 text-2xl text-gray-400 hover:text-pink-600 cursor-pointer">&times;</span>
+            <h2 class="text-xl font-bold text-pink-600 text-center mb-6">My Addresses</h2>
 
-        <div class="profile-card">
+            <div id="addressList" class="space-y-4"></div>
 
-            <div class="profile-avatar">
-                <i class="fa-solid fa-user"></i>
-            </div>
+            <button id="showAddAddressFormBtn" type="button"
+                class="w-full mt-4 py-3 border-2 border-dashed border-pink-600 text-pink-600 rounded-xl font-semibold hover:bg-pink-50 transition">
+                + Add New Address
+            </button>
 
-            <h1 class="brand">Maquillage</h1>
+            <form id="addressForm" class="hidden space-y-3 border-t mt-5 pt-5">
+                <input type="hidden" id="addressId">
 
-            <p class="subtitle">My Profile</p>
-
-            <div class="info-item">
-                <label>Full Name</label>
-                <p id="username"></p>
-            </div>
-
-            <div class="info-item">
-                <label>Email Address</label>
-                <p id="email"></p>
-            </div>
-
-            <div class="account-section">
-                <h3>Account Settings</h3>
-                <div class="setting-item" id="editProfileBtn">
-                    <div class="setting-left">
-                        <i class="fa-solid fa-user-pen"></i>
-                        <span>Edit Profile</span>
-                    </div>
-
-                    <i class="fa-solid fa-chevron-right"></i>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">Full Name</label>
+                    <input type="text" id="addr_full_name" required class="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500">
                 </div>
-
-                <div class="setting-item" id="changePasswordBtn">
-                    <div class="setting-left">
-                        <i class="fa-solid fa-lock"></i>
-                        <span>Change Password</span>
-                    </div>
-
-                    <i class="fa-solid fa-chevron-right"></i>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">Phone</label>
+                    <input type="tel" id="addr_phone" required class="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500">
                 </div>
-
-                <div class="setting-item logout" id="logoutBtn">
-                    <div class="setting-left">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                        <span>Logout</span>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">Address Line 1</label>
+                    <input type="text" id="addr_line1" required class="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">Address Line 2</label>
+                    <input type="text" id="addr_line2" class="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">City</label>
+                        <input type="text" id="addr_city" required class="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">State</label>
+                        <input type="text" id="addr_state" required class="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500">
                     </div>
                 </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Pincode</label>
+                        <input type="text" id="addr_pincode" required class="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Country</label>
+                        <input type="text" id="addr_country" value="India" required class="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    </div>
+                </div>
 
-            </div>    
+                <label class="checkbox-label">
+                    <input type="checkbox" id="addr_is_default">
+                    Set as default address
+                </label>
+
+                <button type="submit" id="addressFormSubmitBtn"
+                    class="w-full py-3 bg-pink-600 text-white rounded-xl font-semibold hover:bg-pink-700 transition mt-2">
+                    Save Address
+                </button>
+                <button type="button" id="cancelAddressFormBtn"
+                    class="w-full py-2.5 border rounded-xl text-gray-500 hover:text-gray-700 hover:border-gray-400 transition">
+                    Cancel
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Page Content -->
+    <div class="max-w-5xl mx-auto px-6 py-12">
+
+        <div class="grid md:grid-cols-3 gap-8">
+
+            <!-- Left: Profile summary -->
+            <div class="md:col-span-1">
+                <div class="bg-white rounded-2xl shadow-md p-8 text-center">
+                    <div class="w-24 h-24 mx-auto rounded-full bg-pink-600 flex items-center justify-center text-white text-4xl mb-5">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold text-pink-600">Maquillage</h1>
+                    <p class="text-gray-400 mb-6">My Profile</p>
+
+                    <div class="text-left space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">Full Name</label>
+                            <p id="username" class="px-4 py-3 bg-gray-50 border rounded-xl text-gray-800"></p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">Email Address</label>
+                            <p id="email" class="px-4 py-3 bg-gray-50 border rounded-xl text-gray-800"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Account settings -->
+            <div class="md:col-span-2">
+                <div class="bg-white rounded-2xl shadow-md p-8">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-5">Account Settings</h3>
+
+                    <div class="space-y-3">
+
+                        <div id="editProfileBtn" class="flex items-center justify-between p-4 border rounded-xl cursor-pointer hover:border-pink-500 hover:shadow-sm transition">
+                            <div class="flex items-center gap-4">
+                                <span class="w-11 h-11 rounded-full bg-pink-50 text-pink-600 flex items-center justify-center">
+                                    <i class="fa-solid fa-user-pen"></i>
+                                </span>
+                                <span class="font-semibold text-gray-700">Edit Profile</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-gray-300"></i>
+                        </div>
+
+                        <div id="changePasswordBtn" class="flex items-center justify-between p-4 border rounded-xl cursor-pointer hover:border-pink-500 hover:shadow-sm transition">
+                            <div class="flex items-center gap-4">
+                                <span class="w-11 h-11 rounded-full bg-pink-50 text-pink-600 flex items-center justify-center">
+                                    <i class="fa-solid fa-lock"></i>
+                                </span>
+                                <span class="font-semibold text-gray-700">Change Password</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-gray-300"></i>
+                        </div>
+
+                        <div id="addressesBtn" class="flex items-center justify-between p-4 border rounded-xl cursor-pointer hover:border-pink-500 hover:shadow-sm transition">
+                            <div class="flex items-center gap-4">
+                                <span class="w-11 h-11 rounded-full bg-pink-50 text-pink-600 flex items-center justify-center">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                </span>
+                                <span class="font-semibold text-gray-700">My Addresses</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-gray-300"></i>
+                        </div>
+
+                        <a href="orders.html" class="flex items-center justify-between p-4 border rounded-xl cursor-pointer hover:border-pink-500 hover:shadow-sm transition no-underline">
+                            <div class="flex items-center gap-4">
+                                <span class="w-11 h-11 rounded-full bg-pink-50 text-pink-600 flex items-center justify-center">
+                                    <i class="fa-solid fa-box"></i>
+                                </span>
+                                <span class="font-semibold text-gray-700">My Orders</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-gray-300"></i>
+                        </a>
+
+                        <div id="logoutBtn" class="flex items-center justify-between p-4 border border-red-100 rounded-xl cursor-pointer hover:border-red-400 hover:bg-red-50/40 transition">
+                            <div class="flex items-center gap-4">
+                                <span class="w-11 h-11 rounded-full bg-red-50 text-red-500 flex items-center justify-center">
+                                    <i class="fa-solid fa-right-from-bracket"></i>
+                                </span>
+                                <span class="font-semibold text-red-500">Logout</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
 
         </div>
-
     </div>
 
     <script src="../js/session.js"></script>
     <script src="../js/profile.js"></script>
+    <script src="../js/addresses.js"></script>
 
 </body>
 
