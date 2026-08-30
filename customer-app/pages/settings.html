@@ -206,5 +206,46 @@
     </div>
 <script src="../js/session.js"></script>
     <script src="../js/settings.js"></script>
+
+    <!-- Reset Password Modal -->
+    <div id="passwordModal" class="modal hidden">
+        <div class="modal-content">
+
+            <span id="closeModal" class="close">&times;</span>
+
+            <h2>Reset Password</h2>
+
+            <form id="changePasswordForm">
+
+                <label>Current Password</label>
+                <input
+                    type="password"
+                    id="currentPassword"
+                    required
+                >
+
+                <label>New Password</label>
+                <input
+                    type="password"
+                    id="newPassword"
+                    required
+                >
+
+                <label>Confirm New Password</label>
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    required
+                >
+
+                <button type="submit">
+                    Update Password
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
 </body>
 </html>
