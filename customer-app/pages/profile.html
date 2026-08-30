@@ -8,6 +8,7 @@
     <title>My Profile</title>
 
     <link rel="stylesheet" href="../css/profile.css">
+    <link rel="stylesheet" href="../css/dark-mode.css">
 
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
@@ -15,53 +16,17 @@
 
 <body>
 
-    <!-- Change Password Modal -->
-    <div id="passwordModal" class="modal hidden">
-
-        <div class="modal-content">
-
-            <span id="closeModal" class="close">&times;</span>
-
-            <h2>Change Password</h2>
-
-            <form id="changePasswordForm">
-
-                <label>Current Password</label>
-                <input
-                    type="password"
-                    id="currentPassword"
-                    required
-                >
-
-                <label>New Password</label>
-                <input
-                   type="password"
-                   id="newPassword"
-                   required
-                >
-
-                <label>Confirm Password</label>
-                <input
-                    type="password"
-                    id="confirmPassword"
-                    required
-                >
-
-                <button type="submit">
-                    Update Password
-                </button>
-
-            </form>
-
-        </div>
-
-    </div>
-
+    <!-- Edit Profile Modal -->
     <div id="editProfileModal" class="modal hidden">
+
         <div class="modal-content">
+
             <span id="closeEditModal" class="close">&times;</span>
+
             <h2>Edit Profile</h2>
+
             <form id="editProfileForm">
+
                 <label>Full Name</label>
                 <input
                     type="text"
@@ -86,6 +51,7 @@
 
     </div>
 
+
     <div class="profile-container">
 
         <div class="profile-card">
@@ -98,48 +64,52 @@
 
             <p class="subtitle">My Profile</p>
 
-            <div class="info-item">
-                <label>Full Name</label>
-                <p id="username"></p>
-            </div>
 
             <div class="info-item">
-                <label>Email Address</label>
-                <p id="email"></p>
+
+                <label>Full Name</label>
+
+                <p id="username"></p>
+
             </div>
+
+
+            <div class="info-item">
+
+                <label>Email Address</label>
+
+                <p id="email"></p>
+
+            </div>
+
 
             <div class="account-section">
+
                 <h3>Account Settings</h3>
+
                 <div class="setting-item" id="editProfileBtn">
+
                     <div class="setting-left">
+
                         <i class="fa-solid fa-user-pen"></i>
-                        <span>Edit Profile</span>
+
+                        <div>
+                            <strong>Edit Profile</strong>
+                            <span>Edit your name and email.</span>
+                        </div>
+
                     </div>
 
                     <i class="fa-solid fa-chevron-right"></i>
+
                 </div>
 
-                <div class="setting-item" id="changePasswordBtn">
-                    <div class="setting-left">
-                        <i class="fa-solid fa-lock"></i>
-                        <span>Change Password</span>
-                    </div>
-
-                    <i class="fa-solid fa-chevron-right"></i>
-                </div>
-
-                <div class="setting-item logout" id="logoutBtn">
-                    <div class="setting-left">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                        <span>Logout</span>
-                    </div>
-                </div>
-
-            </div>    
+            </div>
 
         </div>
 
     </div>
+
 
     <script src="../js/session.js"></script>
     <script src="../js/profile.js"></script>

@@ -67,3 +67,12 @@ async function authFetch(url, options = {}) {
     }
     return res;
 }
+/* ---- Global customer theme ---- */
+(function () {
+    const savedTheme = localStorage.getItem("theme");
+
+    if (savedTheme === "dark") {
+        document.documentElement.classList.add("dark-mode");
+        document.body.classList.add("dark-mode");
+    }
+})();

@@ -15,7 +15,6 @@
 </head>
 
 <body>
-
     <div class="settings-page">
 
         <div class="settings-container">
@@ -170,7 +169,7 @@
 
                         <div>
                             <strong>Profile</strong>
-                            <span>Edit your name, email and password.</span>
+                            <span>Edit your name and email.</span>
                         </div>
 
                     </div>
@@ -179,32 +178,33 @@
 
                 </a>
 
-
-                <button class="setting-action logout" id="logoutBtn">
-
+                <button class="setting-action" id="resetPasswordBtn" type="button">
                     <div class="setting-info">
+                        <i class="fa-solid fa-lock"></i>
+                        <div>
+                            <strong>Reset Password</strong>
+                            <span>Update your account password.</span>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
 
+                <button class="setting-action logout" id="logoutBtn" type="button">
+                    <div class="setting-info">
                         <i class="fa-solid fa-right-from-bracket"></i>
-
                         <div>
                             <strong>Logout</strong>
                             <span>Sign out of your account.</span>
                         </div>
-
                     </div>
-
                 </button>
 
-            </section>
+</section>
 
         </div>
 
     </div>
-
-
-    <script src="../js/session.js"></script>
+<script src="../js/session.js"></script>
     <script src="../js/settings.js"></script>
-
 </body>
-
 </html>

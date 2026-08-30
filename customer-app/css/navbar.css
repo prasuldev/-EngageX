@@ -1,4 +1,11 @@
-nav a{
+nav.bg-white {
+    background-color: var(--white);
+    color: var(--text);
+}
+
+nav a,
+nav button{
+    color: inherit;
     transition:.3s;
 }
 
@@ -6,10 +13,15 @@ nav a:hover{
     color:#db2777;
 }
 
-nav button{
-    transition:.3s;
+nav button.bg-pink-600{
+    color: white;
 }
 
-nav button:hover{
+nav button:not(.bg-pink-600):hover{
     color:#db2777;
+}
+
+#mobileMenu{
+    background-color: var(--white);
+    border-color: var(--light);
 }

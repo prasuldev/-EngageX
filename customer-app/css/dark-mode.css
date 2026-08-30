@@ -1,0 +1,74 @@
+@import url('variables.css');
+
+/* Shared overrides for customer pages that use Tailwind or component-specific colors. */
+body.dark-mode {
+    background-color: var(--background);
+    color: var(--text);
+}
+
+body.dark-mode.bg-gray-50,
+body.dark-mode .bg-gray-50 {
+    background-color: var(--background);
+}
+
+body.dark-mode .bg-white,
+body.dark-mode .product-placeholder,
+body.dark-mode .profile-card,
+body.dark-mode .setting-item,
+body.dark-mode .modal-content,
+body.dark-mode #ai-welcome-card,
+body.dark-mode #ai-chat-window,
+body.dark-mode .chat-footer,
+body.dark-mode .bot-message .message-content,
+body.dark-mode .quick-action {
+    background-color: var(--white);
+    color: var(--text);
+}
+
+body.dark-mode .bg-gray-100,
+body.dark-mode .product-image,
+body.dark-mode .info-item p,
+body.dark-mode .chat-body,
+body.dark-mode .chat-introduction {
+    background-color: var(--light);
+    color: var(--text);
+}
+
+body.dark-mode .border,
+body.dark-mode .product-placeholder,
+body.dark-mode .info-item p,
+body.dark-mode .setting-item,
+body.dark-mode .chat-footer,
+body.dark-mode .chat-input input {
+    border-color: #374151;
+}
+
+body.dark-mode .text-gray-500,
+body.dark-mode .text-gray-600,
+body.dark-mode .text-gray-700,
+body.dark-mode .product-placeholder-text,
+body.dark-mode .subtitle,
+body.dark-mode .info-item label,
+body.dark-mode .account-section h3,
+body.dark-mode .setting-left span,
+body.dark-mode .modal-content label,
+body.dark-mode .welcome-content p,
+body.dark-mode .chat-introduction p {
+    color: var(--text);
+}
+
+body.dark-mode .category-card,
+body.dark-mode .category-name {
+    background-color: var(--white);
+    color: var(--text);
+}
+
+body.dark-mode .chat-input input {
+    background-color: var(--white);
+    color: var(--text);
+}
+
+body.dark-mode .quick-action:hover {
+    background: #EC4899;
+    color: white;
+}

@@ -8,7 +8,7 @@ main{
 .section-title{
     font-size:32px;
     margin-bottom:25px;
-    color:#333;
+    color:var(--text);
 }
 
 section{
@@ -34,7 +34,7 @@ section{
 =========================== */
 
 .product-card {
-    background: #fff;
+    background: var(--white);
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
@@ -59,7 +59,7 @@ section{
     height: 220px;
     flex-shrink: 0;
 
-    background: #f5f5f5;
+    background: var(--light);
 
     display: flex;
     align-items: center;
@@ -75,6 +75,7 @@ section{
 
 .product-info {
     padding: 18px;
+    color: var(--text);
 
     display: flex;
     flex-direction: column;
@@ -88,7 +89,7 @@ section{
 =========================== */
 
 .product-brand {
-    color: #d63384;
+    color: var(--primary);
     font-size: 14px;
     font-weight: 600;
 
@@ -128,7 +129,7 @@ section{
 =========================== */
 
 .product-category {
-    color: #777;
+    color: var(--text);
 
     margin-bottom: 10px;
 
@@ -141,7 +142,7 @@ section{
 =========================== */
 
 .product-rating {
-    color: #f4b400;
+    color: var(--warning);
 
     margin-bottom: 12px;
 
@@ -156,7 +157,7 @@ section{
 .product-price {
     font-size: 22px;
     font-weight: bold;
-    color: #111;
+    color: var(--text);
 
     margin-bottom: 18px;
 }
