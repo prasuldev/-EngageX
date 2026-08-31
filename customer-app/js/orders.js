@@ -16,6 +16,7 @@ const REASON_TAGS = {
     mid: ["Okay but not great", "Average quality", "Expected better packaging", "Price too high for quality"],
     high: ["Great quality", "Value for money", "Fast delivery", "As described", "Great packaging", "Would buy again"]
 };
+const RETURN_WINDOW_DAYS = 7;
 
 function tierFor(rating) {
     if (rating <= 2) return "low";
@@ -328,7 +329,17 @@ function renderOrderActions(orderId, order, returnRequest) {
                 </div>
             `;
         } else {
-            actionsHtml += `<button id="returnRequestBtn" class="w-full py-3 rounded-xl bg-pink-50 text-pink-600 font-semibold hover:bg-pink-100 transition">Request Return / Exchange</button>`;
+            const deliveredAt = order.delivered_at ? new Date(order.delivered_at) : null;
+            const deadline = deliveredAt
+                ? new Date(deliveredAt.getTime() + RETURN_WINDOW_DAYS * 24 * 60 * 60 * 1000)
+                : null;
+            const windowOpen = deadline && new Date() <= deadline;
+
+            if (windowOpen) {
+                actionsHtml += `<button id="returnRequestBtn" class="w-full py-3 rounded-xl bg-pink-50 text-pink-600 font-semibold hover:bg-pink-100 transition">Request Return / Exchange</button>`;
+            } else {
+                actionsHtml += `<div class="p-3 bg-gray-50 rounded-xl text-sm text-gray-500">Return/exchange window has closed</div>`;
+            }
         }
     }
 

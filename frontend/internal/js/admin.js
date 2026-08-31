@@ -72,8 +72,50 @@ async function loadTeam() {
     if (!res.ok) return;
 
     const users = await res.json();
+    const currentUser = getInternalUser();
     const tbody = document.querySelector("#team-table tbody");
-    tbody.innerHTML = users.map(u =>
-        `<tr><td>${u.full_name}</td><td>${u.email}</td><td>${u.role}</td></tr>`
-    ).join("");
+
+    tbody.innerHTML = users.map(u => `
+        <tr>
+            <td>${u.full_name}</td>
+            <td>${u.email}</td>
+            <td>${u.role}</td>
+            <td>
+                <span class="status-pill ${u.is_online ? "online" : "offline"}">${u.is_online ? "Online" : "Offline"}</span>
+                <span class="status-pill ${u.is_active ? "active" : "inactive"}">${u.is_active ? "Active" : "Inactive"}</span>
+            </td>
+            <td>
+                ${u.id === currentUser.id
+                    ? `<span class="muted">You</span>`
+                    : `<button class="btn-danger" data-delete-id="${u.id}" data-name="${u.full_name}">Delete</button>`
+                }
+            </td>
+        </tr>
+    `).join("");
+
+    tbody.querySelectorAll("[data-delete-id]").forEach(btn => {
+        btn.addEventListener("click", () => deleteTeamMember(btn.dataset.deleteId, btn.dataset.name));
+    });
+}
+
+async function deleteTeamMember(id, name) {
+    if (!confirm(`Remove ${name} from the team? This cannot be undone.`)) return;
+
+    try {
+        const res = await fetch(`${API_BASE}/api/internal/users/${id}`, {
+            method: "DELETE",
+            headers: { "Authorization": `Bearer ${getInternalToken()}` }
+        });
+
+        if (!res.ok) {
+            const err = await res.json();
+            alert(err.detail || "Failed to delete team member");
+            return;
+        }
+
+        await loadTeam();
+        await loadTeamOverview();
+    } catch {
+        alert("Network error");
+    }
 }

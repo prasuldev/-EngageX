@@ -25,8 +25,15 @@ async def list_internal_users(
 ):
     rows = await db.fetch(
         """
-        SELECT iu.id, iu.full_name, iu.email, ir.name AS role, iu.created_at
-        FROM internal_users iu JOIN internal_roles ir ON iu.role_id = ir.id
+        SELECT
+            iu.id, iu.full_name, iu.email, ir.name AS role,
+            iu.is_active, iu.created_at,
+            MAX(al.created_at) AS last_active,
+            (MAX(al.created_at) > NOW() - INTERVAL '5 minutes') AS is_online
+        FROM internal_users iu
+        JOIN internal_roles ir ON iu.role_id = ir.id
+        LEFT JOIN audit_logs al ON al.user_id = iu.id
+        GROUP BY iu.id, iu.full_name, iu.email, ir.name, iu.is_active, iu.created_at
         ORDER BY iu.created_at
         """
     )
@@ -54,6 +61,30 @@ async def create_internal_user(
     )
     await log_action(db, current_user["id"], "internal_user.created", "internal_user", user["id"], {"role": payload.role})
     return dict(user)
+
+@router.delete("/{user_id}")
+async def delete_internal_user(
+    user_id: int,
+    current_user=Depends(require_role(["admin"])),
+    db=Depends(get_db)
+):
+    if user_id == current_user["id"]:
+        raise HTTPException(status_code=400, detail="You cannot delete your own account")
+
+    target = await db.fetchrow("SELECT id, full_name, email FROM internal_users WHERE id = $1", user_id)
+    if not target:
+        raise HTTPException(status_code=404, detail="Team member not found")
+
+    async with db.transaction():
+        # detach audit history so the FK doesn't block the delete, regardless of how it was defined
+        await db.execute("UPDATE audit_logs SET user_id = NULL WHERE user_id = $1", user_id)
+        await db.execute("DELETE FROM internal_users WHERE id = $1", user_id)
+
+    await log_action(
+        db, current_user["id"], "internal_user.deleted", "internal_user", user_id,
+        {"deleted_full_name": target["full_name"], "deleted_email": target["email"]}
+    )
+    return {"message": "Team member removed"}
 
 @router.get("/team-overview")
 async def team_overview(

@@ -47,6 +47,11 @@
                     <span>Campaigns</span>
                     <i class="dot" aria-hidden="true"></i>
                 </li>
+                <li data-target="panel-orders" data-accent="gold">
+                    <i class="fa-solid fa-box"></i>
+                    <span>Orders</span>
+                    <i class="dot" aria-hidden="true"></i>
+                </li>
                 <li data-target="panel-analytics" data-accent="gold">
                     <i class="fa-solid fa-chart-pie"></i>
                     <span>Analytics</span>
@@ -123,6 +128,45 @@
                             <th>Status</th>
                             <th>Participants</th>
                             <th>Responses</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="panel-orders" class="panel">
+            <header class="panel-head">
+                <p class="eyebrow"><i class="dot" style="background:var(--gold)"></i>Fulfillment</p>
+                <h1>Orders</h1>
+                <p class="panel-desc">Track and update order status across all customers.</p>
+            </header>
+
+            <div class="orders-toolbar">
+                <label class="field">
+                    <span>Filter by status</span>
+                    <select id="order-status-filter">
+                        <option value="">All</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="surface-card">
+                <table id="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Order</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Return / Exchange</th>
+                            <th>Total</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -328,6 +372,12 @@
             </div>
         </section>
 
+    <div id="order-detail-modal" class="hidden modal-overlay">
+        <div class="modal-box">
+            <span id="close-order-detail" class="modal-close">&times;</span>
+            <div id="order-detail-body"></div>
+        </div>
+    </div>
 
 </div>
 
@@ -335,6 +385,7 @@
 <script src="js/ws-client.js"></script>
 <script src="js/sidebar-nav.js"></script>
 <script src="js/dashboard.js"></script>
+<script src="js/orders-admin.js"></script>
 <script src="js/kpi-swatches.js"></script>
 
 </body>

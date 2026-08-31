@@ -247,6 +247,7 @@ function initDashboard() {
     if (!requireRole(["marketing_manager"])) return; // add this line
 
     initTheme();
+    initOrdersPanel();
     connectDashboardWS();
     loadDashboard();
     loadCampaignPerformance();

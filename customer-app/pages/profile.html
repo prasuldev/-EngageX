@@ -7,7 +7,6 @@
     <title>My Profile | Maquillage</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>My Profile</title>
 
     <link rel="stylesheet" href="../css/profile.css">
     <link rel="stylesheet" href="../css/dark-mode.css">
@@ -80,23 +79,6 @@
         <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
             <span id="closeEditModal" class="absolute top-4 right-5 text-2xl text-gray-400 hover:text-pink-600 cursor-pointer">&times;</span>
             <h2 class="text-xl font-bold text-pink-600 text-center mb-6">Edit Profile</h2>
-    <!-- Edit Profile Modal -->
-    <div id="editProfileModal" class="modal hidden">
-
-        <div class="modal-content">
-
-            <span id="closeEditModal" class="close">&times;</span>
-
-            <h2>Edit Profile</h2>
-
-            <form id="editProfileForm">
-
-                <label>Full Name</label>
-                <input
-                    type="text"
-                    id="editName"
-                    required
-                >
 
             <form id="editProfileForm" class="space-y-4">
                 <div>
@@ -121,8 +103,6 @@
         <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-8 max-h-[85vh] overflow-y-auto">
             <span id="closeAddressesModal" class="absolute top-4 right-5 text-2xl text-gray-400 hover:text-pink-600 cursor-pointer">&times;</span>
             <h2 class="text-xl font-bold text-pink-600 text-center mb-6">My Addresses</h2>
-
-    <div class="profile-container">
 
             <div id="addressList" class="space-y-4"></div>
 
@@ -191,6 +171,12 @@
     <!-- Page Content -->
     <div class="max-w-5xl mx-auto px-6 py-12">
 
+        <button id="backBtn" type="button"
+            class="flex items-center gap-2 text-gray-500 hover:text-pink-600 font-medium mb-6 transition">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back
+        </button>
+
         <div class="grid md:grid-cols-3 gap-8">
 
             <!-- Left: Profile summary -->
@@ -227,7 +213,10 @@
                                 <span class="w-11 h-11 rounded-full bg-pink-50 text-pink-600 flex items-center justify-center">
                                     <i class="fa-solid fa-user-pen"></i>
                                 </span>
-                                <span class="font-semibold text-gray-700">Edit Profile</span>
+                                <div>
+                                    <span class="font-semibold text-gray-700 block">Edit Profile</span>
+                                    <span class="text-xs text-gray-400">Edit your name and email.</span>
+                                </div>
                             </div>
                             <i class="fa-solid fa-chevron-right text-gray-300"></i>
                         </div>
@@ -273,57 +262,26 @@
 
                     </div>
                 </div>
-            <p class="subtitle">My Profile</p>
-
-
-            <div class="info-item">
-
-                <label>Full Name</label>
-
-                <p id="username"></p>
-
-            </div>
-
-
-            <div class="info-item">
-
-                <label>Email Address</label>
-
-                <p id="email"></p>
-
-            </div>
-
-
-            <div class="account-section">
-
-                <h3>Account Settings</h3>
-
-                <div class="setting-item" id="editProfileBtn">
-
-                    <div class="setting-left">
-
-                        <i class="fa-solid fa-user-pen"></i>
-
-                        <div>
-                            <strong>Edit Profile</strong>
-                            <span>Edit your name and email.</span>
-                        </div>
-
-                    </div>
-
-                    <i class="fa-solid fa-chevron-right"></i>
-
-                </div>
-
             </div>
 
         </div>
     </div>
 
-
     <script src="../js/session.js"></script>
     <script src="../js/profile.js"></script>
     <script src="../js/addresses.js"></script>
+
+    <script>
+        document.getElementById("backBtn").addEventListener("click", function () {
+            // Go back if there's history to go back to (e.g. came from products/home),
+            // otherwise fall back to home so the button always does something sensible.
+            if (document.referrer && document.referrer.includes(window.location.host)) {
+                window.history.back();
+            } else {
+                window.location.href = "home.html";
+            }
+        });
+    </script>
 
 </body>
 

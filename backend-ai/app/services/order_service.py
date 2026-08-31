@@ -1,6 +1,8 @@
 from decimal import Decimal
-from datetime import timedelta
+from datetime import datetime, timedelta
 from app.services.activity_service import ActivityService
+
+RETURN_WINDOW_DAYS = 7
 
 
 def add_working_days(start_date, days: int):
@@ -18,6 +20,7 @@ class OrderService:
     COD_CHARGE = Decimal("30.00")
     PLATFORM_FEE = Decimal("12.00")
     CANCELLABLE_STATUSES = ("Pending", "Confirmed")
+    RETURN_WINDOW_DAYS = 7
 
     @staticmethod
     async def place_order(db, user_id: int, address_id: int, payment_method: str = "COD", product_ids: list[int] | None = None):
@@ -109,6 +112,7 @@ class OrderService:
             """
             SELECT
                 o.id, o.total_amount, o.status, o.created_at, o.expected_delivery_date,
+                o.delivered_at,
                 o.cod_charge, o.platform_fee,
                 a.full_name, a.phone, a.address_line1, a.address_line2,
                 a.city, a.state, a.pincode, a.country
@@ -186,7 +190,7 @@ class OrderService:
     @staticmethod
     async def request_return(db, user_id: int, order_id: int, request_type: str, reason: str):
         order = await db.fetchrow(
-            "SELECT status FROM orders WHERE id = $1 AND user_id = $2",
+            "SELECT status, delivered_at FROM orders WHERE id = $1 AND user_id = $2",
             order_id, user_id
         )
         if not order:
@@ -194,6 +198,14 @@ class OrderService:
 
         if order["status"] != "Delivered":
             return {"error": True, "message": "Return/exchange is only available after delivery"}
+
+        if order["delivered_at"] is None:
+            return {"error": True, "message": "Return/exchange is not available for this order"}
+
+        from datetime import datetime, timedelta
+        deadline = order["delivered_at"] + timedelta(days=OrderService.RETURN_WINDOW_DAYS)
+        if datetime.now() > deadline:
+            return {"error": True, "message": "The return/exchange window for this order has closed"}
 
         existing = await db.fetchval(
             "SELECT 1 FROM return_requests WHERE order_id = $1", order_id
