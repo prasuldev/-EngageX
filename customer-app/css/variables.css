@@ -17,6 +17,7 @@
    CUSTOMER DARK MODE
    ========================= */
 
+html.dark-mode,
 body.dark-mode {
     --text: #F3F4F6;
     --light: #1F2937;

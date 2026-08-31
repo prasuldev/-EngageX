@@ -1,36 +1,48 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     // Dark Mode
-    const darkModeToggle =
-        document.getElementById("darkModeToggle");
+const darkModeToggle =
+    document.getElementById("darkModeToggle");
 
-    const savedTheme =
-        localStorage.getItem("theme");
+const savedTheme =
+    localStorage.getItem("engagex_theme") ||
+    localStorage.getItem("theme") ||
+    "light";
 
-    if (savedTheme === "dark") {
-        document.body.classList.add("dark-mode");
+const applyTheme = (theme) => {
+    const isDark = theme === "dark";
 
-        if (darkModeToggle) {
-            darkModeToggle.checked = true;
-        }
-    }
+    document.documentElement.classList.toggle(
+        "dark-mode",
+        isDark
+    );
+
+    document.body.classList.toggle(
+        "dark-mode",
+        isDark
+    );
 
     if (darkModeToggle) {
-        darkModeToggle.addEventListener("change", () => {
-
-            if (darkModeToggle.checked) {
-                document.body.classList.add("dark-mode");
-                localStorage.setItem("theme", "dark");
-            } else {
-                document.body.classList.remove("dark-mode");
-                localStorage.setItem("theme", "light");
-            }
-
-        });
+        darkModeToggle.checked = isDark;
     }
+};
+
+applyTheme(savedTheme);
+
+if (darkModeToggle) {
+    darkModeToggle.addEventListener("change", () => {
+        const theme = darkModeToggle.checked ? "dark" : "light";
+
+        localStorage.setItem("engagex_theme", theme);
+        localStorage.setItem("theme", theme);
+
+        applyTheme(theme);
+    });
+}
 
 
-    // Ask AI
+// Ask AI
+
     const askAiBtn =
         document.getElementById("askAiBtn");
 

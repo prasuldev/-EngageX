@@ -69,13 +69,26 @@ async function authFetch(url, options = {}) {
 }
 /* ---- Global customer theme ---- */
 (function () {
-    const savedTheme = localStorage.getItem("theme");
+    const savedTheme =
+        localStorage.getItem("engagex_theme") ||
+        localStorage.getItem("theme") ||
+        "system";
 
-    if (savedTheme === "dark") {
-        document.documentElement.classList.add("dark-mode");
+    const applyTheme = (theme) => {
+        const isDark = theme === "dark";
+
+        document.documentElement.classList.toggle(
+            "dark-mode",
+            isDark
+        );
 
         if (document.body) {
-            document.body.classList.add("dark-mode");
+            document.body.classList.toggle(
+                "dark-mode",
+                isDark
+            );
         }
-    }
+    };
+
+    applyTheme(savedTheme);
 })();
