@@ -72,3 +72,729 @@ body.dark-mode .quick-action:hover {
     background: #EC4899;
     color: white;
 }
+
+/* =========================================================
+   CUSTOMER APP — GLOBAL DARK MODE
+   Covers pages/components that use hard-coded light colors
+   ========================================================= */
+
+body.dark-mode {
+    background-color: var(--background);
+    color: var(--text);
+}
+
+/* Tailwind utility backgrounds */
+body.dark-mode .bg-white {
+    background-color: var(--white) !important;
+}
+
+body.dark-mode .bg-gray-50 {
+    background-color: var(--background) !important;
+}
+
+body.dark-mode .bg-gray-100 {
+    background-color: var(--light) !important;
+}
+
+/* Tailwind text utilities */
+body.dark-mode .text-gray-900,
+body.dark-mode .text-gray-800,
+body.dark-mode .text-gray-700,
+body.dark-mode .text-gray-600,
+body.dark-mode .text-gray-500 {
+    color: var(--text) !important;
+}
+
+/* Category pages */
+body.dark-mode .category-page {
+    background:
+        radial-gradient(
+            circle at top left,
+            rgba(230, 48, 126, 0.10),
+            transparent 35%
+        ),
+        linear-gradient(
+            180deg,
+            #111827 0%,
+            #1f2937 100%
+        );
+}
+
+body.dark-mode .category-header h1,
+body.dark-mode .category-name {
+    color: var(--text) !important;
+}
+
+body.dark-mode .category-header p {
+    color: #d1d5db !important;
+}
+
+body.dark-mode .category-card {
+    background: var(--white) !important;
+    border-color: #374151 !important;
+    color: var(--text) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.30);
+}
+
+body.dark-mode .category-icon-wrapper {
+    background: linear-gradient(
+        145deg,
+        #374151,
+        #1f2937
+    ) !important;
+}
+
+/* Products */
+body.dark-mode .product-placeholder {
+    background: var(--light) !important;
+    border-color: #374151 !important;
+}
+
+body.dark-mode .product-placeholder-text {
+    color: #d1d5db !important;
+}
+
+body.dark-mode .product-info h1,
+body.dark-mode .info {
+    color: var(--text) !important;
+}
+
+/* Cards / panels / common containers */
+body.dark-mode .card,
+body.dark-mode .panel,
+body.dark-mode .modal,
+body.dark-mode .modal-content,
+body.dark-mode .setting-item,
+body.dark-mode .profile-card,
+body.dark-mode .quick-action {
+    background-color: var(--white);
+    color: var(--text);
+}
+
+/* Borders */
+body.dark-mode .border,
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+    border-color: #374151 !important;
+}
+
+/* Form controls */
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+    background-color: var(--white);
+    color: var(--text);
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+    color: #9ca3af;
+}
+
+/* Tables */
+body.dark-mode table,
+body.dark-mode th,
+body.dark-mode td {
+    color: var(--text);
+    border-color: #374151;
+}
+
+/* Navbar */
+body.dark-mode nav,
+body.dark-mode .navbar {
+    background-color: var(--white) !important;
+    color: var(--text);
+}
+
+/* Footer */
+body.dark-mode footer {
+    background-color: #111827 !important;
+    color: var(--text);
+}
+
+/* Links */
+body.dark-mode a {
+    color: inherit;
+}
+
+/* Images/placeholders */
+body.dark-mode .product-image,
+body.dark-mode .product-placeholder {
+    background-color: var(--light);
+}
+
+/* Keep primary actions pink */
+body.dark-mode .buy-btn,
+body.dark-mode .btn-primary {
+    background-color: var(--primary) !important;
+    color: #fff !important;
+}
+
+/* Category products page - dark mode text fix */
+body.dark-mode .category-products-header h1 {
+    color: #F3F4F6 !important;
+}
+
+body.dark-mode .category-products-header p {
+    color: #D1D5DB !important;
+}
+
+/* =========================================================
+   CUSTOMER APP — GLOBAL DARK MODE FIX
+   ========================================================= */
+
+/* Category/product listing headings */
+body.dark-mode .category-products-header h1,
+body.dark-mode .category-products-header p,
+body.dark-mode .category-products-header *,
+body.dark-mode .category-header h1,
+body.dark-mode .category-header p,
+body.dark-mode .category-name,
+body.dark-mode .category-explore {
+    color: var(--text) !important;
+}
+
+/* Category search */
+body.dark-mode .category-products-page input,
+body.dark-mode .category-products-page input::placeholder {
+    color: var(--text) !important;
+}
+
+/* Product detail page */
+body.dark-mode .product-info,
+body.dark-mode .product-info h1,
+body.dark-mode .product-info h2,
+body.dark-mode .product-info h3,
+body.dark-mode .product-info p,
+body.dark-mode .product-info span,
+body.dark-mode .product-info label,
+body.dark-mode .info,
+body.dark-mode .info *,
+body.dark-mode .price {
+    color: var(--text) !important;
+}
+
+/* Product detail panels */
+body.dark-mode .product-page,
+body.dark-mode .product-info,
+body.dark-mode .info-item,
+body.dark-mode .product-details,
+body.dark-mode .product-detail,
+body.dark-mode .details {
+    background-color: transparent;
+}
+
+/* Product cards/text */
+body.dark-mode .product-card,
+body.dark-mode .product-card h2,
+body.dark-mode .product-card h3,
+body.dark-mode .product-card p,
+body.dark-mode .product-card span,
+body.dark-mode .product-title,
+body.dark-mode .product-name {
+    color: var(--text) !important;
+}
+
+/* Hotline / support / contact */
+body.dark-mode .hotline,
+body.dark-mode .hotline *,
+body.dark-mode [class*="hotline"],
+body.dark-mode [id*="hotline"],
+body.dark-mode .support,
+body.dark-mode .support *,
+body.dark-mode [class*="support"],
+body.dark-mode [id*="support"],
+body.dark-mode .contact,
+body.dark-mode .contact * {
+    color: var(--text) !important;
+}
+
+/* Footer/support panels */
+body.dark-mode footer *,
+body.dark-mode .footer *,
+body.dark-mode .footer-section *,
+body.dark-mode .contact-support *,
+body.dark-mode .support-section * {
+    color: var(--text);
+}
+
+/* Keep buttons readable */
+body.dark-mode button,
+body.dark-mode .btn,
+body.dark-mode a {
+    text-decoration-color: currentColor;
+}
+
+
+/* =========================================================
+   FINAL GLOBAL CUSTOMER DARK MODE
+   ========================================================= */
+
+html.dark-mode,
+html.dark-mode body {
+    background-color: #111827 !important;
+    color: #F3F4F6 !important;
+}
+
+/* Category page */
+html.dark-mode .category-products-page,
+html.dark-mode .category-page {
+    background: #111827 !important;
+    color: #F3F4F6 !important;
+}
+
+html.dark-mode .category-products-header h1,
+html.dark-mode .category-products-header p,
+html.dark-mode .category-products-header span,
+html.dark-mode .category-header h1,
+html.dark-mode .category-header p {
+    color: #F3F4F6 !important;
+}
+
+/* Category search */
+html.dark-mode .category-products-page input,
+html.dark-mode .category-products-page input::placeholder {
+    background-color: #1F2937 !important;
+    color: #F3F4F6 !important;
+    border-color: #374151 !important;
+}
+
+/* Category cards */
+html.dark-mode .category-card,
+html.dark-mode .category-card h1,
+html.dark-mode .category-card h2,
+html.dark-mode .category-card h3,
+html.dark-mode .category-card p,
+html.dark-mode .category-card span,
+html.dark-mode .category-name {
+    background-color: #1F2937 !important;
+    color: #F3F4F6 !important;
+}
+
+/* Product detail page */
+html.dark-mode .product-page,
+html.dark-mode .product-info,
+html.dark-mode .product-info h1,
+html.dark-mode .product-info h2,
+html.dark-mode .product-info h3,
+html.dark-mode .product-info p,
+html.dark-mode .product-info span,
+html.dark-mode .product-info label,
+html.dark-mode .info,
+html.dark-mode .info *,
+html.dark-mode .price,
+html.dark-mode .product-placeholder-text {
+    color: #F3F4F6 !important;
+}
+
+/* Product detail background */
+html.dark-mode .product-placeholder,
+html.dark-mode .product-image {
+    background-color: #1F2937 !important;
+    border-color: #374151 !important;
+}
+
+/* Product cards everywhere */
+html.dark-mode .product-card,
+html.dark-mode .product-card h1,
+html.dark-mode .product-card h2,
+html.dark-mode .product-card h3,
+html.dark-mode .product-card p,
+html.dark-mode .product-card span,
+html.dark-mode .product-title,
+html.dark-mode .product-name {
+    color: #F3F4F6 !important;
+}
+
+/* Hotline / support / contact */
+html.dark-mode .hotline,
+html.dark-mode .hotline *,
+html.dark-mode [class*="hotline"],
+html.dark-mode [id*="hotline"],
+html.dark-mode .support,
+html.dark-mode .support *,
+html.dark-mode [class*="support"],
+html.dark-mode [id*="support"],
+html.dark-mode .contact,
+html.dark-mode .contact * {
+    color: #F3F4F6 !important;
+}
+
+/* Settings */
+html.dark-mode .settings-page,
+html.dark-mode .settings-page h1,
+html.dark-mode .settings-page h2,
+html.dark-mode .settings-page h3,
+html.dark-mode .settings-page p,
+html.dark-mode .settings-page span,
+html.dark-mode .settings-page label {
+    color: #F3F4F6 !important;
+}
+
+html.dark-mode .settings-card,
+html.dark-mode .setting-item,
+html.dark-mode .modal-content {
+    background-color: #1F2937 !important;
+    color: #F3F4F6 !important;
+    border-color: #374151 !important;
+}
+
+/* Forms */
+html.dark-mode input,
+html.dark-mode textarea,
+html.dark-mode select {
+    background-color: #1F2937 !important;
+    color: #F3F4F6 !important;
+    border-color: #374151 !important;
+}
+
+html.dark-mode input::placeholder,
+html.dark-mode textarea::placeholder {
+    color: #9CA3AF !important;
+}
+
+/* Footer */
+html.dark-mode footer,
+html.dark-mode footer p,
+html.dark-mode footer span,
+html.dark-mode footer a {
+    color: #F3F4F6 !important;
+}
+
+/* Keep pink actions pink */
+html.dark-mode .buy-btn,
+html.dark-mode .btn-primary,
+html.dark-mode button[type="submit"] {
+    background-color: #E91E63 !important;
+    color: #FFFFFF !important;
+}
+
+
+/* =========================================================
+   FINAL GLOBAL DARK MODE OVERRIDES
+   Applies across the entire customer app
+   ========================================================= */
+
+/* Page + typography */
+html.dark-mode body,
+body.dark-mode {
+    background: #0f172a !important;
+    color: #f3f4f6 !important;
+}
+
+html.dark-mode main,
+body.dark-mode main,
+html.dark-mode section,
+body.dark-mode section {
+    color: #f3f4f6 !important;
+}
+
+/* ALL common headings */
+html.dark-mode h1,
+html.dark-mode h2,
+html.dark-mode h3,
+html.dark-mode h4,
+html.dark-mode h5,
+html.dark-mode h6,
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6 {
+    color: #f9fafb !important;
+}
+
+/* ALL normal text */
+html.dark-mode p,
+html.dark-mode span,
+html.dark-mode label,
+html.dark-mode li,
+html.dark-mode small,
+html.dark-mode strong,
+html.dark-mode div,
+body.dark-mode p,
+body.dark-mode span,
+body.dark-mode label,
+body.dark-mode li,
+body.dark-mode small,
+body.dark-mode strong,
+body.dark-mode div {
+    color: #e5e7eb;
+}
+
+/* Do not destroy pink branding */
+html.dark-mode .category-back,
+html.dark-mode .category-back-btn,
+html.dark-mode .category-explore,
+html.dark-mode .buy-btn,
+html.dark-mode .btn-primary,
+html.dark-mode a,
+body.dark-mode .category-back,
+body.dark-mode .category-back-btn,
+body.dark-mode .category-explore,
+body.dark-mode .buy-btn,
+body.dark-mode .btn-primary,
+body.dark-mode a {
+    color: #ec4899 !important;
+}
+
+/* Category/product pages */
+html.dark-mode .category-page,
+html.dark-mode .category-products-page,
+html.dark-mode .product-page,
+body.dark-mode .category-page,
+body.dark-mode .category-products-page,
+body.dark-mode .product-page {
+    background: #0f172a !important;
+    color: #f3f4f6 !important;
+}
+
+/* Category headings */
+html.dark-mode .category-header h1,
+html.dark-mode .category-products-header h1,
+body.dark-mode .category-header h1,
+body.dark-mode .category-products-header h1 {
+    color: #f9fafb !important;
+}
+
+html.dark-mode .category-header p,
+html.dark-mode .category-products-header p,
+body.dark-mode .category-header p,
+body.dark-mode .category-products-header p {
+    color: #d1d5db !important;
+}
+
+/* Category cards */
+html.dark-mode .category-card,
+body.dark-mode .category-card {
+    background: #1e293b !important;
+    border-color: #374151 !important;
+    color: #f9fafb !important;
+}
+
+html.dark-mode .category-card h1,
+html.dark-mode .category-card h2,
+html.dark-mode .category-card h3,
+html.dark-mode .category-card p,
+html.dark-mode .category-card span,
+html.dark-mode .category-name,
+body.dark-mode .category-card h1,
+body.dark-mode .category-card h2,
+body.dark-mode .category-card h3,
+body.dark-mode .category-card p,
+body.dark-mode .category-card span,
+body.dark-mode .category-name {
+    color: #f3f4f6 !important;
+}
+
+/* Search/input fields */
+html.dark-mode input,
+html.dark-mode textarea,
+html.dark-mode select,
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+    background: #1e293b !important;
+    color: #f9fafb !important;
+    border-color: #475569 !important;
+}
+
+html.dark-mode input::placeholder,
+html.dark-mode textarea::placeholder,
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+    color: #9ca3af !important;
+}
+
+/* Product details */
+html.dark-mode .product-info,
+html.dark-mode .product-info h1,
+html.dark-mode .product-info h2,
+html.dark-mode .product-info h3,
+html.dark-mode .product-info p,
+html.dark-mode .product-info span,
+html.dark-mode .product-info label,
+html.dark-mode .product-details,
+html.dark-mode .product-detail,
+body.dark-mode .product-info,
+body.dark-mode .product-info h1,
+body.dark-mode .product-info h2,
+body.dark-mode .product-info h3,
+body.dark-mode .product-info p,
+body.dark-mode .product-info span,
+body.dark-mode .product-info label,
+body.dark-mode .product-details,
+body.dark-mode .product-detail {
+    color: #f3f4f6 !important;
+}
+
+/* Product cards/listings */
+html.dark-mode .product-card,
+html.dark-mode .product-card h1,
+html.dark-mode .product-card h2,
+html.dark-mode .product-card h3,
+html.dark-mode .product-card p,
+html.dark-mode .product-card span,
+html.dark-mode .product-title,
+html.dark-mode .product-name,
+body.dark-mode .product-card,
+body.dark-mode .product-card h1,
+body.dark-mode .product-card h2,
+body.dark-mode .product-card h3,
+body.dark-mode .product-card p,
+body.dark-mode .product-card span,
+body.dark-mode .product-title,
+body.dark-mode .product-name {
+    color: #f3f4f6 !important;
+}
+
+/* Product placeholder */
+html.dark-mode .product-placeholder,
+body.dark-mode .product-placeholder {
+    background: #1e293b !important;
+    border-color: #374151 !important;
+}
+
+html.dark-mode .product-placeholder-text,
+body.dark-mode .product-placeholder-text {
+    color: #d1d5db !important;
+}
+
+/* Login / Register / Forgot / Reset pages */
+html.dark-mode .auth-container,
+html.dark-mode .auth-card,
+html.dark-mode .login-container,
+html.dark-mode .login-card,
+html.dark-mode .register-container,
+html.dark-mode .register-card,
+body.dark-mode .auth-container,
+body.dark-mode .auth-card,
+body.dark-mode .login-container,
+body.dark-mode .login-card,
+body.dark-mode .register-container,
+body.dark-mode .register-card {
+    color: #f3f4f6 !important;
+}
+
+html.dark-mode .auth-container h1,
+html.dark-mode .auth-container h2,
+html.dark-mode .auth-container h3,
+html.dark-mode .auth-container p,
+html.dark-mode .auth-container label,
+html.dark-mode .auth-container span,
+html.dark-mode .login-container h1,
+html.dark-mode .login-container h2,
+html.dark-mode .login-container p,
+html.dark-mode .login-container label,
+html.dark-mode .login-container span,
+body.dark-mode .auth-container h1,
+body.dark-mode .auth-container h2,
+body.dark-mode .auth-container h3,
+body.dark-mode .auth-container p,
+body.dark-mode .auth-container label,
+body.dark-mode .auth-container span,
+body.dark-mode .login-container h1,
+body.dark-mode .login-container h2,
+body.dark-mode .login-container p,
+body.dark-mode .login-container label,
+body.dark-mode .login-container span {
+    color: #f3f4f6 !important;
+}
+
+/* Generic white auth cards */
+html.dark-mode .auth-card,
+html.dark-mode .login-card,
+html.dark-mode .register-card,
+body.dark-mode .auth-card,
+body.dark-mode .login-card,
+body.dark-mode .register-card {
+    background: #1e293b !important;
+    border-color: #374151 !important;
+}
+
+/* Hotline / support / contact */
+html.dark-mode .hotline,
+html.dark-mode .hotline *,
+html.dark-mode [class*="hotline"],
+html.dark-mode [class*="hotline"] *,
+html.dark-mode [id*="hotline"],
+html.dark-mode [id*="hotline"] *,
+html.dark-mode .support,
+html.dark-mode .support *,
+html.dark-mode [class*="support"],
+html.dark-mode [class*="support"] *,
+html.dark-mode [id*="support"],
+html.dark-mode [id*="support"] *,
+body.dark-mode .hotline,
+body.dark-mode .hotline *,
+body.dark-mode [class*="hotline"],
+body.dark-mode [class*="hotline"] *,
+body.dark-mode [id*="hotline"],
+body.dark-mode [id*="hotline"] *,
+body.dark-mode .support,
+body.dark-mode .support *,
+body.dark-mode [class*="support"],
+body.dark-mode [class*="support"] *,
+body.dark-mode [id*="support"],
+body.dark-mode [id*="support"] * {
+    color: #f3f4f6 !important;
+}
+
+/* Footer */
+html.dark-mode footer,
+body.dark-mode footer {
+    background: #111827 !important;
+    color: #f3f4f6 !important;
+}
+
+html.dark-mode footer *,
+body.dark-mode footer * {
+    color: #e5e7eb !important;
+}
+
+/* Links inside footer/support stay readable */
+html.dark-mode footer a,
+html.dark-mode .support a,
+html.dark-mode .hotline a,
+body.dark-mode footer a,
+body.dark-mode .support a,
+body.dark-mode .hotline a {
+    color: #ec4899 !important;
+}
+
+/* Buttons */
+html.dark-mode button,
+body.dark-mode button {
+    color: #f9fafb;
+}
+
+html.dark-mode .buy-btn,
+html.dark-mode .btn-primary,
+body.dark-mode .buy-btn,
+body.dark-mode .btn-primary {
+    background: #ec4899 !important;
+    color: #ffffff !important;
+}
+
+/* Cards / panels */
+html.dark-mode .card,
+html.dark-mode .panel,
+html.dark-mode .modal,
+html.dark-mode .modal-content,
+html.dark-mode .setting-item,
+html.dark-mode .profile-card,
+html.dark-mode .quick-action,
+body.dark-mode .card,
+body.dark-mode .panel,
+body.dark-mode .modal,
+body.dark-mode .modal-content,
+body.dark-mode .setting-item,
+body.dark-mode .profile-card,
+body.dark-mode .quick-action {
+    background: #1e293b !important;
+    color: #f3f4f6 !important;
+    border-color: #374151 !important;
+}
+

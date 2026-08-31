@@ -73,6 +73,9 @@ async function authFetch(url, options = {}) {
 
     if (savedTheme === "dark") {
         document.documentElement.classList.add("dark-mode");
-        document.body.classList.add("dark-mode");
+
+        if (document.body) {
+            document.body.classList.add("dark-mode");
+        }
     }
 })();
