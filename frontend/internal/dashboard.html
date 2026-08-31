@@ -87,11 +87,59 @@
                 <p class="panel-desc">Where every campaign stands, right now.</p>
             </header>
 
-            <div class="cards">
-                <div class="card kpi">
-                    <p class="kpi-eyebrow">Active campaigns</p>
-                    <p class="kpi-value" id="active-count">0</p>
-                    <div class="swatch-strip" data-swatch="active" style="--fill-color:var(--teal)"></div>
+            <div<div class="cards">
+    <div class="card kpi">
+        <p class="kpi-eyebrow">Total Customers</p>
+        <p class="kpi-value" id="total-customers">0</p>
+        <div class="swatch-strip" style="--fill-color:var(--teal)"></div>
+    </div>
+
+    <div class="card kpi">
+        <p class="kpi-eyebrow">Total Orders</p>
+        <p class="kpi-value" id="total-orders">0</p>
+        <div class="swatch-strip" style="--fill-color:var(--gold)"></div>
+    </div>
+
+    <div class="card kpi">
+        <p class="kpi-eyebrow">Revenue</p>
+        <p class="kpi-value" id="total-revenue">₹0</p>
+        <div class="swatch-strip" style="--fill-color:var(--berry)"></div>
+    </div>
+
+    <div class="card kpi kpi-accent">
+        <p class="kpi-eyebrow">Active Campaigns</p>
+        <p class="kpi-value" id="active-count">0</p>
+        <div class="swatch-strip swatch-strip--pattern" aria-hidden="true"></div>
+    </div>
+</div>
+
+<div class="surface-card recent-orders-card">
+    <div class="section-header">
+        <div>
+            <h2 class="section-title">Recent Orders</h2>
+            <p class="panel-desc">Latest customer orders.</p>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <table id="recent-orders-table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="5">Loading orders...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
                 </div>
                 <div class="card kpi">
                     <p class="kpi-eyebrow">Inactive campaigns</p>

@@ -96,3 +96,50 @@ async def ai_insights(
     current_user=Depends(require_role(["admin", "marketing_manager"]))
 ):
     return await get_ai_insights(db, force_refresh=refresh)
+@router.get("/sales-overview")
+async def sales_overview(
+    db=Depends(get_db),
+    current_user=Depends(require_role(["admin", "marketing_manager"]))
+):
+    summary = await db.fetchrow(
+        """
+        SELECT
+            (SELECT COUNT(*)
+             FROM users u
+             JOIN roles r ON r.id = u.role_id
+             WHERE r.name = 'customer') AS total_customers,
+
+            (SELECT COUNT(*)
+             FROM orders) AS total_orders,
+
+            (SELECT COALESCE(SUM(total_amount), 0)
+             FROM orders) AS revenue,
+
+            (SELECT COUNT(*)
+             FROM campaigns
+             WHERE is_active = true) AS active_campaigns
+        """
+    )
+
+    recent_orders = await db.fetch(
+        """
+        SELECT
+            o.id AS order_id,
+            u.full_name AS customer,
+            o.total_amount AS amount,
+            o.status,
+            o.created_at AS date
+        FROM orders o
+        JOIN users u ON u.id = o.user_id
+        ORDER BY o.created_at DESC
+        LIMIT 5
+        """
+    )
+
+    return {
+        "total_customers": summary["total_customers"],
+        "total_orders": summary["total_orders"],
+        "revenue": float(summary["revenue"] or 0),
+        "active_campaigns": summary["active_campaigns"],
+        "recent_orders": [dict(row) for row in recent_orders],
+    }

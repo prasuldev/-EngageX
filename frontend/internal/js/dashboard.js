@@ -1,251 +1,217 @@
-// ---------------- API Helpers ----------------
-
-async function apiGet(path) {
-    try {
-        const token = localStorage.getItem("internal_token");
-        const response = await fetch(`${API_BASE}${path}`, {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        });
-        if (!response.ok) {
-            throw new Error(`API error: ${response.status}`);
-        }
-        return await response.json();
-    } catch (error) {
-        console.error("apiGet error:", error);
-        return null;
-    }
-}
-
-async function apiPost(path, body) {
-    const token = localStorage.getItem("internal_token");
-    const response = await fetch(`${API_BASE}${path}`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(body)
-    });
-    if (!response.ok) {
-        let detail = `API error: ${response.status}`;
-        try {
-            const err = await response.json();
-            detail = err.detail || detail;
-        } catch (_) { /* response wasn't JSON */ }
-        throw new Error(detail);
-    }
-    return await response.json();
-}
-
-// ---------------- Loaders ----------------
+document.addEventListener("DOMContentLoaded", initDashboard);
 
 async function loadDashboard() {
     const data = await apiGet("/api/internal/dashboard/campaign-overview");
+
     if (!data) return;
 
-    document.getElementById("active-count").textContent = data.active_campaigns;
-    document.getElementById("inactive-count").textContent = data.inactive_campaigns;
-    document.getElementById("total-count").textContent = data.total_campaigns;
-}
+    const active = document.getElementById("active-count");
+    const inactive = document.getElementById("inactive-count");
+    const total = document.getElementById("total-count");
 
-async function loadCustomerSegments() {
-    const data = await apiGet("/api/internal/dashboard/customer-segments");
-    if (!data) return;
-
-    document.getElementById("funnel-total").textContent = data.response_funnel.total_responses;
-    document.getElementById("funnel-profiles").textContent = data.response_funnel.unique_profiles;
-    document.getElementById("funnel-users").textContent = data.response_funnel.unique_users;
-
-    const skinTypeBody = document.querySelector("#skin-type-table tbody");
-    skinTypeBody.innerHTML = "";
-    if (data.skin_type_breakdown.length === 0) {
-        skinTypeBody.innerHTML = `<tr><td colspan="3">No skin profile data yet</td></tr>`;
-    } else {
-        data.skin_type_breakdown.forEach(s => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${s.skin_type}</td>
-                <td>${s.response_count}</td>
-                <td>${s.unique_users}</td>
-            `;
-            skinTypeBody.appendChild(row);
-        });
+    if (active) {
+        active.textContent = Number(data.active_campaigns || 0).toLocaleString();
     }
 
-    const concernsBody = document.querySelector("#top-concerns-table tbody");
-    concernsBody.innerHTML = "";
-    if (data.top_concerns.length === 0) {
-        concernsBody.innerHTML = `<tr><td colspan="2">No concern data yet</td></tr>`;
-    } else {
-        data.top_concerns.forEach(c => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${c.concern}</td>
-                <td>${c.count}</td>
-            `;
-            concernsBody.appendChild(row);
-        });
+    if (inactive) {
+        inactive.textContent = Number(data.inactive_campaigns || 0).toLocaleString();
+    }
+
+    if (total) {
+        total.textContent = Number(data.total_campaigns || 0).toLocaleString();
     }
 }
 
-async function loadCampaignPerformance() {
-    const rows = await apiGet("/api/internal/dashboard/campaign-performance");
-    if (!rows) return;
+async function loadSalesOverview() {
+    const data = await apiGet("/api/internal/dashboard/sales-overview");
 
-    const tbody = document.querySelector("#performance-table tbody");
-    tbody.innerHTML = rows.length
-        ? rows.map(r => `
-            <tr>
-                <td>${r.title}</td>
-                <td>${r.campaign_type}</td>
-                <td>${r.is_active ? "Active" : "Inactive"}</td>
-                <td>${r.participants}</td>
-                <td>${r.total_responses}</td>
-            </tr>
-        `).join("")
-        : `<tr><td colspan="5">No campaigns yet</td></tr>`;
-}
-
-async function loadBeautyMatchPerformance() {
-    const rows = await apiGet("/api/internal/dashboard/beauty-match-performance");
-    if (!rows) return;
-
-    const tbody = document.querySelector("#beauty-match-table tbody");
-    tbody.innerHTML = rows.length
-        ? rows.map(r => `
-            <tr>
-                <td>${r.title}</td>
-                <td>${r.total_plays}</td>
-                <td>${r.completions}</td>
-                <td>${r.avg_moves}</td>
-                <td>${r.avg_time_seconds}</td>
-            </tr>
-        `).join("")
-        : `<tr><td colspan="5">No games played yet</td></tr>`;
-}
-
-async function loadAIInsights(forceRefresh = false) {
-    const path = forceRefresh
-        ? "/api/internal/dashboard/ai-insights?refresh=true"
-        : "/api/internal/dashboard/ai-insights";
-    const data = await apiGet(path);
     if (!data) return;
 
-    const list = document.getElementById("ai-insights-list");
-    list.innerHTML = "";
-    data.insights.forEach(insight => {
-        const li = document.createElement("li");
-        li.textContent = insight;
-        list.appendChild(li);
-    });
+    const totalCustomers = document.getElementById("total-customers");
+    const totalOrders = document.getElementById("total-orders");
+    const totalRevenue = document.getElementById("total-revenue");
 
-    const generatedAt = new Date(data.generated_at * 1000);
-    document.getElementById("insights-generated-at").textContent =
-        `Generated ${generatedAt.toLocaleTimeString()}${data.cached ? " (cached)" : ""}`;
-}
+    if (totalCustomers) {
+        totalCustomers.textContent =
+            Number(data.total_customers || 0).toLocaleString();
+    }
 
-// ---------------- AI Campaign Generator ----------------
+    if (totalOrders) {
+        totalOrders.textContent =
+            Number(data.total_orders || 0).toLocaleString();
+    }
 
-async function handleGenerateCampaign() {
-    const product = document.getElementById("product").value;
-    const audience = document.getElementById("audience").value;
-    const goal = document.getElementById("goal").value;
-    const output = document.getElementById("campaignOutput");
-    const generateBtn = document.getElementById("generateBtn");
+    if (totalRevenue) {
+        totalRevenue.textContent =
+            `₹${Number(data.revenue || 0).toLocaleString("en-IN")}`;
+    }
 
-    if (!product || !audience || !goal) {
-        output.innerHTML = "<p style='color:red;'>Please fill all fields.</p>";
+    const tbody = document.querySelector("#recent-orders-table tbody");
+
+    if (!tbody) return;
+
+    const orders = data.recent_orders || [];
+
+    if (orders.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5">No orders yet</td>
+            </tr>
+        `;
         return;
     }
 
-    generateBtn.disabled = true;
-    generateBtn.textContent = "Generating...";
-    output.innerHTML = "<p>Generating campaign...</p>";
+    tbody.innerHTML = orders.map(order => {
+        const date = order.date
+            ? new Date(order.date).toLocaleDateString("en-IN")
+            : "—";
 
-    try {
-        const data = await apiPost("/campaign/generate", { product, audience, goal });
-
-        output.innerHTML = `
-            <div class="campaign-result">
-                <h3>✨ AI Generated Campaign</h3>
-                <div class="campaign-meta">
-                    <p><strong>Product:</strong> ${data.product}</p>
-                    <p><strong>Audience:</strong> ${data.audience}</p>
-                    <p><strong>Goal:</strong> ${data.goal}</p>
-                </div>
-                <div class="campaign-content">
-                    <pre>${data.campaign}</pre>
-                </div>
-            </div>
+        return `
+            <tr>
+                <td>#${order.order_id}</td>
+                <td>${order.customer || "—"}</td>
+                <td>₹${Number(order.amount || 0).toLocaleString("en-IN")}</td>
+                <td>${order.status || "—"}</td>
+                <td>${date}</td>
+            </tr>
         `;
-    } catch (error) {
-        console.error("Campaign generation error:", error);
-        output.innerHTML = `<p style='color:red;'>${error.message || "Unable to connect to backend."}</p>`;
-    } finally {
-        generateBtn.disabled = false;
-        generateBtn.textContent = "Generate Campaign";
+    }).join("");
+}
+
+async function loadCampaignPerformance() {
+    const data = await apiGet(
+        "/api/internal/dashboard/campaign-performance"
+    );
+
+    if (!data) return;
+
+    const tbody = document.querySelector("#performance-table tbody");
+
+    if (!tbody) return;
+
+    if (data.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5">No campaigns yet</td>
+            </tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = data.map(campaign => `
+        <tr>
+            <td>${campaign.title || "—"}</td>
+            <td>${campaign.campaign_type || "—"}</td>
+            <td>${campaign.is_active ? "Active" : "Inactive"}</td>
+            <td>${Number(campaign.participants || 0).toLocaleString()}</td>
+            <td>${Number(campaign.total_responses || 0).toLocaleString()}</td>
+        </tr>
+    `).join("");
+}
+
+async function loadBeautyMatchPerformance() {
+    const data = await apiGet(
+        "/api/internal/dashboard/beauty-match-performance"
+    );
+
+    if (!data) return;
+
+    const tbody = document.querySelector("#beauty-match-table tbody");
+
+    if (!tbody) return;
+
+    if (data.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5">No Beauty Match data yet</td>
+            </tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = data.map(item => `
+        <tr>
+            <td>${item.title || "—"}</td>
+            <td>${Number(item.total_plays || 0).toLocaleString()}</td>
+            <td>${Number(item.completions || 0).toLocaleString()}</td>
+            <td>${Number(item.avg_moves || 0).toLocaleString()}</td>
+            <td>${Number(item.avg_time_seconds || 0).toLocaleString()}</td>
+        </tr>
+    `).join("");
+}
+
+async function loadCustomerSegments() {
+    const data = await apiGet(
+        "/api/internal/dashboard/customer-segments"
+    );
+
+    if (!data) return;
+}
+
+async function loadAIInsights() {
+    const data = await apiGet(
+        "/api/internal/dashboard/ai-insights"
+    );
+
+    if (!data) return;
+
+    const container = document.getElementById("ai-insights");
+
+    if (!container) return;
+
+    if (typeof data === "string") {
+        container.textContent = data;
+    } else {
+        container.textContent =
+            data.insight ||
+            data.message ||
+            "No AI insights available.";
     }
 }
 
+function setupNavigation() {
+    const navItems = document.querySelectorAll("#sidebar-nav li");
+    const panels = document.querySelectorAll(".panel");
 
-// ---------------- Theme ----------------
+    navItems.forEach(item => {
+        item.addEventListener("click", async () => {
+            const targetId = item.dataset.target;
 
-function getSystemTheme() {
-    return window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light";
-}
+            navItems.forEach(nav => {
+                nav.classList.remove("active");
+            });
 
-function applyTheme(theme) {
-    const resolvedTheme = theme === "system"
-        ? getSystemTheme()
-        : theme;
+            item.classList.add("active");
 
-    document.documentElement.setAttribute("data-theme", resolvedTheme);
+            panels.forEach(panel => {
+                panel.classList.toggle(
+                    "active",
+                    panel.id === targetId
+                );
+            });
 
-    const themeSelect = document.getElementById("theme-select");
+            if (targetId === "panel-dashboard") {
+                await loadDashboard();
+                await loadSalesOverview();
+            }
 
-    if (themeSelect && themeSelect.value !== theme) {
-        themeSelect.value = theme;
-    }
-}
+            if (targetId === "panel-campaigns") {
+                await loadCampaignPerformance();
+            }
 
-function initTheme() {
-    const savedTheme = localStorage.getItem("engagex_theme") || "system";
+            if (targetId === "panel-analytics") {
+                await loadBeautyMatchPerformance();
+                await loadCustomerSegments();
+            }
 
-    applyTheme(savedTheme);
-
-    const themeSelect = document.getElementById("theme-select");
-
-    if (!themeSelect) return;
-
-    themeSelect.value = savedTheme;
-
-    themeSelect.addEventListener("change", (event) => {
-        const theme = event.target.value;
-
-        localStorage.setItem("engagex_theme", theme);
-        applyTheme(theme);
-    });
-
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-
-    mediaQuery.addEventListener("change", () => {
-        const currentTheme =
-            localStorage.getItem("engagex_theme") || "system";
-
-        if (currentTheme === "system") {
-            applyTheme("system");
-        }
+            if (targetId === "panel-generator") {
+                await loadAIInsights();
+            }
+        });
     });
 }
-// ---------------- Init ----------------
-function initDashboard() {
-    if (!requireAuth()) return;
-    if (!requireRole(["marketing_manager"])) return; // add this line
 
+<<<<<<< Updated upstream
     initTheme();
     initOrdersPanel();
     connectDashboardWS();
@@ -254,12 +220,14 @@ function initDashboard() {
     loadBeautyMatchPerformance();
     loadCustomerSegments();
     loadAIInsights();
+=======
+async function initDashboard() {
+    setupNavigation();
+>>>>>>> Stashed changes
 
-    document.getElementById("refresh-insights-btn")
-        .addEventListener("click", () => loadAIInsights(true));
-
-    document.getElementById("generateBtn")
-        .addEventListener("click", handleGenerateCampaign);
+    await loadDashboard();
+    await loadSalesOverview();
+    await loadCampaignPerformance();
+    await loadBeautyMatchPerformance();
+    await loadCustomerSegments();
 }
-
-document.addEventListener("DOMContentLoaded", initDashboard);
