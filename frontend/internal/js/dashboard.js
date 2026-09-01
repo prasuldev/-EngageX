@@ -211,19 +211,8 @@ function setupNavigation() {
     });
 }
 
-<<<<<<< Updated upstream
-    initTheme();
-    initOrdersPanel();
-    connectDashboardWS();
-    loadDashboard();
-    loadCampaignPerformance();
-    loadBeautyMatchPerformance();
-    loadCustomerSegments();
-    loadAIInsights();
-=======
 async function initDashboard() {
     setupNavigation();
->>>>>>> Stashed changes
 
     await loadDashboard();
     await loadSalesOverview();
