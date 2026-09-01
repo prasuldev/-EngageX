@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+function initSidebarNav() {
     const navItems = document.querySelectorAll("#sidebar-nav li[data-target]");
     const panels = document.querySelectorAll(".panel");
 
@@ -14,4 +14,10 @@ document.addEventListener("DOMContentLoaded", () => {
             item.classList.add("active");
         });
     });
-});
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initSidebarNav);
+} else {
+    initSidebarNav();
+}
