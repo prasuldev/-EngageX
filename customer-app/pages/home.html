@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="../css/navbar.css">
     <link rel="stylesheet" href="../css/home.css">
     <link rel="stylesheet" href="../css/ai.css">
+    <link rel="stylesheet" href="../css/customer-ai.css">
     <link rel="stylesheet" href="../css/dark-mode.css">
     <link rel="stylesheet" href="../css/footer.css">
     <link rel="stylesheet" href="../css/campaigns/campaign-shell.css">
@@ -28,6 +29,20 @@
 
         <section id="hero"></section>
         <section id="categories"></section>
+
+        <section class="customer-ai" aria-labelledby="customer-ai-title">
+            <div class="customer-ai__hero">
+                <div>
+                    <span class="customer-ai__eyebrow">EngageX AI Beauty Intelligence</span>
+                    <h2 id="customer-ai-title">Your beauty edit, made personal</h2>
+                    <p>Recommendations, replenishment timing, routines and offers grounded in your EngageX activity.</p>
+                </div>
+                <span class="customer-ai__spark" aria-hidden="true">✦</span>
+            </div>
+            <div id="customer-ai-content" class="customer-ai__content" aria-live="polite">
+                <div class="customer-ai__loading">Preparing your personalized beauty feed…</div>
+            </div>
+        </section>
 
         <section id="featured-products">
             <h2 class="section-title">
@@ -70,20 +85,7 @@
 
     <script src="../js/app.js"></script>
     <script src="../js/loadComponents.js"></script>
-
-    <!-- AI Widget -->
-    <script>
-        fetch("../components/ai-chat.html")
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById("ai-section").innerHTML = html;
-
-                const script = document.createElement("script");
-                script.type = "module";
-                script.src = "../js/ai.js";
-                document.body.appendChild(script);
-            });
-    </script>
+    <script src="../js/customer-ai-home.js"></script>
 
     <script>
         lucide.createIcons();

@@ -25,7 +25,7 @@ function createProductCard(product) {
     return `
         <div class="product-card">
             <div class="product-image">
-                📦
+                ${productVisualMarkup(product)}
             </div>
             <div class="product-info">
                 <div class="product-brand">${product.brand_name || ''}</div>

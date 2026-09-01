@@ -156,6 +156,16 @@ async function loadProduct() {
             return;
         }
 
+        if (isLoggedIn()) {
+            authFetch(`${API_BASE}/activity`, {
+                method: "POST",
+                body: JSON.stringify({
+                    product_id: product.id,
+                    activity_type: "product_view"
+                })
+            }).catch(error => console.warn("Product view tracking failed:", error));
+        }
+
         // Render Product
         productContainer.innerHTML = `
 
@@ -166,17 +176,7 @@ async function loadProduct() {
                     <!-- Product Image -->
                     <div class="product-image">
 
-                        <div class="product-placeholder">
-
-                            <div class="product-placeholder-icon">
-                                📦
-                            </div>
-
-                        <div class="product-placeholder-text">
-                            Product Image
-                        </div>
-
-                    </div>
+                        ${productVisualMarkup(product, "product-visual--detail")}
 
                 </div>
 

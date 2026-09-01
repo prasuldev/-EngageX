@@ -5,7 +5,7 @@ export function createProductCard(product) {
         <div class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden">
 
             <div class="w-full h-64 bg-gray-100 flex items-center justify-center">
-                <div class="text-7xl">📦</div>
+                ${productVisualMarkup(product)}
             </div>
 
             <div class="p-5">

@@ -534,7 +534,47 @@ tbody tr:hover td{ background:var(--paper); }
 
 .generator-card{
     padding:26px;
+    margin-top:20px;
 }
+
+.ai-intelligence-toolbar{ display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:18px; }
+.ai-tabs{ display:flex; gap:8px; overflow-x:auto; margin-bottom:20px; padding-bottom:4px; }
+.ai-tab{ flex:0 0 auto; border:1px solid var(--line); border-radius:999px; background:var(--surface); color:var(--ink-soft); padding:9px 14px; cursor:pointer; font-weight:600; }
+.ai-tab:hover{ border-color:var(--plum); color:var(--plum); }
+.ai-tab.active{ background:var(--plum); border-color:var(--plum); color:#fff; }
+.ai-tab-panel{ display:none; }
+.ai-tab-panel.active{ display:block; }
+.ai-intelligence-toolbar .insights-meta{ padding:0; }
+.ai-forecast-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin-bottom:16px; }
+.ai-forecast-card{ border-top:3px solid var(--plum); }
+.ai-trend{ color:var(--ink-soft); font-family:var(--font-mono); font-size:12px; margin-top:8px; text-transform:capitalize; }
+.ai-section-card{ padding:24px; margin-bottom:16px; }
+.ai-section-card .section-title,
+.generator-card .section-title{ margin-bottom:14px; }
+.ai-action-list{ display:grid; gap:10px; list-style:none; }
+.ai-action-list li{ display:grid; gap:4px; padding:12px 14px; border:1px solid var(--line); border-left:3px solid var(--plum); border-radius:var(--radius-sm); background:var(--paper); color:var(--ink); line-height:1.45; }
+.ai-action-list li span{ color:var(--ink-soft); font-size:13px; }
+.ai-segment-grid{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+.ai-segment-card{ display:grid; gap:5px; padding:16px; border:1px solid var(--line); border-radius:var(--radius-sm); background:var(--paper); }
+.ai-segment-card strong{ color:var(--plum); font-family:var(--font-display); font-size:28px; }
+.ai-segment-card span{ color:var(--ink); font-weight:600; }
+.ai-segment-card small{ color:var(--mute); line-height:1.4; }
+.ai-beauty-funnel{ display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin:18px 0; }
+.ai-funnel-step{ position:relative; display:grid; gap:6px; padding:14px; border:1px solid var(--line); border-radius:var(--radius-sm); background:var(--paper); }
+.ai-funnel-step span{ color:var(--mute); font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
+.ai-funnel-step strong{ color:var(--ink); font-family:var(--font-display); font-size:21px; }
+.ai-funnel-step i{ position:absolute; right:-9px; top:50%; z-index:1; color:var(--plum); transform:translateY(-50%); }
+.ai-two-column-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+.ai-alert--warning{ border-left-color:var(--danger) !important; }
+.ai-alert--opportunity{ border-left-color:var(--teal) !important; }
+.ai-risk{ display:inline-flex; border-radius:999px; padding:4px 8px; font-size:11px; font-weight:700; }
+.ai-risk--high{ background:rgba(193,68,58,.14); color:var(--danger); }
+.ai-risk--medium{ background:rgba(185,139,62,.14); color:var(--gold); }
+.ai-risk--low{ background:rgba(47,111,98,.14); color:var(--teal); }
+.ai-assistant-card form{ display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:end; gap:12px; margin-top:20px; }
+.ai-sales-answer{ display:grid; gap:8px; margin-top:18px; padding:16px; border:1px solid var(--line); border-left:3px solid var(--plum); border-radius:var(--radius-sm); background:var(--paper); color:var(--ink); min-height:56px; }
+.ai-sales-answer:empty{ display:none; }
+.ai-sales-answer small{ color:var(--mute); }
 
 .generator-fields{
     display:grid;
@@ -686,12 +726,21 @@ tbody tr:hover td{ background:var(--paper); }
 
     .split-grid{ grid-template-columns:1fr; }
     .generator-fields{ grid-template-columns:1fr; }
+    .ai-segment-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .ai-beauty-funnel{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .ai-funnel-step i{ display:none; }
+    .ai-two-column-grid{ grid-template-columns:1fr; }
 }
 
 @media (max-width: 480px){
     .cards{ grid-template-columns:1fr; }
     .topbar{ padding:12px 16px; }
     .brand-sub{ display:none; }
+    .ai-forecast-grid,
+    .ai-segment-grid,
+    .ai-beauty-funnel{ grid-template-columns:1fr; }
+    .ai-intelligence-toolbar{ align-items:flex-start; flex-direction:column; }
+    .ai-assistant-card form{ grid-template-columns:1fr; }
 }
 
 /* ===================================================================

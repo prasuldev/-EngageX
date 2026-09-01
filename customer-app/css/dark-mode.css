@@ -1,4 +1,5 @@
 @import url('variables.css');
+@import url('product-visuals.css');
 
 /* =========================================================
    CUSTOMER APP — GLOBAL DARK MODE
@@ -453,4 +454,105 @@ body.dark-mode .contact * {
 html.dark-mode .category-products-page #loading,
 body.dark-mode .category-products-page #loading {
     color: #f3f4f6 !important;
+}
+
+/* =========================================================
+   COMPLETE CUSTOMER APP COVERAGE
+   ========================================================= */
+
+html.dark-mode .bg-gray-200,
+body.dark-mode .bg-gray-200 {
+    background-color: #334155 !important;
+}
+
+html.dark-mode .bg-pink-50,
+body.dark-mode .bg-pink-50 {
+    background-color: #3b1d32 !important;
+}
+
+html.dark-mode .text-gray-400,
+html.dark-mode .text-gray-300,
+body.dark-mode .text-gray-400,
+body.dark-mode .text-gray-300 {
+    color: #cbd5e1 !important;
+}
+
+html.dark-mode .settings-container,
+html.dark-mode .orders-card,
+html.dark-mode .order-card,
+html.dark-mode .order-meta-row,
+html.dark-mode .order-item-row,
+html.dark-mode .address-card,
+html.dark-mode .faq-item,
+html.dark-mode .help-center-modal,
+html.dark-mode .contact-support-modal,
+body.dark-mode .settings-container,
+body.dark-mode .orders-card,
+body.dark-mode .order-card,
+body.dark-mode .order-meta-row,
+body.dark-mode .order-item-row,
+body.dark-mode .address-card,
+body.dark-mode .faq-item,
+body.dark-mode .help-center-modal,
+body.dark-mode .contact-support-modal {
+    background-color: #1e293b !important;
+    border-color: #475569 !important;
+    color: #f1f5f9 !important;
+}
+
+html.dark-mode .settings-header p,
+html.dark-mode .settings-card-header p,
+html.dark-mode .setting-info span,
+html.dark-mode .info-item p,
+html.dark-mode .address-card p,
+html.dark-mode .order-card p,
+html.dark-mode .order-item-info span,
+html.dark-mode .section-label,
+body.dark-mode .settings-header p,
+body.dark-mode .settings-card-header p,
+body.dark-mode .setting-info span,
+body.dark-mode .info-item p,
+body.dark-mode .address-card p,
+body.dark-mode .order-card p,
+body.dark-mode .order-item-info span,
+body.dark-mode .section-label {
+    color: #cbd5e1 !important;
+}
+
+html.dark-mode .campaign-expanded,
+html.dark-mode .campaign-content,
+html.dark-mode .campaign-option-btn,
+html.dark-mode .campaign-recommendation,
+html.dark-mode .match-start-card,
+html.dark-mode .match-card-front,
+html.dark-mode .match-card-back,
+body.dark-mode .campaign-expanded,
+body.dark-mode .campaign-content,
+body.dark-mode .campaign-option-btn,
+body.dark-mode .campaign-recommendation,
+body.dark-mode .match-start-card,
+body.dark-mode .match-card-front,
+body.dark-mode .match-card-back {
+    background-color: #1e293b !important;
+    border-color: #475569 !important;
+    color: #f8fafc !important;
+}
+
+html.dark-mode .chat-body,
+html.dark-mode .chat-footer,
+html.dark-mode .message-content,
+body.dark-mode .chat-body,
+body.dark-mode .chat-footer,
+body.dark-mode .message-content {
+    background-color: #1e293b !important;
+    border-color: #475569 !important;
+    color: #f8fafc !important;
+}
+
+/* Keep every customer-facing headline readable, including dynamically inserted headings. */
+html.dark-mode :is(main, .modal-content, .campaign-content, .chat-body) :is(h1, h2, h3, h4, h5, h6),
+body.dark-mode :is(main, .modal-content, .campaign-content, .chat-body) :is(h1, h2, h3, h4, h5, h6) {
+    color: #ffffff !important;
+    opacity: 1 !important;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, .18);
 }

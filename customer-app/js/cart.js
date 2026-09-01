@@ -111,7 +111,7 @@ async function renderCart() {
                 <div class="flex items-center gap-5">
                     <input type="checkbox" class="item-select w-5 h-5" data-id="${item.id}"
                         ${selectedProductIds.has(item.id) ? "checked" : ""}>
-                    <img src="${item.image_url || ''}" class="w-24 h-24 bg-gray-100 rounded-xl object-cover">
+                    <div class="w-24 h-24 bg-gray-100 rounded-xl overflow-hidden">${productVisualMarkup(item)}</div>
                     <div>
                         <h3 class="text-xl font-semibold">${item.name}</h3>
                         <p class="text-pink-600 font-bold text-lg mt-2">₹${item.price}</p>

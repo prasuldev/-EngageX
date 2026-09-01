@@ -1,7 +1,12 @@
 from fastapi import APIRouter, Depends
+from pydantic import BaseModel, Field
 from app.database import get_db
 from app.auth.role_guard import require_role
 from app.services.ai_insights_service import get_ai_insights
+from app.services.ai_sales_intelligence_service import (
+    answer_sales_question,
+    get_ai_sales_intelligence,
+)
 from app.services.segmentation_service import (
     get_skin_type_breakdown,
     get_top_concerns,
@@ -10,6 +15,10 @@ from app.services.segmentation_service import (
 )
 
 router = APIRouter(prefix="/api/internal/dashboard", tags=["dashboard"])
+
+
+class SalesQuestion(BaseModel):
+    question: str = Field(min_length=3, max_length=500)
 
 @router.get("/campaign-performance")
 async def campaign_performance(
@@ -96,6 +105,26 @@ async def ai_insights(
     current_user=Depends(require_role(["admin", "marketing_manager"]))
 ):
     return await get_ai_insights(db, force_refresh=refresh)
+
+
+@router.get("/ai-sales-intelligence")
+async def ai_sales_intelligence(
+    db=Depends(get_db),
+    current_user=Depends(require_role(["admin", "marketing_manager"]))
+):
+    return await get_ai_sales_intelligence(db)
+
+
+@router.post("/ai-sales-assistant")
+async def ai_sales_assistant(
+    payload: SalesQuestion,
+    db=Depends(get_db),
+    current_user=Depends(require_role(["admin", "marketing_manager"]))
+):
+    intelligence = await get_ai_sales_intelligence(db)
+    return answer_sales_question(payload.question, intelligence)
+
+
 @router.get("/sales-overview")
 async def sales_overview(
     db=Depends(get_db),

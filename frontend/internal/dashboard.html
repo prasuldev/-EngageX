@@ -26,7 +26,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/dashboard.css?v=20260901-2">
+    <link rel="stylesheet" href="css/dashboard.css?v=20260901-5">
 </head>
 <body>
 
@@ -76,7 +76,7 @@
                 </li>
                 <li data-target="panel-generator" data-accent="plum">
                     <i class="fa-solid fa-robot"></i>
-                    <span>AI Generator</span>
+                    <span>AI Intelligence</span>
                     <i class="dot" aria-hidden="true"></i>
                 </li>
                 <li data-target="panel-settings" data-accent="mute">
@@ -95,6 +95,11 @@
 
     <!-- Main -->
     <main class="main">
+
+        <div id="preview-data-banner" class="surface-card" hidden
+             style="margin-bottom:16px;padding:12px 16px;border-left:3px solid var(--gold);">
+            <strong>Demo preview data</strong> — live EngageX data will replace these examples after backend deployment.
+        </div>
 
         <!-- Dashboard panel -->
         <section id="panel-dashboard" class="panel active">
@@ -296,15 +301,135 @@
             </div>
         </section>
 
-        <!-- AI Generator panel -->
+        <!-- AI Intelligence panel -->
         <section id="panel-generator" class="panel">
             <header class="panel-head">
-                <p class="eyebrow"><i class="dot" style="background:var(--plum)"></i>AI Generator</p>
-                <h1>Campaign generator</h1>
-                <p class="panel-desc">Describe the product, audience, and goal — get a draft campaign back.</p>
+                <p class="eyebrow"><i class="dot" style="background:var(--plum)"></i>Sales growth</p>
+                <h1>AI Intelligence</h1>
+                <p class="panel-desc">Forecast demand, find growth opportunities, and decide what deserves attention.</p>
             </header>
 
+            <div class="ai-tabs" role="tablist" aria-label="AI Intelligence sections">
+                <button class="ai-tab active" data-ai-tab="overview">AI Overview</button>
+                <button class="ai-tab" data-ai-tab="products">Product Intelligence</button>
+                <button class="ai-tab" data-ai-tab="customers">Customer Intelligence</button>
+                <button class="ai-tab" data-ai-tab="campaigns">Campaign Intelligence</button>
+                <button class="ai-tab" data-ai-tab="assistant">Ask AI</button>
+            </div>
+
+            <div class="ai-tab-panel active" data-ai-panel="overview">
+            <div class="ai-intelligence-toolbar">
+                <span id="ai-sales-generated-at" class="insights-meta">Analyzing sales data…</span>
+                <button id="refresh-sales-ai-btn" class="btn-secondary">
+                    <i class="fa-solid fa-rotate"></i> Refresh analysis
+                </button>
+            </div>
+
+            <div class="ai-forecast-grid">
+                <div class="card ai-forecast-card">
+                    <p class="kpi-eyebrow">7-day revenue forecast</p>
+                    <p class="kpi-value" id="ai-forecast-revenue">₹0</p>
+                    <p class="ai-trend" id="ai-revenue-trend">Waiting for data</p>
+                </div>
+                <div class="card ai-forecast-card">
+                    <p class="kpi-eyebrow">7-day order forecast</p>
+                    <p class="kpi-value" id="ai-forecast-orders">0</p>
+                    <p class="ai-trend" id="ai-order-trend">Waiting for data</p>
+                </div>
+            </div>
+
+            <div class="surface-card ai-section-card">
+                <h2 class="section-title">Growth insights</h2>
+                <ul id="ai-growth-insights" class="ai-action-list">
+                    <li>Analyzing current sales performance…</li>
+                </ul>
+            </div>
+
+            <div class="surface-card ai-section-card">
+                <h2 class="section-title">Anomaly detection</h2>
+                <ul id="ai-anomaly-alerts" class="ai-action-list"></ul>
+            </div>
+
+            </div>
+
+            <div class="ai-tab-panel" data-ai-panel="products">
+
+            <div class="surface-card ai-section-card">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Beauty Match conversion</h2>
+                        <p class="panel-desc">Recommendation-to-purchase performance within a 30-day attribution window.</p>
+                    </div>
+                </div>
+                <div id="ai-beauty-funnel" class="ai-beauty-funnel"></div>
+                <div class="table-wrap">
+                    <table id="ai-beauty-products">
+                        <thead>
+                            <tr><th>Recommended product</th><th>Matches</th><th>Cart adds</th><th>Purchases</th></tr>
+                        </thead>
+                        <tbody><tr><td colspan="4">Waiting for Beauty Match activity…</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="surface-card ai-section-card">
+                <h2 class="section-title">Products to promote</h2>
+                <div class="table-wrap">
+                    <table id="ai-product-opportunities">
+                        <thead>
+                            <tr><th>Product</th><th>Units</th><th>Revenue</th><th>Momentum</th><th>Recommended action</th></tr>
+                        </thead>
+                        <tbody><tr><td colspan="5">Analyzing product sales…</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="surface-card ai-section-card">
+                <h2 class="section-title">Bundle recommendations</h2>
+                <div class="table-wrap"><table id="ai-bundle-recommendations">
+                    <thead><tr><th>Bundle</th><th>Orders together</th><th>Revenue</th><th>Recommended action</th></tr></thead>
+                    <tbody><tr><td colspan="4">Analyzing product affinity…</td></tr></tbody>
+                </table></div>
+            </div>
+            </div>
+
+            <div class="ai-tab-panel" data-ai-panel="customers">
+            <div class="surface-card ai-section-card">
+                <h2 class="section-title">Customer opportunities</h2>
+                <div id="ai-customer-segments" class="ai-segment-grid"></div>
+            </div>
+
+            <div class="surface-card ai-section-card">
+                <h2 class="section-title">Churn-risk prediction</h2>
+                <div id="ai-churn-summary" class="ai-segment-grid"></div>
+            </div>
+
+            <div class="surface-card ai-section-card">
+                <h2 class="section-title">Customer next-best actions</h2>
+                <div class="table-wrap"><table id="ai-customer-actions">
+                    <thead><tr><th>Customer</th><th>Segment</th><th>Churn risk</th><th>Inactive</th><th>Next-best action</th></tr></thead>
+                    <tbody><tr><td colspan="5">Analyzing customer behavior…</td></tr></tbody>
+                </table></div>
+            </div>
+            </div>
+
+            <div class="ai-tab-panel" data-ai-panel="campaigns">
+                <div class="surface-card ai-section-card">
+                    <h2 class="section-title">Campaign optimizer</h2>
+                    <ul id="ai-campaign-actions" class="ai-action-list"></ul>
+                </div>
+
+                <div class="surface-card ai-section-card">
+                    <h2 class="section-title">A/B experiment engine</h2>
+                    <div class="table-wrap"><table id="ai-experiment-plans">
+                        <thead><tr><th>Campaign</th><th>Hypothesis</th><th>Variant B</th><th>Success metric</th><th>Minimum sample</th></tr></thead>
+                        <tbody><tr><td colspan="5">Building experiment plans…</td></tr></tbody>
+                    </table></div>
+                </div>
+
             <div class="surface-card generator-card">
+                <h2 class="section-title">AI campaign generator</h2>
+                <p class="panel-desc">Turn a selected sales opportunity into a campaign draft.</p>
                 <div class="generator-fields">
                     <label class="field">
                         <span>Product name</span>
@@ -323,6 +448,22 @@
                     <i class="fa-solid fa-wand-magic-sparkles"></i> Generate campaign
                 </button>
                 <div id="campaignOutput"></div>
+            </div>
+            </div>
+
+            <div class="ai-tab-panel" data-ai-panel="assistant">
+                <div class="surface-card ai-section-card ai-assistant-card">
+                    <h2 class="section-title">Ask the sales dashboard</h2>
+                    <p class="panel-desc">Answers use current EngageX sales, product, customer, and campaign aggregates.</p>
+                    <form id="ai-sales-question-form">
+                        <label class="field">
+                            <span>Your question</span>
+                            <input id="ai-sales-question" maxlength="500" placeholder="Which products should I promote this week?" required>
+                        </label>
+                        <button class="btn-primary" type="submit"><i class="fa-solid fa-paper-plane"></i> Ask AI</button>
+                    </form>
+                    <div id="ai-sales-answer" class="ai-sales-answer" aria-live="polite"></div>
+                </div>
             </div>
         </section>
 
@@ -405,12 +546,12 @@
     </main>
 </div>
 
-<script src="js/auth.js?v=20260901-2"></script>
-<script src="js/ws-client.js?v=20260901-2"></script>
-<script src="js/sidebar-nav.js?v=20260901-2"></script>
-<script src="js/dashboard.js?v=20260901-2"></script>
-<script src="js/orders-admin.js?v=20260901-2"></script>
-<script src="js/kpi-swatches.js?v=20260901-2"></script>
+<script src="js/auth.js?v=20260901-5"></script>
+<script src="js/ws-client.js?v=20260901-5"></script>
+<script src="js/sidebar-nav.js?v=20260901-5"></script>
+<script src="js/dashboard.js?v=20260901-7"></script>
+<script src="js/orders-admin.js?v=20260901-7"></script>
+<script src="js/kpi-swatches.js?v=20260901-5"></script>
 
 </body>
 </html>

@@ -1,0 +1,28 @@
+.product-visual {
+    --visual-accent: #c94f88;
+    position: relative; isolation: isolate; width: 100%; height: 100%; min-height: 180px;
+    display: grid; place-items: center; overflow: hidden;
+    background: radial-gradient(circle at 22% 18%, rgba(255,255,255,.92), transparent 24%), radial-gradient(circle at 78% 76%, color-mix(in srgb, var(--visual-accent) 28%, transparent), transparent 32%), linear-gradient(145deg, #fff8f4, #f4dfe8 55%, #ded6ee);
+}
+.product-visual::before, .product-visual::after { content: ""; position: absolute; z-index: -1; border-radius: 999px; }
+.product-visual::before { width: 68%; height: 42%; left: -18%; bottom: -17%; border: 1px solid rgba(255,255,255,.7); background: rgba(255,255,255,.22); transform: rotate(16deg); }
+.product-visual::after { width: 110px; height: 110px; right: -24px; top: -28px; border: 22px solid rgba(255,255,255,.25); }
+.product-visual img { position: absolute; inset: 0; z-index: 3; width: 100%; height: 100%; object-fit: cover; }
+.product-visual__stage { position: relative; display: grid; place-items: center; width: 118px; height: 138px; filter: drop-shadow(0 20px 18px rgba(74,38,59,.22)); }
+.product-visual__bottle { position: relative; width: 76px; height: 102px; margin-top: 25px; border: 1px solid rgba(80,45,65,.13); border-radius: 18px 18px 25px 25px; background: linear-gradient(100deg, rgba(255,255,255,.92), rgba(255,255,255,.55) 52%, color-mix(in srgb, var(--visual-accent) 25%, white)); box-shadow: inset 9px 0 16px rgba(255,255,255,.65); }
+.product-visual__bottle::before { content: ""; position: absolute; width: 34px; height: 27px; left: 20px; top: -24px; border-radius: 7px 7px 2px 2px; background: linear-gradient(90deg, #332b34, #746171); box-shadow: inset 4px 0 rgba(255,255,255,.12); }
+.product-visual__bottle::after { content: ""; position: absolute; width: 49px; height: 38px; left: 13px; top: 30px; border-top: 1px solid color-mix(in srgb, var(--visual-accent) 50%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--visual-accent) 35%, transparent); background: rgba(255,255,255,.28); }
+.product-visual__monogram { position: absolute; z-index: 2; top: 72px; color: #493542; font: 700 16px/1 Georgia, serif; letter-spacing: .08em; }
+.product-visual__label { position: absolute; left: 12px; right: 12px; bottom: 10px; overflow: hidden; color: rgba(58,41,53,.78); font-size: 9px; font-weight: 800; letter-spacing: .08em; text-align: center; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
+.product-visual[data-category*="clean"] { --visual-accent: #4aa6b8; }
+.product-visual[data-category*="serum"], .product-visual[data-category*="oil"] { --visual-accent: #d49b45; }
+.product-visual[data-category*="mask"] { --visual-accent: #8073c8; }
+.product-visual[data-category*="lip"], .product-visual[data-category*="makeup"] { --visual-accent: #d94d72; }
+.product-visual[data-category*="hair"] { --visual-accent: #7f8c56; }
+.product-visual--detail { min-height: 500px; border-radius: 22px; }
+.product-visual--detail .product-visual__stage { transform: scale(1.8); }
+.customer-ai__product-image .product-visual,
+.w-24 > .product-visual,
+.w-16 > .product-visual { min-height: 100%; }
+html.dark-mode .product-visual, body.dark-mode .product-visual { background: radial-gradient(circle at 22% 18%, rgba(255,255,255,.16), transparent 25%), radial-gradient(circle at 78% 76%, color-mix(in srgb, var(--visual-accent) 30%, transparent), transparent 34%), linear-gradient(145deg, #282434, #1c2637 58%, #241b2d) !important; }
+html.dark-mode .product-visual__bottle, body.dark-mode .product-visual__bottle { background: linear-gradient(100deg, rgba(255,255,255,.9), rgba(239,228,238,.62) 55%, color-mix(in srgb, var(--visual-accent) 32%, #ddd)); }

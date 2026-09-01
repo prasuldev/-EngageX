@@ -25,6 +25,7 @@ async def get_products(
             p.name,
             p.price,
             p.rating,
+            p.image_url,
             b.name AS brand_name,
             c.name AS category_name
         FROM products p
@@ -54,7 +55,7 @@ async def get_products(
 async def get_product(product_id: int, db=Depends(get_db)):
     row = await db.fetchrow("""
         SELECT
-            p.id, p.name, p.description, p.price, p.rating,
+            p.id, p.name, p.description, p.price, p.rating, p.image_url,
             b.name AS brand_name, c.name AS category_name
         FROM products p
         LEFT JOIN brands b ON p.brand_id = b.id

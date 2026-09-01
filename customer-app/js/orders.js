@@ -169,7 +169,7 @@ function renderOrderList(orders) {
     if (orders.length === 0) {
         orderList.innerHTML = `
             <div class="bg-white rounded-2xl shadow-sm p-12 text-center">
-                <div class="text-6xl mb-4">📦</div>
+                <div class="text-6xl mb-4">🛍️</div>
                 <h2 class="text-2xl font-bold mb-3">No orders yet</h2>
                 <p class="text-gray-500 mb-8">When you place an order, it'll show up here.</p>
                 <a href="products.html" class="inline-block bg-pink-600 text-white px-6 py-3 rounded-lg hover:bg-pink-700 transition">Shop Now</a>
@@ -286,7 +286,7 @@ function renderOrderItems(items, orderStatus, reviews, orderId) {
 
         return `
             <div class="flex items-center gap-4 py-4">
-                <img src="${item.image_url || '../assets/placeholder.png'}" class="w-16 h-16 rounded-lg object-cover bg-gray-100">
+                <div class="w-16 h-16 rounded-lg overflow-hidden bg-gray-100">${productVisualMarkup(item)}</div>
                 <div class="flex-1">
                     <p class="font-semibold">${item.name}</p>
                     <p class="text-gray-500 text-sm">Qty: ${item.quantity} × ₹${Number(item.price).toFixed(2)}</p>

@@ -26,7 +26,7 @@ function renderProducts(products) {
     products.forEach(product => {
         container.innerHTML += `
             <div class="product-card">
-                <div class="product-image">📦</div>
+                <div class="product-image">${productVisualMarkup(product)}</div>
                 <div class="product-info">
                     <div class="product-brand">${product.brand_name || ''}</div>
                     <div class="product-name">${product.name}</div>

@@ -179,26 +179,6 @@
 .switch input:checked + .slider::before {
     transform: translateX(22px);
 }
-
-
-
-    .settings-page {
-        padding: 30px 15px;
-    }
-
-    .settings-header {
-        align-items: center;
-    }
-
-    .settings-header h1 {
-        font-size: 30px;
-    }
-
-    .setting-info span {
-        max-width: 220px;
-    }
-
-}
     @media (max-width: 600px) {
 
     .settings-page {
@@ -612,4 +592,3 @@ body.dark-mode .help-footer span {
         width: 100%;
     }
 }
-

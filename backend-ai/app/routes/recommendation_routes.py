@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 import asyncpg
 
 from app.database import get_db
+from app.auth.dependencies import get_current_customer
 from app.services.recommendation_service import RecommendationService
 
 router = APIRouter(
@@ -11,12 +12,10 @@ router = APIRouter(
 
 @router.get("")
 async def get_recommendations(
-    db: asyncpg.Connection = Depends(get_db)
+    db: asyncpg.Connection = Depends(get_db),
+    current_user=Depends(get_current_customer),
 ):
-
-    user_id = 1
-
     return await RecommendationService.get_recommendations(
         db,
-        user_id
+        current_user["id"]
     )

@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 import asyncpg
 
 from app.database import get_db
 from app.schemas.activity import ActivityCreate
 from app.services.activity_service import ActivityService
+from app.auth.dependencies import get_current_customer
 
 router = APIRouter(
     prefix="/activity",
@@ -13,14 +14,16 @@ router = APIRouter(
 @router.post("")
 async def create_activity(
     payload: ActivityCreate,
+    current_user=Depends(get_current_customer),
     db: asyncpg.Connection = Depends(get_db)
 ):
+    if payload.activity_type != "product_view":
+        raise HTTPException(status_code=400, detail="Unsupported activity type")
 
-    user_id = 1
-
-    return await ActivityService.log_activity(
+    await ActivityService.log_activity(
         db,
-        user_id,
+        current_user["id"],
         payload.product_id,
         payload.activity_type
     )
+    return {"success": True}

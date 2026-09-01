@@ -6,6 +6,7 @@ from app.database import get_db
 from app.ai_recommender import get_ai_recommendation, generate_category_questions, generate_skin_blurb, generate_skin_routine
 from app.services.mood_ritual_resolver import resolve_product_for_category
 from app.services.mood_ritual_ai import generate_mood_captions
+from app.services.activity_service import ActivityService
 from app.routes.dashboard_ws import manager
 from app.auth.dependencies import get_current_customer
 
@@ -272,6 +273,11 @@ async def submit_response(slug: str, payload: ResponseSubmission, db=Depends(get
             """,
             user_id, campaign_id, json.dumps(payload.answers), profile_hash
         )
+
+        for product in products:
+            await ActivityService.log_activity(
+                db, user_id, product["id"], "beauty_match_recommendation"
+            )
 
         await db.execute(
             """

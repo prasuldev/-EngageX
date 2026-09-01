@@ -55,7 +55,7 @@ async function renderWishlist() {
     container.innerHTML = wishlist.map(product => `
         <div class="bg-white rounded-2xl shadow-sm border hover:shadow-lg transition overflow-hidden w-full">
             <div class="h-48 bg-gray-100 flex items-center justify-center text-6xl">
-                ${product.image_url ? `<img src="${product.image_url}" class="w-full h-full object-cover">` : "📦"}
+                ${productVisualMarkup(product)}
             </div>
             <div class="p-5">
                 <p class="text-sm text-gray-500 uppercase">${product.brand || "Brand"}</p>

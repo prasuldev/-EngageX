@@ -58,7 +58,7 @@ function renderCategories(categories) {
                 data-category="${category}">
 
                 <div class="category-icon">
-                    ${categoryIcons[category] || "📦"}
+                    ${categoryIcons[category] || "✦"}
                 </div>
 
                 <div class="category-name">

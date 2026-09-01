@@ -31,7 +31,9 @@ async function loadOrders(status = "") {
     tbody.innerHTML = `<tr><td colspan="6">Loading orders...</td></tr>`;
 
     const query = status ? `?status=${encodeURIComponent(status)}` : "";
-    const rows = await apiGet(`/admin/orders${query}`);
+    const liveRows = await apiGet(`/admin/orders${query}`);
+    const rows = liveRows?.length ? liveRows : getDashboardPreviewData().orders
+        .filter(order => !status || order.status === status);
 
     if (!rows) {
         tbody.innerHTML = `<tr><td colspan="6">Couldn't load orders.</td></tr>`;

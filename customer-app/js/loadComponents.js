@@ -34,7 +34,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Load HTML Components
     await loadComponent("navbar", "../components/navbar.html");
 
-    await loadComponent("ai-container", "../components/ai-chat.html");
+    const aiMount = document.getElementById("ai-container") || document.getElementById("ai-section");
+    if (aiMount) {
+        await loadComponent(aiMount.id, "../components/ai-chat.html");
+    }
 
     const currentPage = window.location.pathname.split("/").pop();
     if (currentPage === "home.html") {
