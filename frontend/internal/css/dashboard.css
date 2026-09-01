@@ -203,7 +203,7 @@ button{ font-family:inherit; }
     cursor:pointer;
     font-size:14px;
     font-weight:500;
-    color:#B7BAC3;
+   color:var(--ink-soft);
     border-left:3px solid transparent;
     transition:.15s ease;
 }
@@ -229,11 +229,14 @@ button{ font-family:inherit; }
     text-align:center;
     font-size:14px;
 }
-
 .sidebar li span{
     flex:1;
+    color:inherit;
 }
 
+.sidebar li i.fa-solid{
+    color:inherit;
+}
 .sidebar li i.dot{
     width:6px;
     height:6px;
@@ -256,7 +259,7 @@ button{ font-family:inherit; }
     display:flex;
     justify-content:space-between;
     font-size:11px;
-    color:#6B6F79;
+   color:var(--mute);
     padding:0 14px;
     text-transform:uppercase;
     letter-spacing:.06em;
@@ -1101,6 +1104,17 @@ body.login-page{
     font-size:13px;
     color:var(--ink);
     background:var(--paper);
+}
+#order-status-filter{
+    color:var(--ink);
+    background:var(--surface);
+    border:1px solid var(--line);
+}
+
+[data-theme="dark"] #order-status-filter,
+[data-theme="dark"] #order-status-filter option{
+    color:var(--ink);
+    background:var(--surface);
 }
 
 .return-badge{

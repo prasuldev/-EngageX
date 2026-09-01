@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>
+    (() => {
+        const savedTheme =
+            localStorage.getItem("engagex_theme") ||
+            localStorage.getItem("theme") ||
+            "light";
+
+        document.documentElement.setAttribute(
+            "data-theme",
+            savedTheme === "dark" ? "dark" : "light"
+        );
+    })();
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EngageX Sales Console</title>
@@ -87,7 +100,7 @@
                 <p class="panel-desc">Where every campaign stands, right now.</p>
             </header>
 
-            <div<div class="cards">
+            <div class="cards">
     <div class="card kpi">
         <p class="kpi-eyebrow">Total Customers</p>
         <p class="kpi-value" id="total-customers">0</p>
@@ -140,24 +153,6 @@
         </table>
     </div>
 </div>
-                </div>
-                <div class="card kpi">
-                    <p class="kpi-eyebrow">Inactive campaigns</p>
-                    <p class="kpi-value" id="inactive-count">0</p>
-                    <div class="swatch-strip" data-swatch="inactive" style="--fill-color:var(--mute)"></div>
-                </div>
-                <div class="card kpi">
-                    <p class="kpi-eyebrow">Total campaigns</p>
-                    <p class="kpi-value" id="total-count">0</p>
-                    <div class="swatch-strip" data-swatch="total" style="--fill-color:var(--ink)"></div>
-                </div>
-                <div class="card kpi kpi-accent">
-                    <p class="kpi-eyebrow">AI generated</p>
-                    <p class="kpi-value">&#8734;</p>
-                    <div class="swatch-strip swatch-strip--pattern" aria-hidden="true"></div>
-                </div>
-            </div>
-        </section>
 
         <!-- Campaigns panel -->
         <section id="panel-campaigns" class="panel">
@@ -365,33 +360,32 @@
                             <i class="fa-solid fa-circle-question"></i>
                         </div>
                         <div>
-                            <h2>Help &amp; Support</h2>
+
                             <p>Get help with your EngageX account.</p>
                         </div>
                     </div>
+<a class="settings-action" href="mailto:support@engagex.com?subject=Complaint%20-%20EngageX"
+   id="raise-complaint-link">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    <span>
+        <strong>Raise a Complaint</strong>
+        <small>Tell us about a problem or concern</small>
+    </span>
+    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+</a>
 
-                    <div class="settings-actions">
-                        <a class="settings-action" href="#" id="help-center-link">
-                            <i class="fa-solid fa-book-open"></i>
-                            <span>
-                                <strong>Help Center</strong>
-                                <small>Browse guides and documentation</small>
-                            </span>
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                        </a>
+<a class="settings-action" href="mailto:support@engagex.com?subject=Issue%20Report%20-%20EngageX"
+   id="report-issue-link">
+    <i class="fa-solid fa-bug"></i>
+    <span>
+        <strong>Report an Issue</strong>
+        <small>Report a technical problem</small>
+    </span>
+    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+</a>
+</div>
 
-                        <a class="settings-action"
-                           href="mailto:support@engagex.com"
-                           id="support-email-link">
-                            <i class="fa-solid fa-envelope"></i>
-                            <span>
-                                <strong>Contact Support</strong>
-                                <small>Send us an email</small>
-                            </span>
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                        </a>
-                    </div>
-                </div>
+
 
                 <!-- AI Assistant -->
                 <div class="surface-card settings-card">
