@@ -22,7 +22,6 @@ function connectDashboardWS() {
     loadCampaignPerformance();
     loadBeautyMatchPerformance();
     loadCustomerSegments();
-};
     };
 
 

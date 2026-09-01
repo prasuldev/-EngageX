@@ -1,5 +1,47 @@
 document.addEventListener("DOMContentLoaded", initDashboard);
 
+async function apiGet(path) {
+    try {
+        const token = getInternalToken();
+        const response = await fetch(`${API_BASE}${path}`, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("apiGet error:", error);
+        return null;
+    }
+}
+
+async function apiPost(path, body) {
+    const response = await fetch(`${API_BASE}${path}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${getInternalToken()}`
+        },
+        body: JSON.stringify(body)
+    });
+
+    if (!response.ok) {
+        let detail = `API error: ${response.status}`;
+        try {
+            const error = await response.json();
+            detail = error.detail || detail;
+        } catch (_) { /* response was not JSON */ }
+        throw new Error(detail);
+    }
+
+    return await response.json();
+}
+
 async function loadDashboard() {
     const data = await apiGet("/api/internal/dashboard/campaign-overview");
 
@@ -146,27 +188,106 @@ async function loadCustomerSegments() {
     );
 
     if (!data) return;
+
+    const funnel = data.response_funnel || {};
+    document.getElementById("funnel-total").textContent = funnel.total_responses || 0;
+    document.getElementById("funnel-profiles").textContent = funnel.unique_profiles || 0;
+    document.getElementById("funnel-users").textContent = funnel.unique_users || 0;
+
+    const skinTypes = data.skin_type_breakdown || [];
+    document.querySelector("#skin-type-table tbody").innerHTML = skinTypes.length
+        ? skinTypes.map(item => `
+            <tr>
+                <td>${item.skin_type || "—"}</td>
+                <td>${item.response_count || 0}</td>
+                <td>${item.unique_users || 0}</td>
+            </tr>
+        `).join("")
+        : `<tr><td colspan="3">No skin profile data yet</td></tr>`;
+
+    const concerns = data.top_concerns || [];
+    document.querySelector("#top-concerns-table tbody").innerHTML = concerns.length
+        ? concerns.map(item => `
+            <tr><td>${item.concern || "—"}</td><td>${item.count || 0}</td></tr>
+        `).join("")
+        : `<tr><td colspan="2">No concern data yet</td></tr>`;
 }
 
-async function loadAIInsights() {
-    const data = await apiGet(
-        "/api/internal/dashboard/ai-insights"
-    );
+async function loadAIInsights(forceRefresh = false) {
+    const path = forceRefresh
+        ? "/api/internal/dashboard/ai-insights?refresh=true"
+        : "/api/internal/dashboard/ai-insights";
+    const data = await apiGet(path);
 
     if (!data) return;
 
-    const container = document.getElementById("ai-insights");
+    const list = document.getElementById("ai-insights-list");
+    const insights = data.insights || [];
+    list.innerHTML = insights.length
+        ? insights.map(insight => `<li>${insight}</li>`).join("")
+        : `<li>No AI insights available.</li>`;
 
-    if (!container) return;
-
-    if (typeof data === "string") {
-        container.textContent = data;
-    } else {
-        container.textContent =
-            data.insight ||
-            data.message ||
-            "No AI insights available.";
+    if (data.generated_at) {
+        const generatedAt = new Date(data.generated_at * 1000);
+        document.getElementById("insights-generated-at").textContent =
+            `Generated ${generatedAt.toLocaleTimeString()}${data.cached ? " (cached)" : ""}`;
     }
+}
+
+async function handleGenerateCampaign() {
+    const product = document.getElementById("product").value.trim();
+    const audience = document.getElementById("audience").value.trim();
+    const goal = document.getElementById("goal").value.trim();
+    const output = document.getElementById("campaignOutput");
+    const button = document.getElementById("generateBtn");
+
+    if (!product || !audience || !goal) {
+        output.innerHTML = `<p class="empty-state">Please fill all fields.</p>`;
+        return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Generating...";
+
+    try {
+        const data = await apiPost("/campaign/generate", { product, audience, goal });
+        output.innerHTML = `
+            <div class="campaign-result">
+                <h3>AI Generated Campaign</h3>
+                <pre>${data.campaign || "No campaign returned."}</pre>
+            </div>
+        `;
+    } catch (error) {
+        output.innerHTML = `<p class="empty-state">${error.message}</p>`;
+    } finally {
+        button.disabled = false;
+        button.textContent = "Generate campaign";
+    }
+}
+
+function applyTheme(theme) {
+    const resolvedTheme = theme === "system"
+        ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+        : theme;
+    document.documentElement.setAttribute("data-theme", resolvedTheme);
+}
+
+function initTheme() {
+    const select = document.getElementById("theme-select");
+    const savedTheme = localStorage.getItem("engagex_theme") || "system";
+    select.value = savedTheme;
+    applyTheme(savedTheme);
+
+    select.addEventListener("change", event => {
+        localStorage.setItem("engagex_theme", event.target.value);
+        applyTheme(event.target.value);
+    });
+
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+        if ((localStorage.getItem("engagex_theme") || "system") === "system") {
+            applyTheme("system");
+        }
+    });
 }
 
 function setupNavigation() {
@@ -212,11 +333,27 @@ function setupNavigation() {
 }
 
 async function initDashboard() {
+    if (!requireAuth()) return;
+    if (!requireRole(["marketing_manager"])) return;
+
+    const user = getInternalUser();
+    const greeting = document.getElementById("user-greeting");
+    if (greeting && user) greeting.textContent = user.full_name;
+
+    initTheme();
+    initOrdersPanel();
+    connectDashboardWS();
     setupNavigation();
+
+    document.getElementById("refresh-insights-btn")
+        .addEventListener("click", () => loadAIInsights(true));
+    document.getElementById("generateBtn")
+        .addEventListener("click", handleGenerateCampaign);
 
     await loadDashboard();
     await loadSalesOverview();
     await loadCampaignPerformance();
     await loadBeautyMatchPerformance();
     await loadCustomerSegments();
+    await loadAIInsights();
 }
