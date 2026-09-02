@@ -297,6 +297,16 @@ function formatTrend(value, label) {
     return `${direction} ${Math.abs(value).toFixed(1)}% vs previous week`;
 }
 
+let latestAISalesData = null;
+
+function buildDemoHistory() {
+    return Array.from({ length: 30 }, (_, index) => {
+        const date = new Date();
+        date.setDate(date.getDate() - (29 - index));
+        return { date: date.toISOString().slice(0, 10), revenue: 3200 + index * 95 + (index % 5) * 240, orders: 3 + (index % 6) };
+    });
+}
+
 function getAISalesPreviewData() {
     return {
         preview: true,
@@ -307,6 +317,8 @@ function getAISalesPreviewData() {
             "Beauty Match recommendations are converting best when customers view the matched product immediately."
         ],
         forecast: { next_7_days_revenue: 48600, next_7_days_orders: 34, revenue_change_percent: 12.4, order_change_percent: 8.1, method: "Demo 30-day trend" },
+        sales_history: buildDemoHistory(),
+        sales_summary: { today_revenue: 5950, today_orders: 8, current_7_days_revenue: 36400, previous_7_days_revenue: 32384, current_7_days_orders: 49, previous_7_days_orders: 45 },
         customer_segments: { high_value: 18, frequent_buyers: 27, at_risk: 7, never_purchased: 21 },
         churn_risk_summary: { high: 7, medium: 14, low: 38 },
         beauty_match_conversion: {
@@ -317,9 +329,9 @@ function getAISalesPreviewData() {
             ]
         },
         product_opportunities: [
-            { name: "Hydrating Barrier Serum", units: 42, revenue: 31500, momentum_percent: 31.2, action: "Increase visibility and use as a cross-sell anchor." },
-            { name: "Gentle Gel Cleanser", units: 35, revenue: 18900, momentum_percent: 14.8, action: "Bundle with the leading serum." },
-            { name: "Mineral Sunscreen SPF 50", units: 19, revenue: 17100, momentum_percent: -8.3, action: "Test placement beside daytime routines." }
+            { name: "Hydrating Barrier Serum", units: 42, revenue: 31500, recent_units: 21, previous_units: 16, momentum_percent: 31.2, action: "Increase visibility and use as a cross-sell anchor." },
+            { name: "Gentle Gel Cleanser", units: 35, revenue: 18900, recent_units: 18, previous_units: 16, momentum_percent: 14.8, action: "Bundle with the leading serum." },
+            { name: "Mineral Sunscreen SPF 50", units: 19, revenue: 17100, recent_units: 11, previous_units: 12, momentum_percent: -8.3, action: "Test placement beside daytime routines." }
         ],
         bundle_recommendations: [
             { product_a: "Hydrating Barrier Serum", product_b: "Gentle Gel Cleanser", orders_together: 14, bundle_revenue: 19600, action: "Test a 10% routine bundle." },
@@ -334,8 +346,132 @@ function getAISalesPreviewData() {
             { title: "Find Your Skin Twin", response_rate: 61.5, participants: 52, action: "Scale this format and reuse its audience targeting.", experiment: { hypothesis: "Leading with the reward will raise response rate.", variant_b: "Show the reward before the first question.", primary_metric: "Response rate", minimum_sample: 104 } },
             { title: "Glow Routine Quiz", response_rate: 28.4, participants: 38, action: "Simplify the interaction and strengthen the call to action.", experiment: { hypothesis: "A shorter quiz will improve completion.", variant_b: "Reduce the quiz to three questions.", primary_metric: "Completion rate", minimum_sample: 80 } }
         ],
-        anomalies: [{ severity: "opportunity", title: "Revenue increased 12.4%", detail: "Compared with the previous seven days." }]
+        anomalies: [{ severity: "opportunity", metric: "revenue", title: "Revenue increased 12.4%", detail: "Compared with the previous seven days." }]
     };
+}
+
+function estimatedMetricHistory(metric, data) {
+    const forecast = data.forecast || {};
+    const change = Number(forecast[metric === "revenue" ? "revenue_change_percent" : "order_change_percent"] || 0);
+    const weeklyForecast = Number(forecast[metric === "revenue" ? "next_7_days_revenue" : "next_7_days_orders"] || 0);
+    const dailyBase = Math.max(metric === "revenue" ? 100 : 1, weeklyForecast / 7);
+    return Array.from({ length: 30 }, (_, index) => {
+        const date = new Date();
+        date.setDate(date.getDate() - (29 - index));
+        const progress = index / 29;
+        const slope = (change / 100) * (progress - .5);
+        const naturalMovement = Math.sin(index * 1.7) * .12 + Math.cos(index * .63) * .07;
+        return { date: date.toISOString().slice(0, 10), [metric]: Math.max(0, dailyBase * (1 + slope + naturalMovement)) };
+    });
+}
+
+function marketChartSVG(history, metric, estimated = false) {
+    const width = 900, height = 300, left = 66, right = 24, top = 24, bottom = 42;
+    const values = history.map(day => Number(day[metric] || 0));
+    const max = Math.max(...values, 1), min = Math.min(...values, 0), range = max - min || 1;
+    const x = index => left + (index / Math.max(1, values.length - 1)) * (width - left - right);
+    const y = value => top + (1 - (value - min) / range) * (height - top - bottom);
+    const points = values.map((value, index) => `${x(index).toFixed(1)},${y(value).toFixed(1)}`).join(" ");
+    const area = `${left},${height-bottom} ${points} ${width-right},${height-bottom}`;
+    const rising = values.at(-1) >= values[0];
+    const color = rising ? "#22a06b" : "#e05260";
+    const gradientId = `market-${metric}-${rising ? "up" : "down"}`;
+    const grid = Array.from({ length: 5 }, (_, index) => {
+        const gy = top + index * (height - top - bottom) / 4;
+        const value = max - index * range / 4;
+        const label = metric === "revenue" ? `₹${Math.round(value).toLocaleString("en-IN")}` : Math.round(value).toLocaleString();
+        return `<line class="market-grid" x1="${left}" y1="${gy}" x2="${width-right}" y2="${gy}"></line><text class="market-axis" x="${left-9}" y="${gy+4}" text-anchor="end">${label}</text>`;
+    }).join("");
+    const dateLabels = [0, Math.floor((history.length - 1) / 2), history.length - 1].map(index => `<text class="market-axis" x="${x(index)}" y="${height-12}" text-anchor="middle">${new Date(history[index].date).toLocaleDateString(undefined,{month:"short",day:"numeric"})}</text>`).join("");
+    const pointsMarkup = values.map((value, index) => `<circle cx="${x(index)}" cy="${y(value)}" r="3" style="--point-color:${color}"><title>${new Date(history[index].date).toLocaleDateString()}: ${metric === "revenue" ? `₹${value.toLocaleString("en-IN",{maximumFractionDigits:0})}` : value.toLocaleString(undefined,{maximumFractionDigits:1})}</title></circle>`).join("");
+    return `<div class="ai-market-chart-wrap"><div class="ai-market-legend"><span><i style="background:${color}"></i>${rising ? "Upward" : "Downward"} ${estimated ? "estimated" : "actual"} trend</span><strong style="color:${color}">${rising ? "▲" : "▼"} ${metric === "revenue" ? "Revenue" : "Orders"}</strong></div><svg class="ai-trend-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="${metric} market-style flow chart"><defs><linearGradient id="${gradientId}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".35"></stop><stop offset="1" stop-color="${color}" stop-opacity="0"></stop></linearGradient></defs>${grid}<polygon points="${area}" fill="url(#${gradientId})"></polygon><polyline points="${points}" style="stroke:${color}"></polyline>${pointsMarkup}${dateLabels}</svg>${estimated ? '<p class="ai-estimate-note">Estimated visualization from the available forecast because daily history is not yet returned by the deployed API.</p>' : ""}</div>`;
+}
+
+function showOverviewReport(metric) {
+    if (!latestAISalesData) return;
+    const report = document.getElementById("ai-overview-report");
+    const rawHistory = latestAISalesData.sales_history || [];
+    const summary = latestAISalesData.sales_summary || {};
+    const forecast = latestAISalesData.forecast || {};
+    const isRevenue = metric !== "orders";
+    const metricKey = isRevenue ? "revenue" : "orders";
+    const estimated = rawHistory.length < 2;
+    const history = estimated ? estimatedMetricHistory(metricKey, latestAISalesData) : rawHistory;
+    const fallbackCurrent = history.slice(-7).reduce((total, day) => total + Number(day[metricKey] || 0), 0);
+    const current = Number(summary[isRevenue ? "current_7_days_revenue" : "current_7_days_orders"] ?? fallbackCurrent);
+    const previousFromChange = change => change === -100 ? 0 : current / (1 + change / 100);
+    const change = forecast[isRevenue ? "revenue_change_percent" : "order_change_percent"];
+    const previous = Number(summary[isRevenue ? "previous_7_days_revenue" : "previous_7_days_orders"] ?? previousFromChange(Number(change || 0)));
+    const formatValue = value => isRevenue ? `₹${Number(value).toLocaleString("en-IN", { maximumFractionDigits: 0 })}` : Math.round(Number(value)).toLocaleString();
+    report.innerHTML = `<div class="ai-report-head"><div><p class="eyebrow">Full detail report</p><h2>${isRevenue ? "Revenue" : "Order volume"} flow</h2><p>Daily movement across the last 30 days and a direct seven-day comparison.</p></div><button type="button" class="ai-report-close" aria-label="Close report">×</button></div>
+        ${marketChartSVG(history, metricKey, estimated)}
+        <div class="ai-report-comparison"><div><span>Previous 7 days</span><strong>${formatValue(previous)}</strong></div><i class="fa-solid fa-arrow-right"></i><div><span>Current 7 days</span><strong>${formatValue(current)}</strong></div><div class="ai-report-change ${Number(change) < 0 ? "negative" : "positive"}"><span>Change</span><strong>${change == null ? "No baseline" : `${change >= 0 ? "+" : ""}${Number(change).toFixed(1)}%`}</strong></div></div>
+        <div class="ai-report-note"><strong>What happened?</strong><span>${current > previous ? `${isRevenue ? "Revenue" : "Orders"} increased in the latest period.` : current < previous ? `${isRevenue ? "Revenue" : "Orders"} decreased in the latest period and needs attention.` : "Performance remained level."}</span></div>`;
+    report.hidden = false;
+    report.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function showProductReport(index) {
+    const product = latestAISalesData?.product_opportunities?.[index];
+    if (!product) return;
+    const report = document.getElementById("ai-product-report");
+    const previous = Number(product.previous_units || 0);
+    const recent = Number(product.recent_units || 0);
+    const previousDate = new Date(); previousDate.setDate(previousDate.getDate() - 30);
+    const currentDate = new Date();
+    report.innerHTML = `<div class="ai-report-head"><div><p class="eyebrow">Product performance report</p><h2>${escapeHTML(product.name)}</h2><p>Where the sales movement happened and what to do next.</p></div><button type="button" class="ai-report-close" aria-label="Close report">×</button></div>
+        ${marketChartSVG([{date:previousDate.toISOString().slice(0,10),orders:previous},{date:currentDate.toISOString().slice(0,10),orders:recent}], "orders")}
+        <div class="ai-report-comparison"><div><span>Previous 30 days</span><strong>${previous} units</strong></div><i class="fa-solid fa-arrow-right"></i><div><span>Latest 30 days</span><strong>${recent} units</strong></div><div class="ai-report-change ${Number(product.momentum_percent) < 0 ? "negative" : "positive"}"><span>Momentum</span><strong>${product.momentum_percent == null ? "New" : `${Number(product.momentum_percent).toFixed(1)}%`}</strong></div></div>
+        <div class="ai-report-note"><strong>${Number(product.momentum_percent) < 0 ? "Issue detected" : "Growth opportunity"}</strong><span>${escapeHTML(product.action)}</span></div>`;
+    report.hidden = false;
+    report.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function showBeautyReport() {
+    const beauty = latestAISalesData?.beauty_match_conversion || {};
+    const game = beauty.original_game || {};
+    if (Number(game.total_plays || 0) > 0) {
+        const plays = Number(game.total_plays || 0);
+        const completions = Number(game.completions || 0);
+        const incomplete = Math.max(0, plays - completions);
+        const completionRate = plays ? completions / plays * 100 : 0;
+        const report = document.getElementById("ai-beauty-report");
+        report.innerHTML = `<div class="ai-report-head"><div><p class="eyebrow">Original Beauty Match data</p><h2>Beauty Match game flow</h2><p>Actual plays and completions recorded by the original Beauty Match campaign.</p></div><button type="button" class="ai-report-close" aria-label="Close report">×</button></div>
+            <div class="ai-conversion-flow"><div><span>Total plays</span><strong>${plays}</strong><small>All recorded game sessions</small></div><i class="fa-solid fa-arrow-right"></i><div><span>Completed games</span><strong>${completions}</strong><small>${completionRate.toFixed(1)}% completion rate</small></div><i class="fa-solid fa-arrow-right"></i><div><span>Incomplete games</span><strong>${incomplete}</strong><small>${plays ? (incomplete / plays * 100).toFixed(1) : "0.0"}% drop-off</small></div></div>
+            <div class="ai-report-comparison"><div><span>Average moves</span><strong>${Number(game.avg_moves || 0)}</strong></div><div><span>Average completion time</span><strong>${Number(game.avg_time_seconds || 0)} sec</strong></div><div><span>Unique players</span><strong>${Number(game.unique_players || 0) || "—"}</strong></div><div><span>Rewards issued</span><strong>${Number(game.rewards_issued || 0) || "—"}</strong></div></div>
+            <div class="ai-report-note"><strong>Original campaign result</strong><span>${completionRate >= 60 ? "Beauty Match has a healthy completion rate. Test stronger product follow-through after completion." : "Beauty Match is losing players before completion. Review game difficulty, number of pairs, and reward visibility."}</span></div>`;
+        report.hidden = false;
+        report.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        return;
+    }
+    const recommendations = Number(beauty.recommendations || 0);
+    const stages = [recommendations, Number(beauty.views || 0), Number(beauty.cart_adds || 0), Number(beauty.purchases || 0)];
+    const labels = ["Recommendations", "Views", "Cart adds", "Purchases"];
+    const report = document.getElementById("ai-beauty-report");
+    report.innerHTML = `<div class="ai-report-head"><div><p class="eyebrow">Beauty Match report</p><h2>Recommendation conversion flow</h2><p>Shows exactly where customers continue or drop from the journey.</p></div><button type="button" class="ai-report-close" aria-label="Close report">×</button></div>
+        <div class="ai-conversion-flow">${stages.map((value, index) => { const rate = index === 0 ? 100 : (recommendations ? value / recommendations * 100 : 0); const prior = index ? stages[index - 1] : value; const drop = index ? (prior ? (prior - value) / prior * 100 : 0) : 0; return `<div><span>${labels[index]}</span><strong>${value}</strong><small>${rate.toFixed(1)}% of matches${index ? ` · ${drop.toFixed(1)}% step drop` : ""}</small></div>${index < stages.length - 1 ? '<i class="fa-solid fa-arrow-right"></i>' : ""}`; }).join("")}</div>
+        <div class="ai-report-note"><strong>Sales result</strong><span>₹${Number(beauty.attributed_revenue || 0).toLocaleString("en-IN")} attributed revenue within ${beauty.attribution_window_days || 30} days. ${stages[2] > stages[3] ? "The largest immediate opportunity is converting more cart additions into purchases." : "The funnel is converting consistently."}</span></div>`;
+    report.hidden = false;
+    report.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function showCampaignReport(index) {
+    const campaign = latestAISalesData?.campaign_actions?.[index];
+    if (!campaign) return;
+    if (campaign.title.toLowerCase().includes("beauty match")) {
+        showBeautyReport();
+        return;
+    }
+    const report = document.getElementById("ai-beauty-report");
+    const participants = Number(campaign.participants || 0);
+    const responseRate = Math.min(100, Number(campaign.response_rate || 0));
+    const responses = Number(campaign.responses ?? Math.round(participants * responseRate / 100));
+    const nonResponses = Math.max(0, participants - responses);
+    report.innerHTML = `<div class="ai-report-head"><div><p class="eyebrow">Campaign performance report</p><h2>${escapeHTML(campaign.title)}</h2><p>Participation, response conversion, and the recommended optimization.</p></div><button type="button" class="ai-report-close" aria-label="Close report">×</button></div>
+        <div class="ai-conversion-flow"><div><span>Participants</span><strong>${participants}</strong><small>100% campaign reach</small></div><i class="fa-solid fa-arrow-right"></i><div><span>Responses</span><strong>${responses}</strong><small>${responseRate.toFixed(1)}% response rate</small></div><i class="fa-solid fa-arrow-right"></i><div><span>Did not respond</span><strong>${nonResponses}</strong><small>${participants ? (nonResponses / participants * 100).toFixed(1) : "0.0"}% drop-off</small></div></div>
+        <div class="ai-report-note"><strong>Recommended optimization</strong><span>${escapeHTML(campaign.action)}</span></div>`;
+    report.hidden = false;
+    report.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 async function loadAISalesIntelligence() {
@@ -345,6 +481,20 @@ async function loadAISalesIntelligence() {
             "Sales intelligence is temporarily unavailable.";
         return;
     }
+    const beauty = data.beauty_match_conversion || (data.beauty_match_conversion = {});
+    if (!beauty.original_game || Number(beauty.original_game.total_plays || 0) === 0) {
+        const originalRows = await apiGet("/api/internal/dashboard/beauty-match-performance");
+        if (Array.isArray(originalRows) && originalRows.length) {
+            const totalPlays = originalRows.reduce((sum, row) => sum + Number(row.total_plays || 0), 0);
+            beauty.original_game = {
+                total_plays: totalPlays,
+                completions: originalRows.reduce((sum, row) => sum + Number(row.completions || 0), 0),
+                avg_moves: Math.round(originalRows.reduce((sum, row) => sum + Number(row.avg_moves || 0) * Number(row.total_plays || 0), 0) / Math.max(1, totalPlays)),
+                avg_time_seconds: Math.round(originalRows.reduce((sum, row) => sum + Number(row.avg_time_seconds || 0) * Number(row.total_plays || 0), 0) / Math.max(1, totalPlays)),
+            };
+        }
+    }
+    latestAISalesData = data;
 
     const forecast = data.forecast || {};
     document.getElementById("ai-forecast-revenue").textContent =
@@ -358,7 +508,7 @@ async function loadAISalesIntelligence() {
 
     const insights = data.insights || [];
     document.getElementById("ai-growth-insights").innerHTML = insights.length
-        ? insights.map(item => `<li>${escapeHTML(item)}</li>`).join("")
+        ? insights.map(item => `<li class="ai-insight-trigger" data-report="${item.toLowerCase().includes("order") ? "orders" : "revenue"}">${escapeHTML(item)}<span>View report →</span></li>`).join("")
         : `<li>More sales data is needed to generate growth insights.</li>`;
 
     const segments = data.customer_segments || {};
@@ -377,8 +527,13 @@ async function loadAISalesIntelligence() {
             </div>
         `).join("");
 
-    const beauty = data.beauty_match_conversion || {};
-    const beautySteps = [
+    const originalGame = beauty.original_game || {};
+    const beautySteps = Number(originalGame.total_plays || 0) > 0 ? [
+        ["Game plays", originalGame.total_plays || 0],
+        ["Completions", originalGame.completions || 0],
+        ["Average moves", originalGame.avg_moves || 0],
+        ["Average time", `${Number(originalGame.avg_time_seconds || 0)} sec`],
+    ] : [
         ["Matches", beauty.recommendations || 0],
         ["Product views", beauty.views || 0],
         ["Cart adds", beauty.cart_adds || 0],
@@ -408,8 +563,8 @@ async function loadAISalesIntelligence() {
 
     const products = data.product_opportunities || [];
     document.querySelector("#ai-product-opportunities tbody").innerHTML = products.length
-        ? products.map(product => `
-            <tr>
+        ? products.map((product, index) => `
+            <tr class="ai-product-trigger" data-product-index="${index}" tabindex="0">
                 <td>${escapeHTML(product.name)}</td>
                 <td>${Number(product.units || 0).toLocaleString()}</td>
                 <td>₹${Number(product.revenue || 0).toLocaleString("en-IN")}</td>
@@ -445,10 +600,11 @@ async function loadAISalesIntelligence() {
 
     const campaigns = data.campaign_actions || [];
     document.getElementById("ai-campaign-actions").innerHTML = campaigns.length
-        ? campaigns.map(campaign => `
-            <li>
+        ? campaigns.map((campaign, index) => `
+            <li class="ai-campaign-trigger" data-campaign-index="${index}" tabindex="0">
                 <strong>${escapeHTML(campaign.title)}</strong>
-                <span>${campaign.response_rate}% response rate · ${escapeHTML(campaign.action)}</span>
+                <span>${Math.min(100, Number(campaign.response_rate || 0))}% response rate · ${escapeHTML(campaign.action)}</span>
+                <span>View campaign flow →</span>
             </li>
         `).join("")
         : `<li>No active campaigns are available to optimize.</li>`;
@@ -466,9 +622,10 @@ async function loadAISalesIntelligence() {
     const anomalies = data.anomalies || [];
     document.getElementById("ai-anomaly-alerts").innerHTML = anomalies
         .map(alert => `
-            <li class="ai-alert ai-alert--${escapeHTML(alert.severity)}">
+            <li class="ai-alert ai-alert--${escapeHTML(alert.severity)} ai-anomaly-trigger" data-report="${escapeHTML(alert.metric === "orders" ? "orders" : "revenue")}">
                 <strong>${escapeHTML(alert.title)}</strong>
                 <span>${escapeHTML(alert.detail)}</span>
+                <span>View full report →</span>
             </li>
         `).join("");
 
@@ -486,6 +643,34 @@ function initAITabs() {
     }));
 }
 
+function initAIReports() {
+    const intelligencePanel = document.getElementById("panel-intelligence");
+    intelligencePanel.addEventListener("click", event => {
+        const reportTrigger = event.target.closest("[data-report]");
+        if (reportTrigger) showOverviewReport(reportTrigger.dataset.report);
+        const productTrigger = event.target.closest(".ai-product-trigger");
+        if (productTrigger) showProductReport(Number(productTrigger.dataset.productIndex));
+        const campaignTrigger = event.target.closest(".ai-campaign-trigger");
+        if (campaignTrigger) showCampaignReport(Number(campaignTrigger.dataset.campaignIndex));
+        if (event.target.closest("#ai-beauty-funnel")) showBeautyReport();
+        const close = event.target.closest(".ai-report-close");
+        if (close) close.closest(".ai-detail-report").hidden = true;
+    });
+    intelligencePanel.addEventListener("keydown", event => {
+        if ((event.key === "Enter" || event.key === " ") && event.target.matches(".ai-product-trigger, .ai-campaign-trigger")) {
+            event.preventDefault();
+            if (event.target.matches(".ai-product-trigger")) showProductReport(Number(event.target.dataset.productIndex));
+            else showCampaignReport(Number(event.target.dataset.campaignIndex));
+        }
+    });
+    document.querySelectorAll(".ai-question-suggestions button").forEach(button => {
+        button.addEventListener("click", () => {
+            document.getElementById("ai-sales-question").value = button.textContent;
+            document.getElementById("ai-sales-question-form").requestSubmit();
+        });
+    });
+}
+
 async function handleSalesQuestion(event) {
     event.preventDefault();
     const input = document.getElementById("ai-sales-question");
@@ -495,14 +680,17 @@ async function handleSalesQuestion(event) {
         const data = await apiPost("/api/internal/dashboard/ai-sales-assistant", { question: input.value.trim() });
         answer.innerHTML = `<strong>${escapeHTML(data.answer)}</strong><small>Evidence: ${(data.evidence || []).map(escapeHTML).join(" · ")}</small>`;
     } catch (error) {
-        const preview = getAISalesPreviewData();
         const question = input.value.toLowerCase();
-        if (question.includes("bundle")) {
+        if (question.includes("today") && (question.includes("sale") || question.includes("revenue") || question.includes("order"))) {
+            answer.innerHTML = `<strong>Demo preview: Today's recorded sales are ₹5,950 from 8 orders.</strong><small>Evidence: demo daily sales data</small>`;
+        } else if (question.includes("bundle")) {
             answer.innerHTML = `<strong>Demo preview: Bundle Hydrating Barrier Serum with Gentle Gel Cleanser; they appeared together in 14 orders.</strong><small>Evidence: demo product-affinity data</small>`;
         } else if (question.includes("churn") || question.includes("customer")) {
             answer.innerHTML = `<strong>Demo preview: Prioritize the 7 high-risk customers with personalized 72-hour win-back offers.</strong><small>Evidence: demo recency and frequency scores</small>`;
-        } else {
+        } else if (/sale|revenue|order|product|promote|growth|campaign|beauty|forecast/.test(question)) {
             answer.innerHTML = `<strong>Demo preview: Promote Hydrating Barrier Serum first and cross-sell Gentle Gel Cleanser.</strong><small>Evidence: demo sales momentum and bundle data</small>`;
+        } else {
+            answer.innerHTML = `<strong>I am the EngageX sales assistant, so I can only answer questions about sales, revenue, orders, products, customers, Beauty Match, and campaigns.</strong><small>Evidence: sales-only assistant policy</small>`;
         }
     }
 }
@@ -598,7 +786,7 @@ function setupNavigation() {
                 await loadCustomerSegments();
             }
 
-            if (targetId === "panel-generator") {
+            if (targetId === "panel-intelligence") {
                 await loadAISalesIntelligence();
             }
         });
@@ -615,6 +803,7 @@ async function initDashboard() {
 
     initTheme();
     initAITabs();
+    initAIReports();
     initOrdersPanel();
     connectDashboardWS();
     setupNavigation();

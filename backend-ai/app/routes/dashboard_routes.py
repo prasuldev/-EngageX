@@ -4,7 +4,7 @@ from app.database import get_db
 from app.auth.role_guard import require_role
 from app.services.ai_insights_service import get_ai_insights
 from app.services.ai_sales_intelligence_service import (
-    answer_sales_question,
+    answer_sales_question_flexible,
     get_ai_sales_intelligence,
 )
 from app.services.segmentation_service import (
@@ -122,7 +122,7 @@ async def ai_sales_assistant(
     current_user=Depends(require_role(["admin", "marketing_manager"]))
 ):
     intelligence = await get_ai_sales_intelligence(db)
-    return answer_sales_question(payload.question, intelligence)
+    return await answer_sales_question_flexible(payload.question, intelligence)
 
 
 @router.get("/sales-overview")

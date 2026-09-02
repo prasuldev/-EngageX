@@ -1,5 +1,6 @@
 """Sales-growth intelligence computed from live EngageX commerce data."""
 
+import json
 from datetime import datetime, timezone
 
 
@@ -110,7 +111,12 @@ async def get_ai_sales_intelligence(db) -> dict:
         """
         SELECT c.id, c.title, c.campaign_type,
                COUNT(DISTINCT cp.user_id) AS participants,
-               COUNT(DISTINCT cr.user_id) AS responses
+               GREATEST(
+                   COUNT(DISTINCT cr.user_id),
+                   (SELECT COUNT(DISTINCT gs.user_id)
+                    FROM game_sessions gs
+                    WHERE gs.campaign_id = c.id AND gs.completed = true)
+               ) AS responses
         FROM campaigns c
         LEFT JOIN campaign_participation cp ON cp.campaign_id = c.id
         LEFT JOIN campaign_responses cr ON cr.campaign_id = c.id
@@ -172,6 +178,21 @@ async def get_ai_sales_intelligence(db) -> dict:
                COUNT(*) FILTER (WHERE purchased) AS purchases,
                COALESCE(SUM(attributed_revenue), 0) AS attributed_revenue
         FROM conversions
+        """
+    )
+
+    beauty_game_row = await db.fetchrow(
+        """
+        SELECT COUNT(gs.id) AS total_plays,
+               COUNT(gs.id) FILTER (WHERE gs.completed = true) AS completions,
+               COUNT(DISTINCT gs.user_id) AS unique_players,
+               COUNT(gs.id) FILTER (WHERE gs.reward_issued_value IS NOT NULL) AS rewards_issued,
+               COALESCE(ROUND(AVG(gs.moves_taken) FILTER (WHERE gs.completed = true)), 0) AS avg_moves,
+               COALESCE(ROUND(AVG(gs.time_taken_seconds) FILTER (WHERE gs.completed = true)), 0) AS avg_time_seconds
+        FROM campaigns c
+        JOIN game_sessions gs ON gs.campaign_id = c.id
+        WHERE c.campaign_type = 'memory_match'
+          AND (LOWER(c.title) LIKE '%beauty%match%' OR LOWER(c.slug) LIKE '%beauty%match%')
         """
     )
 
@@ -276,6 +297,8 @@ async def get_ai_sales_intelligence(db) -> dict:
             "units": int(row["units"] or 0),
             "revenue": round(_number(row["revenue"]), 2),
             "momentum_percent": momentum,
+            "recent_units": recent_units,
+            "previous_units": previous_units,
             "action": action,
         })
 
@@ -283,7 +306,7 @@ async def get_ai_sales_intelligence(db) -> dict:
     for row in campaign_rows:
         participants = int(row["participants"] or 0)
         responses = int(row["responses"] or 0)
-        response_rate = round((responses / participants) * 100, 1) if participants else 0
+        response_rate = min(100, round((responses / participants) * 100, 1)) if participants else 0
         if participants < 10:
             action = "Increase reach before judging performance."
         elif response_rate < 25:
@@ -297,6 +320,7 @@ async def get_ai_sales_intelligence(db) -> dict:
             "title": row["title"],
             "campaign_type": row["campaign_type"],
             "participants": participants,
+            "responses": responses,
             "response_rate": response_rate,
             "action": action,
             "experiment": {
@@ -364,6 +388,7 @@ async def get_ai_sales_intelligence(db) -> dict:
         direction = "increased" if revenue_change > 0 else "dropped"
         anomalies.append({
             "severity": "opportunity" if revenue_change > 0 else "warning",
+            "metric": "revenue",
             "title": f"Revenue {direction} {abs(revenue_change):.1f}%",
             "detail": "Compared with the previous seven days.",
         })
@@ -371,12 +396,14 @@ async def get_ai_sales_intelligence(db) -> dict:
         direction = "increased" if order_change > 0 else "dropped"
         anomalies.append({
             "severity": "opportunity" if order_change > 0 else "warning",
+            "metric": "orders",
             "title": f"Order volume {direction} {abs(order_change):.1f}%",
             "detail": "Compared with the previous seven days.",
         })
     if not anomalies:
         anomalies.append({
             "severity": "normal",
+            "metric": "both",
             "title": "No major sales anomalies detected",
             "detail": "Revenue and order movement stayed within the 25% alert threshold.",
         })
@@ -413,6 +440,22 @@ async def get_ai_sales_intelligence(db) -> dict:
             "revenue_change_percent": revenue_change,
             "order_change_percent": order_change,
             "method": "30-day linear trend",
+        },
+        "sales_history": [
+            {
+                "date": row["day"].isoformat(),
+                "revenue": round(_number(row["revenue"]), 2),
+                "orders": int(row["orders"] or 0),
+            }
+            for row in daily_rows
+        ],
+        "sales_summary": {
+            "today_revenue": round(revenues[-1] if revenues else 0, 2),
+            "today_orders": int(orders[-1] if orders else 0),
+            "current_7_days_revenue": round(recent_revenue, 2),
+            "previous_7_days_revenue": round(previous_revenue, 2),
+            "current_7_days_orders": int(recent_orders),
+            "previous_7_days_orders": int(previous_orders),
         },
         "product_opportunities": products[:5],
         "bundle_recommendations": bundles,
@@ -452,6 +495,14 @@ async def get_ai_sales_intelligence(db) -> dict:
                 for row in beauty_product_rows
             ],
             "attribution_window_days": 30,
+            "original_game": {
+                "total_plays": int(beauty_game_row["total_plays"] or 0) if beauty_game_row else 0,
+                "completions": int(beauty_game_row["completions"] or 0) if beauty_game_row else 0,
+                "unique_players": int(beauty_game_row["unique_players"] or 0) if beauty_game_row else 0,
+                "rewards_issued": int(beauty_game_row["rewards_issued"] or 0) if beauty_game_row else 0,
+                "avg_moves": int(beauty_game_row["avg_moves"] or 0) if beauty_game_row else 0,
+                "avg_time_seconds": int(beauty_game_row["avg_time_seconds"] or 0) if beauty_game_row else 0,
+            },
         },
     }
 
@@ -459,12 +510,45 @@ async def get_ai_sales_intelligence(db) -> dict:
 def answer_sales_question(question: str, intelligence: dict) -> dict:
     normalized = question.lower().strip()
     forecast = intelligence.get("forecast", {})
+    summary = intelligence.get("sales_summary", {})
     products = intelligence.get("product_opportunities", [])
     bundles = intelligence.get("bundle_recommendations", [])
     customers = intelligence.get("customer_next_best_actions", [])
     campaigns = intelligence.get("campaign_actions", [])
+    beauty = intelligence.get("beauty_match_conversion", {})
+    anomalies = intelligence.get("anomalies", [])
 
-    if any(word in normalized for word in ("forecast", "future", "next week", "revenue")):
+    sales_terms = (
+        "sale", "revenue", "order", "forecast", "growth", "product", "promote",
+        "bundle", "cross-sell", "customer", "churn", "risk", "campaign", "a/b",
+        "experiment", "beauty match", "conversion", "purchase", "anomaly", "profit",
+        "income", "earned", "made today", "sold", "selling", "business performance",
+        "how are we doing", "went down", "went up", "go down", "go up",
+    )
+    if not any(term in normalized for term in sales_terms):
+        return {
+            "answer": "I am the EngageX sales assistant, so I can only answer questions about sales, revenue, orders, products, customers, Beauty Match, and campaigns.",
+            "evidence": ["Sales-only assistant policy"],
+            "grounded": True,
+        }
+
+    if "today" in normalized and any(word in normalized for word in ("sale", "revenue", "order")):
+        answer = (
+            f"Today's recorded sales are ₹{summary.get('today_revenue', 0):,.0f} from "
+            f"{summary.get('today_orders', 0)} orders."
+        )
+        evidence = ["Orders recorded today", "Cancelled orders excluded"]
+    elif any(word in normalized for word in ("why", "change", "increase", "decrease", "drop", "growth", "anomaly")):
+        revenue_change = forecast.get("revenue_change_percent")
+        order_change = forecast.get("order_change_percent")
+        answer = (
+            f"This week revenue is {format_change(revenue_change)} and order volume is "
+            f"{format_change(order_change)} versus the previous seven days. "
+            f"Current revenue is ₹{summary.get('current_7_days_revenue', 0):,.0f}, compared with "
+            f"₹{summary.get('previous_7_days_revenue', 0):,.0f} previously."
+        )
+        evidence = ["Current 7 days", "Previous 7 days"] + [item.get("title", "") for item in anomalies[:2]]
+    elif any(word in normalized for word in ("forecast", "future", "next week")):
         answer = (
             f"The 7-day forecast is ₹{forecast.get('next_7_days_revenue', 0):,.0f} from "
             f"about {forecast.get('next_7_days_orders', 0)} orders. "
@@ -483,6 +567,20 @@ def answer_sales_question(question: str, intelligence: dict) -> dict:
         top = campaigns[0]
         answer = f"Start with {top['title']}. {top['action']} Test the proposed reward-first variant against the current experience."
         evidence = [f"{top['participants']} participants", f"{top['response_rate']}% response rate"]
+    elif "beauty" in normalized or "match" in normalized:
+        answer = (
+            f"Beauty Match produced {beauty.get('recommendations', 0)} recommendations, "
+            f"{beauty.get('cart_adds', 0)} cart additions, and {beauty.get('purchases', 0)} purchases. "
+            f"Attributed revenue is ₹{beauty.get('attributed_revenue', 0):,.0f}."
+        )
+        evidence = [f"{beauty.get('attribution_window_days', 30)}-day attribution window"]
+    elif any(word in normalized for word in ("revenue", "sale", "order", "week")):
+        answer = (
+            f"During the current seven-day period, EngageX recorded ₹{summary.get('current_7_days_revenue', 0):,.0f} "
+            f"from {summary.get('current_7_days_orders', 0)} orders. Revenue is "
+            f"{format_change(forecast.get('revenue_change_percent'))} versus the previous period."
+        )
+        evidence = ["Current 7-day completed sales", "Previous 7-day comparison"]
     elif products:
         top = products[0]
         answer = f"Promote {top['name']} first. {top['action']}"
@@ -492,6 +590,53 @@ def answer_sales_question(question: str, intelligence: dict) -> dict:
         evidence = ["Current EngageX dashboard aggregates"]
 
     return {"answer": answer, "evidence": evidence, "grounded": True}
+
+
+async def answer_sales_question_flexible(question: str, intelligence: dict) -> dict:
+    """Use the LLM for natural sales language, with a grounded rules fallback."""
+    fallback = answer_sales_question(question, intelligence)
+    if fallback.get("evidence") == ["Sales-only assistant policy"]:
+        return fallback
+
+    safe_snapshot = {
+        "sales_summary": intelligence.get("sales_summary", {}),
+        "forecast": intelligence.get("forecast", {}),
+        "sales_history": intelligence.get("sales_history", []),
+        "product_opportunities": intelligence.get("product_opportunities", []),
+        "bundle_recommendations": intelligence.get("bundle_recommendations", []),
+        "customer_segments": intelligence.get("customer_segments", {}),
+        "churn_risk_summary": intelligence.get("churn_risk_summary", {}),
+        "campaign_actions": intelligence.get("campaign_actions", []),
+        "beauty_match_conversion": intelligence.get("beauty_match_conversion", {}),
+        "anomalies": intelligence.get("anomalies", []),
+    }
+    prompt = f"""
+You are the EngageX internal sales intelligence assistant.
+Answer the manager's sales-related question naturally, even when it is phrased in an unexpected way.
+Use only the supplied EngageX data. Never invent a number, customer, product, cause, or event.
+If the data cannot answer the question, say exactly what data is missing and suggest the nearest useful sales metric.
+Do not answer non-sales topics. Keep the answer concise: maximum 120 words.
+Mention the specific evidence used in the answer.
+
+ENGAGEX SALES DATA:
+{json.dumps(safe_snapshot, default=str)}
+
+MANAGER QUESTION:
+{question}
+"""
+    try:
+        from app.ai.llm_service import LLMService
+        response = (await LLMService().generate_reply(prompt)).strip()
+        if not response:
+            return fallback
+        return {
+            "answer": response,
+            "evidence": ["Live EngageX sales intelligence snapshot"],
+            "grounded": True,
+            "mode": "generative",
+        }
+    except Exception:
+        return {**fallback, "mode": "rules-fallback"}
 
 
 def format_change(value) -> str:
