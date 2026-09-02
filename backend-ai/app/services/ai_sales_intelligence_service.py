@@ -267,6 +267,32 @@ async def get_ai_sales_intelligence(db) -> dict:
         """
     )
 
+    journey_summary_row = await db.fetchrow(
+        """
+        SELECT COUNT(*) FILTER (WHERE activity_type = 'product_view') AS views,
+               COUNT(*) FILTER (WHERE activity_type = 'cart_add') AS cart_adds,
+               COUNT(*) FILTER (WHERE activity_type = 'wishlist_add') AS wishlists,
+               COUNT(*) FILTER (WHERE activity_type = 'purchase') AS purchases,
+               COUNT(DISTINCT user_id) AS active_customers
+        FROM user_activity
+        WHERE activity_type IN ('product_view', 'cart_add', 'wishlist_add', 'purchase')
+        """
+    )
+
+    journey_rows = await db.fetch(
+        """
+        SELECT a.id, a.activity_type, a.created_at,
+               u.id AS customer_id, u.full_name AS customer_name,
+               p.id AS product_id, p.name AS product_name
+        FROM user_activity a
+        JOIN users u ON u.id = a.user_id
+        JOIN products p ON p.id = a.product_id
+        WHERE a.activity_type IN ('product_view', 'cart_add', 'wishlist_add', 'purchase')
+        ORDER BY a.created_at DESC
+        LIMIT 50
+        """
+    )
+
     revenues = [_number(row["revenue"]) for row in daily_rows]
     orders = [_number(row["orders"]) for row in daily_rows]
     revenue_forecast = _forecast(revenues)
@@ -472,6 +498,28 @@ async def get_ai_sales_intelligence(db) -> dict:
                 "at_risk", "total_customers"
             )
         },
+        "customer_journey": {
+            "period": "all_recorded_activity",
+            "summary": {
+                "views": int(journey_summary_row["views"] or 0),
+                "cart_adds": int(journey_summary_row["cart_adds"] or 0),
+                "wishlists": int(journey_summary_row["wishlists"] or 0),
+                "purchases": int(journey_summary_row["purchases"] or 0),
+                "active_customers": int(journey_summary_row["active_customers"] or 0),
+            },
+            "recent_activity": [
+                {
+                    "activity_id": row["id"],
+                    "customer_id": row["customer_id"],
+                    "customer_name": row["customer_name"],
+                    "product_id": row["product_id"],
+                    "product_name": row["product_name"],
+                    "activity_type": row["activity_type"],
+                    "created_at": row["created_at"].isoformat(),
+                }
+                for row in journey_rows
+            ],
+        },
         "campaign_actions": campaigns[:5],
         "anomalies": anomalies,
         "beauty_match_conversion": {
@@ -605,6 +653,7 @@ async def answer_sales_question_flexible(question: str, intelligence: dict) -> d
         "product_opportunities": intelligence.get("product_opportunities", []),
         "bundle_recommendations": intelligence.get("bundle_recommendations", []),
         "customer_segments": intelligence.get("customer_segments", {}),
+        "customer_journey_summary": intelligence.get("customer_journey", {}).get("summary", {}),
         "churn_risk_summary": intelligence.get("churn_risk_summary", {}),
         "campaign_actions": intelligence.get("campaign_actions", []),
         "beauty_match_conversion": intelligence.get("beauty_match_conversion", {}),

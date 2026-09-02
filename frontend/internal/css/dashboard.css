@@ -559,6 +559,16 @@ tbody tr:hover td{ background:var(--paper); }
 .ai-segment-card strong{ color:var(--plum); font-family:var(--font-display); font-size:28px; }
 .ai-segment-card span{ color:var(--ink); font-weight:600; }
 .ai-segment-card small{ color:var(--mute); line-height:1.4; }
+.ai-journey-period{ color:var(--mute); font-family:var(--font-mono); font-size:12px; }
+.ai-journey-summary{ display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin:18px 0; }
+.ai-journey-metric{ display:grid; gap:5px; padding:14px; border:1px solid var(--line); border-radius:var(--radius-sm); background:var(--paper); }
+.ai-journey-metric strong{ color:var(--plum); font-family:var(--font-display); font-size:24px; }
+.ai-journey-metric span{ color:var(--mute); font-size:12px; font-weight:600; }
+.ai-activity-badge{ display:inline-flex; align-items:center; border-radius:999px; padding:5px 9px; font-size:11px; font-weight:700; white-space:nowrap; }
+.ai-activity--product_view{ background:rgba(110,76,143,.14); color:var(--plum); }
+.ai-activity--cart_add{ background:rgba(185,139,62,.14); color:var(--gold); }
+.ai-activity--wishlist_add{ background:rgba(193,68,58,.14); color:var(--danger); }
+.ai-activity--purchase{ background:rgba(47,111,98,.14); color:var(--teal); }
 .ai-beauty-funnel{ display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin:18px 0; }
 .ai-funnel-step{ position:relative; display:grid; gap:6px; padding:14px; border:1px solid var(--line); border-radius:var(--radius-sm); background:var(--paper); }
 .ai-funnel-step span{ color:var(--mute); font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
@@ -727,6 +737,7 @@ tbody tr:hover td{ background:var(--paper); }
     .split-grid{ grid-template-columns:1fr; }
     .generator-fields{ grid-template-columns:1fr; }
     .ai-segment-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .ai-journey-summary{ grid-template-columns:repeat(2,minmax(0,1fr)); }
     .ai-beauty-funnel{ grid-template-columns:repeat(2,minmax(0,1fr)); }
     .ai-funnel-step i{ display:none; }
     .ai-two-column-grid{ grid-template-columns:1fr; }
@@ -738,6 +749,7 @@ tbody tr:hover td{ background:var(--paper); }
     .brand-sub{ display:none; }
     .ai-forecast-grid,
     .ai-segment-grid,
+    .ai-journey-summary,
     .ai-beauty-funnel{ grid-template-columns:1fr; }
     .ai-intelligence-toolbar{ align-items:flex-start; flex-direction:column; }
     .ai-assistant-card form{ grid-template-columns:1fr; }

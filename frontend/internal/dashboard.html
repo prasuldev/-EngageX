@@ -26,7 +26,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/dashboard.css?v=20260902-4">
+    <link rel="stylesheet" href="css/dashboard.css?v=20260902-5">
 </head>
 <body>
 
@@ -405,6 +405,21 @@
                     <tbody><tr><td colspan="5">Analyzing customer behavior…</td></tr></tbody>
                 </table></div>
             </div>
+
+            <div class="surface-card ai-section-card">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">AI Customer Journey Intelligence</h2>
+                        <p class="panel-desc">Follow customer interest from product view to cart, wishlist, and purchase.</p>
+                    </div>
+                    <span class="ai-journey-period">All recorded activity</span>
+                </div>
+                <div id="ai-journey-summary" class="ai-journey-summary"></div>
+                <div class="table-wrap"><table id="ai-customer-journey">
+                    <thead><tr><th>Customer</th><th>Activity</th><th>Product</th><th>When</th><th>AI sales signal</th></tr></thead>
+                    <tbody><tr><td colspan="5">Analyzing customer journeys…</td></tr></tbody>
+                </table></div>
+            </div>
             </div>
 
             <div class="ai-tab-panel" data-ai-panel="campaigns">
@@ -570,7 +585,7 @@
 <script src="js/auth.js?v=20260901-5"></script>
 <script src="js/ws-client.js?v=20260901-5"></script>
 <script src="js/sidebar-nav.js?v=20260901-5"></script>
-<script src="js/dashboard.js?v=20260902-4"></script>
+<script src="js/dashboard.js?v=20260902-5"></script>
 <script src="js/orders-admin.js?v=20260901-7"></script>
 <script src="js/kpi-swatches.js?v=20260901-5"></script>
 

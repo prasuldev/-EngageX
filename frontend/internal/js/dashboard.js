@@ -342,6 +342,16 @@ function getAISalesPreviewData() {
             { name: "Customer #1087", segment: "High value", churn_risk: "Low", churn_risk_score: 18, inactive_days: 9, next_best_action: "Recommend a premium serum and cleanser bundle." },
             { name: "Customer #1121", segment: "Frequent buyer", churn_risk: "Medium", churn_risk_score: 46, inactive_days: 38, next_best_action: "Send a replenishment reminder based on the last purchase." }
         ],
+        customer_journey: {
+            period: "demo_preview",
+            summary: { views: 148, cart_adds: 61, wishlists: 37, purchases: 29, active_customers: 83 },
+            recent_activity: [
+                { customer_name: "Customer #1087", activity_type: "purchase", product_name: "Hydrating Barrier Serum", created_at: new Date().toISOString() },
+                { customer_name: "Customer #1042", activity_type: "cart_add", product_name: "Mineral Sunscreen SPF 50", created_at: new Date(Date.now() - 18 * 60000).toISOString() },
+                { customer_name: "Customer #1121", activity_type: "wishlist_add", product_name: "Gentle Gel Cleanser", created_at: new Date(Date.now() - 65 * 60000).toISOString() },
+                { customer_name: "Customer #1154", activity_type: "product_view", product_name: "Vitamin C Essence", created_at: new Date(Date.now() - 3 * 3600000).toISOString() }
+            ]
+        },
         campaign_actions: [
             { title: "Find Your Skin Twin", response_rate: 61.5, participants: 52, action: "Scale this format and reuse its audience targeting.", experiment: { hypothesis: "Leading with the reward will raise response rate.", variant_b: "Show the reward before the first question.", primary_metric: "Response rate", minimum_sample: 104 } },
             { title: "Glow Routine Quiz", response_rate: 28.4, participants: 38, action: "Simplify the interaction and strengthen the call to action.", experiment: { hypothesis: "A shorter quiz will improve completion.", variant_b: "Reduce the quiz to three questions.", primary_metric: "Completion rate", minimum_sample: 80 } }
@@ -597,6 +607,46 @@ async function loadAISalesIntelligence() {
             <td>${customer.inactive_days} days</td><td>${escapeHTML(customer.next_best_action)}</td>
         </tr>`).join("")
         : `<tr><td colspan="5">No customer behavior is available yet.</td></tr>`;
+
+    const journey = data.customer_journey || {};
+    const journeySummary = journey.summary || {};
+    const journeyMetrics = [
+        ["Product views", journeySummary.views || 0],
+        ["Cart adds", journeySummary.cart_adds || 0],
+        ["Wishlisted", journeySummary.wishlists || 0],
+        ["Purchased", journeySummary.purchases || 0],
+        ["Active customers", journeySummary.active_customers || 0]
+    ];
+    document.getElementById("ai-journey-summary").innerHTML = journeyMetrics
+        .map(([label, value]) => `<div class="ai-journey-metric"><strong>${Number(value).toLocaleString()}</strong><span>${label}</span></div>`)
+        .join("");
+
+    const activityLabels = {
+        product_view: "Viewed product",
+        cart_add: "Added to cart",
+        wishlist_add: "Wishlisted",
+        purchase: "Purchased"
+    };
+    const activitySignals = {
+        product_view: "Interest detected — retarget if the customer does not continue.",
+        cart_add: "High intent — send a timely cart reminder.",
+        wishlist_add: "Saved interest — consider a stock or offer notification.",
+        purchase: "Converted — recommend a complementary or replenishment product."
+    };
+    const journeyActivity = journey.recent_activity || [];
+    document.querySelector("#ai-customer-journey tbody").innerHTML = journeyActivity.length
+        ? journeyActivity.map(item => {
+            const activity = activityLabels[item.activity_type] ? item.activity_type : "product_view";
+            const occurredAt = new Date(item.created_at);
+            return `<tr>
+                <td>${escapeHTML(item.customer_name || "Customer")}</td>
+                <td><span class="ai-activity-badge ai-activity--${activity}">${activityLabels[activity]}</span></td>
+                <td>${escapeHTML(item.product_name || "Product")}</td>
+                <td>${Number.isNaN(occurredAt.getTime()) ? "—" : occurredAt.toLocaleString()}</td>
+                <td>${activitySignals[activity]}</td>
+            </tr>`;
+        }).join("")
+        : `<tr><td colspan="5">No view, cart, wishlist, or purchase activity has been recorded yet.</td></tr>`;
 
     const campaigns = data.campaign_actions || [];
     document.getElementById("ai-campaign-actions").innerHTML = campaigns.length
