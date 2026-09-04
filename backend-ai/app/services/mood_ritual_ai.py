@@ -15,11 +15,12 @@ import json
 import os
 import asyncio
 import httpx
+from app.config import GEMINI_MODEL
 
 # Dedicated key for this feature, falls back to shared key if unset --
 # same pattern as GEMINI_API_KEY_POLL.
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY_MOOD") or os.getenv("GEMINI_API_KEY")
-GEMINI_MODEL = "gemini-3.5-flash-lite"
+
 GEMINI_URL = (
     f"https://generativelanguage.googleapis.com/v1beta/models/"
     f"{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}"

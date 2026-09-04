@@ -20,12 +20,13 @@ import json
 import os
 import asyncio
 import httpx
+from app.config import GEMINI_MODEL
 
 # Uses a dedicated key for this feature if one is set, so it doesn't
 # compete for quota with other Gemini usage (e.g. the AI assistant).
 # Falls back to the shared key if GEMINI_API_KEY_POLL isn't configured.
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY_POLL") or os.getenv("GEMINI_API_KEY")
-GEMINI_MODEL = "gemini-2.5-flash-lite"
+
 GEMINI_URL = (
     f"https://generativelanguage.googleapis.com/v1beta/models/"
     f"{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}"
@@ -126,8 +127,8 @@ def _get_fallback_questions(category: str) -> list[dict]:
     return GENERIC_FALLBACK_QUESTIONS
 
 
-async def _call_gemini(prompt: str, retries: int = 1):
-    async with httpx.AsyncClient(timeout=10.0) as client:
+async def _call_gemini(prompt: str, retries: int = 1, timeout: float = 10.0):
+    async with httpx.AsyncClient(timeout=timeout) as client:
         for attempt in range(retries + 1):
             res = await client.post(
                 GEMINI_URL,
@@ -383,7 +384,7 @@ List steps in the order they should actually be applied within each session.
 """
 
     try:
-        parsed = await _call_gemini(prompt)
+        parsed = await _call_gemini(prompt, timeout=25.0)
         if isinstance(parsed.get("steps"), list) and len(parsed["steps"]) > 0:
             valid_names = {p["name"] for p in products}
             # Guard against Gemini inventing or mis-copying a product name --

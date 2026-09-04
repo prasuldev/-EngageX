@@ -12,6 +12,7 @@ import os
 import httpx
 import asyncpg
 from dotenv import load_dotenv
+from app.config import GEMINI_MODEL
 
 load_dotenv()
 
@@ -20,7 +21,7 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 # Reuses the same key convention as ai_recommender.py -- a dedicated key
 # for this feature if set, falling back to the shared one.
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY_SKIN_TWIN") or os.getenv("GEMINI_API_KEY")
-GEMINI_MODEL = "gemini-3.5-flash-lite"
+
 GEMINI_URL = (
     f"https://generativelanguage.googleapis.com/v1beta/models/"
     f"{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}"

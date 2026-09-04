@@ -1,8 +1,7 @@
 import asyncio
 import logging
-
 import google.generativeai as genai
-
+from app.config import GEMINI_MODEL
 from app.config import settings
 
 logger = logging.getLogger("engagex.llm")

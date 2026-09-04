@@ -17,9 +17,10 @@ import os
 import time
 import asyncio
 import httpx
+from app.config import GEMINI_MODEL
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY_INSIGHTS") or os.getenv("GEMINI_API_KEY")
-GEMINI_MODEL = "gemini-3.5-flash-lite"
+
 GEMINI_URL = (
     f"https://generativelanguage.googleapis.com/v1beta/models/"
     f"{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}"
