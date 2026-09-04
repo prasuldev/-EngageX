@@ -538,15 +538,63 @@ body.dark-mode .match-card-back {
     color: #f8fafc !important;
 }
 
+html.dark-mode #ai-welcome-card,
+html.dark-mode #ai-chat-window,
 html.dark-mode .chat-body,
 html.dark-mode .chat-footer,
-html.dark-mode .message-content,
+body.dark-mode #ai-welcome-card,
+body.dark-mode #ai-chat-window,
 body.dark-mode .chat-body,
-body.dark-mode .chat-footer,
-body.dark-mode .message-content {
+body.dark-mode .chat-footer {
     background-color: #1e293b !important;
     border-color: #475569 !important;
     color: #f8fafc !important;
+}
+
+html.dark-mode #ai-welcome-card,
+html.dark-mode #ai-chat-window,
+body.dark-mode #ai-welcome-card,
+body.dark-mode #ai-chat-window {
+    border: 1px solid #475569;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, .55);
+}
+
+html.dark-mode #close-welcome,
+body.dark-mode #close-welcome {
+    color: #cbd5e1 !important;
+}
+
+html.dark-mode .chat-introduction,
+html.dark-mode .quick-action,
+html.dark-mode .bot-message .message-content,
+body.dark-mode .chat-introduction,
+body.dark-mode .quick-action,
+body.dark-mode .bot-message .message-content {
+    background-color: #0f172a !important;
+    border-color: #475569 !important;
+    color: #f8fafc !important;
+}
+
+html.dark-mode .chat-introduction p,
+body.dark-mode .chat-introduction p {
+    color: #cbd5e1 !important;
+}
+
+html.dark-mode .quick-action:hover,
+body.dark-mode .quick-action:hover {
+    background-color: #ec4899 !important;
+    color: #ffffff !important;
+}
+
+html.dark-mode .user-message .message-content,
+body.dark-mode .user-message .message-content {
+    background-color: #ec4899 !important;
+    color: #ffffff !important;
+}
+
+html.dark-mode .chat-body::-webkit-scrollbar-thumb,
+body.dark-mode .chat-body::-webkit-scrollbar-thumb {
+    background: #64748b;
 }
 
 /* Keep every customer-facing headline readable, including dynamically inserted headings. */
